@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.us.dao.UsUserPlantParamDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.us.entity.UsUserPlantParamEntity" id="usUserPlantParamMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="unitType" column="unit_type"/>
+        <result property="equipmentManufacturer" column="equipment_manufacturer"/>
+        <result property="screenResolution" column="screen_resolution"/>
+        <result property="dpi" column="dpi"/>
+        <result property="systemName" column="system_name"/>
+        <result property="systemVersion" column="system_version"/>
+        <result property="networkType" column="network_type"/>
+        <result property="createDate" column="create_date"/>
+    </resultMap>
+
+
+</mapper>
