@@ -108,7 +108,9 @@ public class Constant {
         //请求成功
         SUCCESS(200),
         //请求失败
-        FAIL(500);
+        FAIL(500),
+        //第三方用户未绑定手机号
+        NO_MOBILE(201);
 
         private int value;
 
@@ -126,9 +128,13 @@ public class Constant {
      */
     public enum Message {
         //请求成功
-        SUCCESS("success"),
+        SUCCESS("成功"),
         //请求失败
-        FAIL("fail");
+        FAIL("失败"),
+        //未知错误
+        UNKNOWN("系统异常"),
+        //第三方用户未绑定手机号
+        NO_MOBILE("未绑定手机号");
 
         private String value;
 

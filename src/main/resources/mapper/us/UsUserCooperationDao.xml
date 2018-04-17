@@ -11,6 +11,8 @@
         <result property="accessToken" column="access_token"/>
         <result property="type" column="type"/>
         <result property="createDate" column="create_date"/>
+        <result property="appid" column="appid"/>
+        <result property="updateDate" column="update_date"/>
     </resultMap>
 
 

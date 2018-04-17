@@ -43,6 +43,10 @@ public class UsUserCooperationEntity implements Serializable {
 	 */
 	private Date createDate;
 
+	private String appid;
+
+	private Date updateDate;
+
 	/**
 	 * 设置：
 	 */
@@ -114,5 +118,35 @@ public class UsUserCooperationEntity implements Serializable {
 	 */
 	public Date getCreateDate() {
 		return createDate;
+	}
+
+	public String getAppid() {
+		return appid;
+	}
+
+	public void setAppid(String appid) {
+		this.appid = appid;
+	}
+
+	public Date getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	@Override
+	public String toString() {
+		return "UsUserCooperationEntity{" +
+				"id='" + id + '\'' +
+				", userId='" + userId + '\'' +
+				", openid='" + openid + '\'' +
+				", accessToken='" + accessToken + '\'' +
+				", type='" + type + '\'' +
+				", createDate=" + createDate +
+				", appid='" + appid + '\'' +
+				", updateDate=" + updateDate +
+				'}';
 	}
 }

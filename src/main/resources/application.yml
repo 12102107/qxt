@@ -23,7 +23,7 @@ spring:
             enabled: true
     redis:
         open: false  # 是否开启redis缓存  true开启   false关闭
-        database: 0
+        database: 1
         host: localhost
         port: 6379
         password:       # 密码（默认为空）

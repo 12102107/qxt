@@ -5,7 +5,7 @@ import org.hibernate.validator.constraints.NotBlank;
 /**
  * @author Li
  */
-public class UsUserCooperationParam extends UsSessionParam {
+public class UsUserCooperationParam extends UsBaseParam {
 
     @NotBlank(message = "openid不能为空")
     private String openid;
