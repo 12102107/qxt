@@ -110,7 +110,9 @@ public class Constant {
         //请求失败
         FAIL(500),
         //第三方用户未绑定手机号
-        NO_MOBILE(201);
+        NO_MOBILE(201),
+
+        ERROR_MOBILE(202);
 
         private int value;
 
@@ -134,7 +136,9 @@ public class Constant {
         //未知错误
         UNKNOWN("系统异常"),
         //第三方用户未绑定手机号
-        NO_MOBILE("未绑定手机号");
+        NO_MOBILE("未绑定手机号"),
+
+        ERROR_MOBILE("手机号码或密码错误");
 
         private String value;
 

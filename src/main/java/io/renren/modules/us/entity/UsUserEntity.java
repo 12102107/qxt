@@ -7,11 +7,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 
- * 
+ *
+ *
  * @author sys
- * @email 
- * @date 2018-04-12 16:26:30
+ * @email
+ * @date 2018-04-18 13:42:29
  */
 @TableName("us_user")
 public class UsUserEntity implements Serializable {
@@ -83,17 +83,25 @@ public class UsUserEntity implements Serializable {
 	 */
 	private String deleteFlag;
 	/**
-	 * 
+	 *
 	 */
 	private String session;
 	/**
+	 * 职业id
+	 */
+	private String uJobid;
+	/**
 	 * 职业
 	 */
-	private String occupation;
+	private String personJob;
 	/**
 	 * 工作单位
 	 */
-	private String workUnit;
+	private String uDepartid;
+	/**
+	 * 工作单位
+	 */
+	private String personDepartname;
 
 	/**
 	 * 设置：id
@@ -300,27 +308,51 @@ public class UsUserEntity implements Serializable {
 		return session;
 	}
 	/**
+	 * 设置：职业id
+	 */
+	public void setUJobid(String uJobid) {
+		this.uJobid = uJobid;
+	}
+	/**
+	 * 获取：职业id
+	 */
+	public String getUJobid() {
+		return uJobid;
+	}
+	/**
 	 * 设置：职业
 	 */
-	public void setOccupation(String occupation) {
-		this.occupation = occupation;
+	public void setPersonJob(String personJob) {
+		this.personJob = personJob;
 	}
 	/**
 	 * 获取：职业
 	 */
-	public String getOccupation() {
-		return occupation;
+	public String getPersonJob() {
+		return personJob;
 	}
 	/**
 	 * 设置：工作单位
 	 */
-	public void setWorkUnit(String workUnit) {
-		this.workUnit = workUnit;
+	public void setUDepartid(String uDepartid) {
+		this.uDepartid = uDepartid;
 	}
 	/**
 	 * 获取：工作单位
 	 */
-	public String getWorkUnit() {
-		return workUnit;
+	public String getUDepartid() {
+		return uDepartid;
+	}
+	/**
+	 * 设置：工作单位
+	 */
+	public void setPersonDepartname(String personDepartname) {
+		this.personDepartname = personDepartname;
+	}
+	/**
+	 * 获取：工作单位
+	 */
+	public String getPersonDepartname() {
+		return personDepartname;
 	}
 }
