@@ -10,8 +10,6 @@ import io.renren.modules.us.entity.UsUserEntity;
 import io.renren.modules.us.param.UsUserCooperationParam;
 import io.renren.modules.us.service.UsUserCooperationService;
 import io.renren.modules.us.service.UsUserService;
-import io.renren.modules.us.util.UsCryptoUtil;
-import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsSessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +28,7 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
     private UsUserService userService;
 
     @Override
-    public R signIn(UsUserCooperationParam cooperationParam){
+    public R signIn(UsUserCooperationParam cooperationParam) {
         EntityWrapper<UsUserCooperationEntity> wrapper = new EntityWrapper<>();
         wrapper.setEntity(new UsUserCooperationEntity());
         wrapper.where("appid={0}", cooperationParam.getAppid())
@@ -40,15 +38,17 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
         if (list.isEmpty()) {
             return R.error(Constant.Result.NO_MOBILE.getValue(), Constant.Message.NO_MOBILE.getValue());
         } else if (list.size() == 1) {
-            //保存数据,更新Session,更新缓存
+            //更新token,updateDate,保存数据
             UsUserCooperationEntity entity = list.get(0);
             entity.setAccessToken(cooperationParam.getAccessToken());
             entity.setUpdateDate(new Date());
             this.updateById(entity);
+            //更新session,保存数据
             String session = UsSessionUtil.generateSession();
             UsUserEntity userEntity = userService.selectById(entity.getUserId());
             userEntity.setSession(session);
             userService.updateById(userEntity);
+            //更新session缓存
             return R.ok();
         } else {
             return R.error();

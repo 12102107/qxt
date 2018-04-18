@@ -134,7 +134,9 @@ public class Constant {
         //未知错误
         UNKNOWN("系统异常"),
         //第三方用户未绑定手机号
-        NO_MOBILE("未绑定手机号");
+        NO_MOBILE("未绑定手机号"),
+        //短信发送失败
+        SMS_FAIL("短信发送失败");
 
         private String value;
 
