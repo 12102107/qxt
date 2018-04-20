@@ -10,11 +10,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class UsSmsUtil {
 
-    private static String url = "http://utf8.api.smschinese.cn/?Uid=gophagroup&Key=2b96c2d083a4bffa6e6f";
-    private static String smsMobUrl = "&smsMob=";
-    private static String smsTextUrl = "&smsText=验证码:";
-
-    public static String message(String mobile) {
+    public static String getCode(String mobile) {
+        String url = "http://utf8.api.smschinese.cn/?Uid=gophagroup&Key=2b96c2d083a4bffa6e6f";
+        String smsMobUrl = "&smsMob=";
+        String smsTextUrl = "&smsText=验证码:";
         url += smsMobUrl + mobile;
         int i = (int) ((Math.random() * 9 + 1) * 100000);
         String code = String.valueOf(i);
@@ -22,7 +21,7 @@ public class UsSmsUtil {
         try {
             Response response = UsOkHttpUtil.getInstance().getDataSync(url);
             String relust = response.body().string();
-            if ("1".equals(relust)) {
+            if (Integer.parseInt(relust) > 0) {
                 return code;
             } else {
                 return Constant.Message.SMS_FAIL.getValue();

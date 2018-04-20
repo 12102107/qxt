@@ -112,7 +112,15 @@ public class Constant {
         //第三方用户未绑定手机号
         NO_MOBILE(201),
 
-        ERROR_MOBILE(202);
+        ERROR_MOBILE(202),
+        //验证码查询结果为空
+        SMS_CODE_NULL(203),
+        //验证码不正确
+        SMS_CODE_ERROR(204),
+        //验证码过期
+        SMS_CODE_EXPIRE(205),
+        //验证码正确
+        SMS_CODE_CORRECT(206);
 
         private int value;
 

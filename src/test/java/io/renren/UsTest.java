@@ -1,7 +1,9 @@
 package io.renren;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import io.renren.modules.us.entity.UsSmsEntity;
 import io.renren.modules.us.entity.UsUserCooperationEntity;
+import io.renren.modules.us.service.UsSmsService;
 import io.renren.modules.us.service.UsUserCooperationService;
 import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsOkHttpUtil;
@@ -16,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -26,6 +29,8 @@ public class UsTest {
     private UsIdUtil usIdUtil;
     @Autowired
     private UsUserCooperationService cooperationService;
+    @Autowired
+    private UsSmsService smsService;
 
     @Test
     public void test1() {
@@ -53,6 +58,21 @@ public class UsTest {
         for (UsUserCooperationEntity e : list) {
             System.out.println(e.toString());
         }
+    }
+
+    @Test
+    public void test8() {
+        EntityWrapper<UsSmsEntity> wrapper = new EntityWrapper<>();
+        wrapper.where("appid={0}", "12345")
+                .and("mobile={0}", "15904607121")
+                .orderBy("create_date", false)
+                .last("limit 1");
+        wrapper.setEntity(new UsSmsEntity());
+        UsSmsEntity smsEntity = smsService.selectOne(wrapper);
+        System.out.println(smsEntity.toString());
+        Date expireDate = smsEntity.getCreateDate();
+        Date now = new Date();
+        System.out.println("日期比较=====" + now.before(expireDate));
     }
 
     @Test
@@ -99,13 +119,23 @@ public class UsTest {
 
     @Test
     public void test6() {
-        String code = UsSmsUtil.message("15904607121");
+        String code = UsSmsUtil.getCode("15904607121");
         System.out.println("短信接口==============================" + code);
     }
 
     @Test
-    public void test7(){
-        int str = (int)((Math.random() * 9 + 1) * 100000);
+    public void test7() {
+        int str = (int) ((Math.random() * 9 + 1) * 100000);
         System.out.println("短信接口==============================" + str);
+    }
+
+    @Test
+    public void test9() {
+        int code = smsService.checkCode("12345", "1234", "666");
+        System.out.println("短信接口==============================" + code);
+        code = smsService.checkCode("12345", "15904607121", "666");
+        System.out.println("短信接口==============================" + code);
+        code = smsService.checkCode("12345", "15904607121", "138584");
+        System.out.println("短信接口==============================" + code);
     }
 }

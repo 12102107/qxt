@@ -56,11 +56,11 @@ public class R extends HashMap<String, Object> {
         return r;
     }
 
-    public static R ok(Map<String, Object> map) {
-        R r = new R();
-        r.putAll(map);
-        return r;
-    }
+//    public static R ok(Map<String, Object> map) {
+//        R r = new R();
+//        r.putAll(map);
+//        return r;
+//    }
 
     public static R ok() {
         return new R();
