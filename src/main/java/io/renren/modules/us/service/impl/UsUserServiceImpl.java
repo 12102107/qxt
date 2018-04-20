@@ -2,7 +2,6 @@ package io.renren.modules.us.service.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.IService;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import io.renren.common.utils.Constant;
 import io.renren.common.utils.PageUtils;
@@ -10,12 +9,18 @@ import io.renren.common.utils.Query;
 import io.renren.common.utils.R;
 import io.renren.modules.us.dao.UsUserDao;
 import io.renren.modules.us.entity.TSDepartEntity;
+import io.renren.modules.us.entity.TSTypeEntity;
 import io.renren.modules.us.entity.UsUserEntity;
 import io.renren.modules.us.entity.UsUserPlantParamEntity;
 import io.renren.modules.us.param.UsLoginParam;
+import io.renren.modules.us.param.UsRegisterParam;
 import io.renren.modules.us.param.UsUserParam;
+import io.renren.modules.us.param.UsUserRealCertParam;
+import io.renren.modules.us.service.TSDepartService;
+import io.renren.modules.us.service.TSTypeService;
 import io.renren.modules.us.service.UsUserPlantParamService;
 import io.renren.modules.us.service.UsUserService;
+import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsSessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +34,10 @@ import java.util.UUID;
 
 @Service("usUserService")
 public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> implements UsUserService {
-
+    @Autowired
+    private TSDepartService tSDepartService;
+    @Autowired
+    private TSTypeService tSTypeService;
     @Autowired
     private UsUserPlantParamService usUserPlantParamService;
 
@@ -101,7 +109,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
     /**
      * 修改个人信息
-     * @param userId
+     * @param
      * @param form
      * @return
      */
@@ -115,11 +123,90 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         user.setEmail(form.getEmail());
         user.setAddress(form.getAddress());
         user.setRemark(form.getRemark());
-        user.setUJobid(form.getuJobid());
-        user.setPersonJob(form.getPersonJob());
+
         user.setUDepartid(form.getuDepartid());
-        user.setPersonDepartname(form.getPersonDepartname());
+        //工作单位
+        if (null != form.getuDepartid()  &&  !"".equals(form.getuDepartid())){
+            TSDepartEntity tSDepart =  tSDepartService.selectById(form.getuDepartid());
+            user.setPersonDepartname(tSDepart.getDepartname());
+        }
+        user.setUJobid(form.getuJobid());
+        //职业
+        if (null != form.getuJobid()  &&  !"".equals(form.getuJobid())){
+            TSTypeEntity ts = tSTypeService.queryByCode(form.getuJobid(),"job_list");
+            user.setPersonJob(ts.getTypename());
+        }
+
         this.updateById(user);
         return user;
+    }
+
+    /**
+     * 实名认证
+     * @param user
+     * @param form
+     * @return
+     */
+    @Override
+    public UsUserEntity realnameCert(UsUserEntity user, UsUserRealCertParam form){
+
+        user.setUpdateDate(new Date());
+
+        user.setRealname(form.getRealname());
+        user.setNickname(form.getNickname());
+        user.setCitizenNo(form.getCitizenNo());
+        user.setSex(form.getSex());
+        user.setEmail(form.getEmail());
+        user.setAddress(form.getAddress());
+
+        user.setUJobid(form.getuJobid());
+        user.setUDepartid(form.getuDepartid());
+
+
+        //工作单位
+        if (null != form.getuDepartid()  &&  !"".equals(form.getuDepartid())){
+            TSDepartEntity tSDepart =  tSDepartService.selectById(form.getuDepartid());
+            user.setPersonDepartname(tSDepart.getDepartname());
+        }
+        //职业
+        if (null != form.getuJobid()  &&  !"".equals(form.getuJobid())){
+            TSTypeEntity ts = tSTypeService.queryByCode(form.getuJobid(),"job_list");
+            user.setPersonJob(ts.getTypename());
+        }
+
+        user.setStatus(1);//已实名认证
+
+        this.updateById(user);
+        return user;
+    }
+
+    //注册
+    public String reg(UsRegisterParam form){
+
+        //保存用户信息
+        UsUserEntity user = new UsUserEntity();
+        user.setMobilePhone(form.getMobilePhone());
+        user.setPassword(form.getPassword());
+        user.setSmsCode(form.getSmsCode());
+        user.setId(UsIdUtil.generateId());
+        user.setCreateDate(new Date());
+        user.setStatus(0);//初始未认证
+        this.insert(user);
+
+        //保存设备信息
+        UsUserPlantParamEntity userPlant = new UsUserPlantParamEntity();
+        userPlant.setUserId(user.getId());
+        userPlant.setId(UsIdUtil.generateId());
+        userPlant.setUnitType(form.getUnitType());
+        userPlant.setEquipmentManufacturer(form.getEquipmentManufacturer());
+        userPlant.setScreenResolution(form.getScreenResolution());
+        userPlant.setDpi(form.getDpi());
+        userPlant.setSystemName(form.getSystemName());
+        userPlant.setSystemVersion(form.getSystemVersion());
+        userPlant.setNetworkType(form.getNetworkType());
+        userPlant.setCreateDate(new Date());
+        usUserPlantParamService.insert(userPlant);
+
+        return user.getMobilePhone();
     }
 }
