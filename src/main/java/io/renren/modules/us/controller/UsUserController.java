@@ -1,17 +1,16 @@
 package io.renren.modules.us.controller;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.service.IService;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.us.entity.TSDepartEntity;
+import io.renren.modules.us.entity.TSTypeEntity;
 import io.renren.modules.us.entity.UsUserEntity;
-import io.renren.modules.us.entity.UsUserPlantParamEntity;
 import io.renren.modules.us.param.*;
+import io.renren.modules.us.service.TSDepartService;
+import io.renren.modules.us.service.TSTypeService;
 import io.renren.modules.us.service.UsUserPlantParamService;
 import io.renren.modules.us.service.UsUserService;
-import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsSessionUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,8 +37,10 @@ public class UsUserController {
     private UsUserService usUserService;
     @Autowired
     private UsUserPlantParamService usUserPlantParamService;
-    private IService iService;
-
+    @Autowired
+    private TSDepartService tSDepartService;
+    @Autowired
+    private TSTypeService tSTypeService;
     /**
      * 列表
      */
@@ -124,36 +125,17 @@ public class UsUserController {
     public R register(@RequestBody UsRegisterParam form ) throws ParseException {
         //表单校验
         ValidatorUtils.validateEntity(form);
-        //保存用户信息
-        UsUserEntity user = new UsUserEntity();
-        user.setMobilePhone(form.getMobilePhone());
-        user.setPassword(form.getPassword());
-        user.setSmsCode(form.getSmsCode());
-        user.setId(UsIdUtil.generateId());
-        user.setCreateDate(new Date());
-        usUserService.insert(user);
-        //保存设备信息
-        UsUserPlantParamEntity userPlant = new UsUserPlantParamEntity();
-        userPlant.setUserId(user.getId());
-        userPlant.setId(UsIdUtil.generateId());
-        userPlant.setUnitType(form.getUnitType());
-        userPlant.setEquipmentManufacturer(form.getEquipmentManufacturer());
-        userPlant.setScreenResolution(form.getScreenResolution());
-        userPlant.setDpi(form.getDpi());
-        userPlant.setSystemName(form.getSystemName());
-        userPlant.setSystemVersion(form.getSystemVersion());
-        userPlant.setNetworkType(form.getNetworkType());
-        userPlant.setCreateDate(new Date());
-        usUserPlantParamService.insert(userPlant);
+
+        String mobilePhone = usUserService.reg(form);
 
         Map<String, Object> map = new HashMap<>();
-        map.put("mobilePhone", user.getMobilePhone());
+        map.put("mobilePhone", mobilePhone);
         return R.ok(map);
     }
 
 
     /**
-     * 修改密码
+     * 登录
      */
     @PostMapping("login")
     @ApiOperation("登录")
@@ -213,7 +195,29 @@ public class UsUserController {
             return R.error("session格式不正确");
         }
 
+        //获取工作单位/职业名称
+        user = this.queryName(user);
+
         return R.ok(user);
+    }
+
+    /**
+     * 根据工作单位id获取名称等
+     * @param
+     * @return
+     */
+    public UsUserEntity queryName(UsUserEntity user) {
+        //工作单位
+        if (null != user.getUDepartid()  &&  !"".equals(user.getUDepartid())){
+            TSDepartEntity tSDepart =  tSDepartService.selectById(user.getUDepartid());
+            user.setPersonDepartname(tSDepart.getDepartname());
+        }
+        //职业
+        if (null != user.getUJobid()  &&  !"".equals(user.getUJobid())){
+            TSTypeEntity ts = tSTypeService.queryByCode(user.getUJobid(),"job_list");
+            user.setPersonJob(ts.getTypename());
+        }
+        return user;
     }
 
 
@@ -235,6 +239,8 @@ public class UsUserController {
 
         user = usUserService.updatePersonalInfo(user,form);
 
+        user = this.queryName(user);
+
         return R.ok(user);
     }
 
@@ -254,12 +260,57 @@ public class UsUserController {
             return R.error("session格式不正确");
         }
 
-        EntityWrapper<TSDepartEntity> wrapper = new EntityWrapper<>();
-        wrapper.setEntity(new TSDepartEntity());
-        wrapper.where("org_code={0}", "A04");
-        List<TSDepartEntity> list = iService.selectList(wrapper);
+        List<TSDepartEntity> list = tSDepartService.queryDepartListByPid("297eb468623bd89b01623ce8a17d000f");
 
         return R.ok(list);
     }
+
+
+    @PostMapping("jobList")
+    @ApiOperation("查询职业信息列表")
+    public R jobList(@RequestBody UsSessionParam form){
+
+        ValidatorUtils.validateEntity(form);
+        //验证是否登录
+        String userId = UsSessionUtil.getUserid(form.getSession());
+        if (userId == null){
+            return R.error("session格式不正确");
+        }
+
+        UsUserEntity user = usUserService.selectById(userId);
+        if(user == null){
+            return R.error("session格式不正确");
+        }
+
+        List<TSTypeEntity> list = tSTypeService.queryList("job_list");
+
+        return R.ok(list);
+    }
+
+
+    @PostMapping("realnameCertification")
+    @ApiOperation("实名认证")
+    public R realnameCertification(@RequestBody UsUserRealCertParam form){
+        //表单校验
+        ValidatorUtils.validateEntity(form);
+
+        String userId = UsSessionUtil.getUserid(form.getSession());
+        if (userId == null){
+            return R.error("session格式不正确");
+        }
+
+        UsUserEntity user = usUserService.selectById(userId);
+        if(user == null){
+            return R.error("session格式不正确");
+        }
+
+        user = usUserService.realnameCert(user,form);
+
+        user = this.queryName(user);
+
+        return R.ok(user);
+    }
+
+
 
 }

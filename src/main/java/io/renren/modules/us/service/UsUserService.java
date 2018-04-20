@@ -5,7 +5,9 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.modules.us.entity.UsUserEntity;
 import io.renren.modules.us.param.UsLoginParam;
+import io.renren.modules.us.param.UsRegisterParam;
 import io.renren.modules.us.param.UsUserParam;
+import io.renren.modules.us.param.UsUserRealCertParam;
 
 import java.util.Map;
 
@@ -22,8 +24,13 @@ public interface UsUserService extends IService<UsUserEntity> {
 
     R signIn(UsLoginParam form);
 
+    String reg(UsRegisterParam form);
+
     UsUserEntity checkUserExits(String userId, String oldPassword);
 
     UsUserEntity updatePersonalInfo(UsUserEntity user, UsUserParam form);
+
+    UsUserEntity realnameCert(UsUserEntity user, UsUserRealCertParam form);
+
 }
 
