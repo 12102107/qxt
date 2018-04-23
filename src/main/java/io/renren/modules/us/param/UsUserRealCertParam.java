@@ -17,22 +17,18 @@ public class UsUserRealCertParam extends UsSessionParam {
     private String citizenNo;
 
     @ApiModelProperty(value = "性别")
-    @NotBlank(message = "性别不能为空")
     private  String sex;
 
     @ApiModelProperty(value = "电子邮箱")
-    @NotBlank(message = "电子邮箱不能为空")
     private String email;
 
     @ApiModelProperty(value = "地址")
     private  String address;
 
     @ApiModelProperty(value = "职业")
-    @NotBlank(message = "职业不能为空")
     private String uJobid;
 
     @ApiModelProperty(value = "工作单位")
-    @NotBlank(message = "工作单位不能为空")
     private String uDepartid;
 
 

@@ -21,7 +21,7 @@ public interface UsUserService extends IService<UsUserEntity> {
 
     R signIn(UsLoginParam form);
 
-    String reg(UsRegisterParam form);
+    UsUserEntity reg(UsRegisterParam form);
 
     UsUserEntity checkUserExits(String userId, String oldPassword);
 

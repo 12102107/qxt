@@ -135,9 +135,10 @@ public class UsUserController {
         Integer code = usSmsService.checkCode(form.getAppid(),form.getMobilePhone(),form.getSmsCode());
 
         if (code == Constant.Result.SMS_CODE_CORRECT.getValue()){
-            String mobilePhone = usUserService.reg(form);
+            UsUserEntity us = usUserService.reg(form);
             Map<String, Object> map = new HashMap<>();
-            map.put("mobilePhone", mobilePhone);
+            map.put("mobilePhone", us.getMobilePhone());
+            map.put("session",us.getSession());
             return R.ok(map);
 
         }else if(code == Constant.Result.SMS_CODE_ERROR.getValue()){
@@ -192,6 +193,7 @@ public class UsUserController {
             return R.error("旧密码错误");
         }
         user.setPassword(newPassword);
+        user.setAppid(form.getAppid());
         usUserService.updateById(user);
         return R.ok("修改成功");
     }
@@ -333,7 +335,6 @@ public class UsUserController {
         UsUserHPram user_ = usUserService.usHiddenProperty(user);
         return R.ok(user_);
     }
-
 
 
 
