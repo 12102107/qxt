@@ -2,7 +2,8 @@ package io.renren.modules.us.controller;
 
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
-import io.renren.modules.us.param.UsUserCooperationParam;
+import io.renren.modules.us.param.UsUserCooperationSignInParam;
+import io.renren.modules.us.param.UsUserCooperationSignUpParam;
 import io.renren.modules.us.service.UsUserCooperationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/cooperation")
 @Api("第三方接口")
 public class UsUserCooperationController {
-    @Autowired
+
     private UsUserCooperationService cooperationService;
 
     /**
@@ -28,9 +29,23 @@ public class UsUserCooperationController {
      */
     @PostMapping("signin")
     @ApiOperation("第三方登录接口")
-    public R signIn(@RequestBody UsUserCooperationParam cooperationParam) {
-        ValidatorUtils.validateEntity(cooperationParam);
-        return cooperationService.signIn(cooperationParam);
+    public R signIn(@RequestBody UsUserCooperationSignInParam signInParam) {
+        ValidatorUtils.validateEntity(signInParam);
+        return cooperationService.signIn(signInParam);
     }
 
+    /**
+     * 第三方注册接口
+     */
+    @PostMapping("signup")
+    @ApiOperation("第三方注册接口")
+    public R signUp(@RequestBody UsUserCooperationSignUpParam signUpParam) {
+        ValidatorUtils.validateEntity(signUpParam);
+        return cooperationService.signUp(signUpParam);
+    }
+
+    @Autowired
+    public void setCooperationService(UsUserCooperationService cooperationService) {
+        this.cooperationService = cooperationService;
+    }
 }

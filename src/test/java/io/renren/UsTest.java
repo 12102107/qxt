@@ -64,15 +64,15 @@ public class UsTest {
     public void test8() {
         EntityWrapper<UsSmsEntity> wrapper = new EntityWrapper<>();
         wrapper.where("appid={0}", "12345")
-                .and("mobile={0}", "15904607121")
+                .and("mobile={0}", "12345")
                 .orderBy("create_date", false)
                 .last("limit 1");
         wrapper.setEntity(new UsSmsEntity());
         UsSmsEntity smsEntity = smsService.selectOne(wrapper);
-        System.out.println(smsEntity.toString());
-        Date expireDate = smsEntity.getCreateDate();
-        Date now = new Date();
-        System.out.println("日期比较=====" + now.before(expireDate));
+        System.out.println("测试代码==========="+(smsEntity==null));
+//        Date expireDate = smsEntity.getCreateDate();
+//        Date now = new Date();
+//        System.out.println("日期比较=====" + now.before(expireDate));
     }
 
     @Test
