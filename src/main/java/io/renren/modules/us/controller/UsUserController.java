@@ -1,6 +1,5 @@
 package io.renren.modules.us.controller;
 
-import io.renren.common.utils.Constant;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
@@ -132,7 +131,7 @@ public class UsUserController {
         //表单校验
         ValidatorUtils.validateEntity(form);
         //短信验证码是否正确
-        Integer code = usSmsService.checkCode(form.getAppid(),form.getMobilePhone(),form.getSmsCode());
+/*        Integer code = usSmsService.checkCode(form.getAppid(),form.getMobilePhone(),form.getSmsCode());
 
         if (code == Constant.Result.SMS_CODE_CORRECT.getValue()){
             UsUserEntity us = usUserService.reg(form);
@@ -147,7 +146,13 @@ public class UsUserController {
             return R.error(205,"验证码过期");
         }else{
             return R.error(203,"验证码查询结果为空");
-        }
+        }*/
+
+        UsUserEntity us = usUserService.reg(form);
+        Map<String, Object> map = new HashMap<>();
+        map.put("mobilePhone", us.getMobilePhone());
+        map.put("session",us.getSession());
+        return R.ok(map);
 
     }
 
