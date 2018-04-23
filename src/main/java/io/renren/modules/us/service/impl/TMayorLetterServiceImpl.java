@@ -86,6 +86,7 @@ public class TMayorLetterServiceImpl extends ServiceImpl<TMayorLetterDao, TMayor
         tmay.setQuestionTitle(form.getQuestionTitle());
         tmay.setQuestionContent(form.getQuestionContent());
 
+        tmay.setAppid(form.getAppid());
         this.insert(tmay);
         return tmay;
     }

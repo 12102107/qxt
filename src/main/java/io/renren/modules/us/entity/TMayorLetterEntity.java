@@ -22,6 +22,8 @@ public class TMayorLetterEntity implements Serializable {
 	 */
 	@TableId
 	private String id;
+
+	private String appid;
 	/**
 	 * 创建人名称
 	 */
@@ -450,5 +452,13 @@ public class TMayorLetterEntity implements Serializable {
 	 */
 	public String getReplyDepartname() {
 		return replyDepartname;
+	}
+
+	public String getAppid() {
+		return appid;
+	}
+
+	public void setAppid(String appid) {
+		this.appid = appid;
 	}
 }

@@ -60,6 +60,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             entity.setUpdateDate(new Date());
             String session = UsSessionUtil.generateSession();
             entity.setSession(session);
+            entity.setAppid(form.getAppid());
             this.updateById(entity);
 
             //保存设备信息
@@ -74,6 +75,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             userPlant.setSystemVersion(form.getSystemVersion());
             userPlant.setNetworkType(form.getNetworkType());
             userPlant.setCreateDate(new Date());
+            userPlant.setAppid(form.getAppid());
             usUserPlantParamService.insert(userPlant);
 
             //返回user隐藏部分字段
@@ -163,7 +165,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             TSTypeEntity ts = tSTypeService.queryByCode(form.getuJobid(),"job_list");
             user.setPersonJob(ts.getTypename());
         }
-
+        user.setAppid(form.getAppid());
         this.updateById(user);
         return user;
     }
@@ -202,14 +204,14 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         }
 
         user.setStatus(1);//已实名认证
+        user.setAppid(form.getAppid());
 
         this.updateById(user);
         return user;
     }
 
     //注册
-    public String reg(UsRegisterParam form){
-
+    public UsUserEntity reg(UsRegisterParam form){
         //保存用户信息
         UsUserEntity user = new UsUserEntity();
         user.setMobilePhone(form.getMobilePhone());
@@ -217,6 +219,9 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         user.setId(UsIdUtil.generateId());
         user.setCreateDate(new Date());
         user.setStatus(0);//初始未认证
+        String session = UsSessionUtil.generateSession();//生成session
+        user.setSession(session);
+        user.setAppid(form.getAppid());
         this.insert(user);
 
         //保存设备信息
@@ -231,8 +236,9 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         userPlant.setSystemVersion(form.getSystemVersion());
         userPlant.setNetworkType(form.getNetworkType());
         userPlant.setCreateDate(new Date());
+        userPlant.setAppid(form.getAppid());
         usUserPlantParamService.insert(userPlant);
 
-        return user.getMobilePhone();
+        return user;
     }
 }

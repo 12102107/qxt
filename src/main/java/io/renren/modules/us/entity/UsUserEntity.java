@@ -22,6 +22,9 @@ public class UsUserEntity implements Serializable {
 	 */
 	@TableId
 	private String id;
+
+	private String appid;
+
 	/**
 	 * 手机号
 	 */
@@ -115,6 +118,16 @@ public class UsUserEntity implements Serializable {
 	public String getId() {
 		return id;
 	}
+
+
+	public String getAppid() {
+		return appid;
+	}
+
+	public void setAppid(String appid) {
+		this.appid = appid;
+	}
+
 	/**
 	 * 设置：手机号
 	 */

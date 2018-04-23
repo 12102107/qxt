@@ -22,6 +22,9 @@ public class UsUserPlantParamEntity implements Serializable {
 	 */
 	@TableId
 	private String id;
+
+	private String appid;
+
 	/**
 	 * 用户id
 	 */
@@ -178,5 +181,14 @@ public class UsUserPlantParamEntity implements Serializable {
 	 */
 	public Date getCreateDate() {
 		return createDate;
+	}
+
+
+	public String getAppid() {
+		return appid;
+	}
+
+	public void setAppid(String appid) {
+		this.appid = appid;
 	}
 }
