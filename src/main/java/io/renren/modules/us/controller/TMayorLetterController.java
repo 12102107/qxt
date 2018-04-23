@@ -164,7 +164,7 @@ public class TMayorLetterController {
 
         }
 
-        return R.ok().put("ob", page);
+        return R.ok(page);
 
     }
 
@@ -236,7 +236,7 @@ public class TMayorLetterController {
 
         }
 
-        return R.ok().put("page", page);
+        return R.ok(page);
 
     }
 

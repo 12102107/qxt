@@ -8,14 +8,8 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.common.utils.R;
 import io.renren.modules.us.dao.UsUserDao;
-import io.renren.modules.us.entity.TSDepartEntity;
-import io.renren.modules.us.entity.TSTypeEntity;
-import io.renren.modules.us.entity.UsUserEntity;
-import io.renren.modules.us.entity.UsUserPlantParamEntity;
-import io.renren.modules.us.param.UsLoginParam;
-import io.renren.modules.us.param.UsRegisterParam;
-import io.renren.modules.us.param.UsUserParam;
-import io.renren.modules.us.param.UsUserRealCertParam;
+import io.renren.modules.us.entity.*;
+import io.renren.modules.us.param.*;
 import io.renren.modules.us.service.TSDepartService;
 import io.renren.modules.us.service.TSTypeService;
 import io.renren.modules.us.service.UsUserPlantParamService;
@@ -82,11 +76,44 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             userPlant.setCreateDate(new Date());
             usUserPlantParamService.insert(userPlant);
 
-            return R.ok(entity);
+            //返回user隐藏部分字段
+           UsUserHPram user_ = this.usHiddenProperty(entity);
+            return R.ok(user_);
         } else {
             return R.error();
         }
     }
+
+    /**
+     * 调用隐藏返回不需要的属性
+     * @param user
+     * @return
+     */
+    public UsUserHPram usHiddenProperty (UsUserEntity user) {
+
+        UsUserHPram user_ = new UsUserHPram();
+        user_.setSession(user.getSession());
+
+        user_.setStatus(user.getStatus());
+        user_.setPersonDepartname(user.getPersonDepartname());
+        user_.setPersonJob(user.getPersonJob());
+        user_.setUJobid(user.getUJobid());
+        user_.setUDepartid(user.getUDepartid());
+        user_.setRemark(user.getRemark());
+
+        user_.setRealname(user.getRealname());
+        user_.setId(user.getId());
+        user_.setEmail(user.getEmail());
+        user_.setNickname(user.getNickname());
+        user_.setMobilePhone(user.getMobilePhone());
+        user_.setCitizenNo(user.getCitizenNo());
+
+        user_.setAddress(user.getAddress());
+        user_.setPortrait(user.getPortrait());
+
+        return user_;
+    }
+
 
     /**
      * 检查用户是否存在
@@ -187,7 +214,6 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         UsUserEntity user = new UsUserEntity();
         user.setMobilePhone(form.getMobilePhone());
         user.setPassword(form.getPassword());
-        user.setSmsCode(form.getSmsCode());
         user.setId(UsIdUtil.generateId());
         user.setCreateDate(new Date());
         user.setStatus(0);//初始未认证

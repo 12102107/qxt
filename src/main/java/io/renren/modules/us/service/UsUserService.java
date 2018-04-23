@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.service.IService;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.modules.us.entity.UsUserEntity;
-import io.renren.modules.us.param.UsLoginParam;
-import io.renren.modules.us.param.UsRegisterParam;
-import io.renren.modules.us.param.UsUserParam;
-import io.renren.modules.us.param.UsUserRealCertParam;
+import io.renren.modules.us.param.*;
 
 import java.util.Map;
 
@@ -31,6 +28,8 @@ public interface UsUserService extends IService<UsUserEntity> {
     UsUserEntity updatePersonalInfo(UsUserEntity user, UsUserParam form);
 
     UsUserEntity realnameCert(UsUserEntity user, UsUserRealCertParam form);
+
+    UsUserHPram usHiddenProperty (UsUserEntity user);
 
 }
 

@@ -1,5 +1,6 @@
 package io.renren.modules.us.controller;
 
+import io.renren.common.utils.Constant;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
@@ -9,7 +10,7 @@ import io.renren.modules.us.entity.UsUserEntity;
 import io.renren.modules.us.param.*;
 import io.renren.modules.us.service.TSDepartService;
 import io.renren.modules.us.service.TSTypeService;
-import io.renren.modules.us.service.UsUserPlantParamService;
+import io.renren.modules.us.service.UsSmsService;
 import io.renren.modules.us.service.UsUserService;
 import io.renren.modules.us.util.UsSessionUtil;
 import io.swagger.annotations.Api;
@@ -19,7 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 
 /**
@@ -36,11 +41,12 @@ public class UsUserController {
     @Autowired
     private UsUserService usUserService;
     @Autowired
-    private UsUserPlantParamService usUserPlantParamService;
-    @Autowired
     private TSDepartService tSDepartService;
     @Autowired
     private TSTypeService tSTypeService;
+    @Autowired
+    private UsSmsService usSmsService;
+
     /**
      * 列表
      */
@@ -125,12 +131,23 @@ public class UsUserController {
     public R register(@RequestBody UsRegisterParam form ) throws ParseException {
         //表单校验
         ValidatorUtils.validateEntity(form);
+        //短信验证码是否正确
+        Integer code = usSmsService.checkCode(form.getAppid(),form.getMobilePhone(),form.getSmsCode());
 
-        String mobilePhone = usUserService.reg(form);
+        if (code == Constant.Result.SMS_CODE_CORRECT.getValue()){
+            String mobilePhone = usUserService.reg(form);
+            Map<String, Object> map = new HashMap<>();
+            map.put("mobilePhone", mobilePhone);
+            return R.ok(map);
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("mobilePhone", mobilePhone);
-        return R.ok(map);
+        }else if(code == Constant.Result.SMS_CODE_ERROR.getValue()){
+            return R.error(204,"验证码不正确");
+        }else if(code == Constant.Result.SMS_CODE_EXPIRE.getValue()){
+            return R.error(205,"验证码过期");
+        }else{
+            return R.error(203,"验证码查询结果为空");
+        }
+
     }
 
 
@@ -198,8 +215,12 @@ public class UsUserController {
         //获取工作单位/职业名称
         user = this.queryName(user);
 
-        return R.ok(user);
+        //返回user隐藏部分字段
+        UsUserHPram user_ = usUserService.usHiddenProperty(user);
+        return R.ok(user_);
     }
+
+
 
     /**
      * 根据工作单位id获取名称等
@@ -240,8 +261,9 @@ public class UsUserController {
         user = usUserService.updatePersonalInfo(user,form);
 
         user = this.queryName(user);
-
-        return R.ok(user);
+        //返回user隐藏部分字段
+        UsUserHPram user_ = usUserService.usHiddenProperty(user);
+        return R.ok(user_);
     }
 
     @PostMapping("departList")
@@ -307,9 +329,12 @@ public class UsUserController {
         user = usUserService.realnameCert(user,form);
 
         user = this.queryName(user);
-
-        return R.ok(user);
+        //返回user隐藏部分字段
+        UsUserHPram user_ = usUserService.usHiddenProperty(user);
+        return R.ok(user_);
     }
+
+
 
 
 
