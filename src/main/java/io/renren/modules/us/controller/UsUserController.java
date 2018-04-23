@@ -1,5 +1,6 @@
 package io.renren.modules.us.controller;
 
+import io.renren.common.utils.Constant;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
@@ -115,7 +116,7 @@ public class UsUserController {
         hp.put("mobile_phone",form.getMobilePhone());
         List rs = usUserService.selectByMap(hp);
         if (rs.size()>0){
-            return R.error("此电话号码被注册过，请登录或尝试其他号码");
+            return R.error(Constant.Result.REG_MOBILE.getValue(),Constant.Message.REG_MOBILE.getValue());
         }else{
             return R.ok();
         }
@@ -141,11 +142,11 @@ public class UsUserController {
             return R.ok(map);
 
         }else if(code == Constant.Result.SMS_CODE_ERROR.getValue()){
-            return R.error(204,"验证码不正确");
+            return R.error(Constant.Result.SMS_CODE_ERROR.getValue(),"验证码不正确");
         }else if(code == Constant.Result.SMS_CODE_EXPIRE.getValue()){
-            return R.error(205,"验证码过期");
+            return R.error(Constant.Result.SMS_CODE_EXPIRE.getValue(),"验证码过期");
         }else{
-            return R.error(203,"验证码查询结果为空");
+            return R.error(Constant.Result.SMS_CODE_NULL.getValue(),"验证码查询结果为空");
         }*/
 
         UsUserEntity us = usUserService.reg(form);

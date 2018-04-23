@@ -120,8 +120,11 @@ public class Constant {
         //验证码过期
         SMS_CODE_EXPIRE(205),
         //验证码正确
-        SMS_CODE_CORRECT(206);
-
+        SMS_CODE_CORRECT(206),
+        //电话号码已被注册
+        REG_MOBILE(207),
+        //电话号码未被注册过
+        NO_REG_MOBILE(208);
         private int value;
 
         Result(int value) {
@@ -148,7 +151,11 @@ public class Constant {
         //短信发送失败
         SMS_FAIL("短信发送失败"),
 
-        ERROR_MOBILE("手机号码或密码错误");
+        ERROR_MOBILE("手机号码或密码错误"),
+
+        REG_MOBILE("手机号码已被注册"),
+
+        NO_REG_MOBILE("手机号码未被注册");
 
         private String value;
 
