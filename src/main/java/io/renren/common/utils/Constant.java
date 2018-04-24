@@ -124,7 +124,12 @@ public class Constant {
         //电话号码已被注册
         REG_MOBILE(207),
         //电话号码未被注册过
-        NO_REG_MOBILE(208);
+        NO_REG_MOBILE(208),
+        //第三方帐号已存在
+        COOPERATION_EXIST(209),
+        //第三方帐号不存在
+        COOPERATION_NOT_EXIST(210);
+
         private int value;
 
         Result(int value) {
@@ -155,7 +160,15 @@ public class Constant {
 
         REG_MOBILE("手机号码已被注册"),
 
-        NO_REG_MOBILE("手机号码未被注册");
+        NO_REG_MOBILE("手机号码未被注册"),
+        //短信验证码不正确
+        SMS_CODE_ERROR("短信验证码不正确"),
+        //短信验证码已过期
+        SMS_CODE_EXPIRE("短信验证码已过期"),
+        //第三方帐号已存在
+        COOPERATION_EXIST("第三方帐号已存在"),
+        //第三方帐号不存在
+        COOPERATION_NOT_EXIST("第三方帐号不存在");
 
         private String value;
 

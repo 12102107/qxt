@@ -51,7 +51,7 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
         wrapper.setEntity(new UsUserEntity());
         UsUserEntity userEntity = userService.selectOne(wrapper);
         if (userEntity == null || userEntity.getId() == null) {
-            return R.error("用户不存在");
+            return R.error(Constant.Result.NO_REG_MOBILE.getValue(), Constant.Message.NO_REG_MOBILE.getValue());
         }
         //更新session,保存数据
         String session = UsSessionUtil.generateSession();
@@ -81,13 +81,14 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
         wrapper.setEntity(new UsUserEntity());
         UsUserEntity userEntity = userService.selectOne(wrapper);
         if (userEntity != null) {
-            return R.error("用户已存在");
+            return R.error(Constant.Result.REG_MOBILE.getValue(), Constant.Message.REG_MOBILE.getValue());
         }
         //注册用户帐号
         userEntity = new UsUserEntity();
         String userid = UsIdUtil.generateId();
         userEntity.setId(userid);
         userEntity.setPassword(signUpParam.getPassword());
+        userEntity.setMobilePhone(signUpParam.getMobile());
         userEntity.setCreateDate(new Date());
         //更新session,保存数据
         String session = UsSessionUtil.generateSession();
@@ -112,7 +113,7 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
     public R signIn(UsUserCooperationSignInParam signInParam) {
         List<UsUserCooperationEntity> list = getUserCooperation(signInParam.getAppid(), signInParam.getType(), signInParam.getOpenid());
         if (list.isEmpty()) {
-            return R.error(Constant.Result.NO_MOBILE.getValue(), Constant.Message.NO_MOBILE.getValue());
+            return R.error(Constant.Result.COOPERATION_NOT_EXIST.getValue(), Constant.Message.COOPERATION_NOT_EXIST.getValue());
         } else if (list.size() == 1) {
             //更新token,updateDate,保存数据
             UsUserCooperationEntity entity = list.get(0);
@@ -135,13 +136,16 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
     public R signUp(UsUserCooperationSignUpParam signUpParam) {
         //验证第三方帐号是否注册
         List<UsUserCooperationEntity> list = getUserCooperation(signUpParam.getAppid(), signUpParam.getType(), signUpParam.getOpenid());
-        if (list.isEmpty() || list.size() != 1) {
-            return R.error("已注册过");
+        if (!list.isEmpty()) {
+            return R.error(Constant.Result.COOPERATION_EXIST.getValue(), Constant.Message.COOPERATION_EXIST.getValue());
         }
         //验证短信验证码是否正确
         int result = smsService.checkCode(signUpParam.getAppid(), signUpParam.getMobile(), signUpParam.getCode());
+        if (result == Constant.Result.SMS_CODE_EXPIRE.getValue()) {
+            return R.error(Constant.Result.SMS_CODE_EXPIRE.getValue(), Constant.Message.SMS_CODE_EXPIRE.getValue());
+        }
         if (result != Constant.Result.SMS_CODE_CORRECT.getValue()) {
-            return R.error("验证码校验未通过");
+            return R.error(Constant.Result.SMS_CODE_ERROR.getValue(), Constant.Message.SMS_CODE_ERROR.getValue());
         }
         //根据是否密码参数是否为空,执行不同的注册逻辑
         if (signUpParam.getPassword() == null || signUpParam.getPassword().isEmpty()) {
