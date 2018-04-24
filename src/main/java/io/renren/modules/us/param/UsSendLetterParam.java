@@ -22,8 +22,8 @@ public class UsSendLetterParam extends UsSessionParam {
     @NotBlank(message = "身份证号码不能为空")
     private String personIdCard;
 
-    @ApiModelProperty(value = "手机号")
-    @NotBlank(message = "手机号不能为空")
+    @ApiModelProperty(value = "手机号码")
+    @NotBlank(message = "手机号码不能为空")
     private String personMobile;
 
     @ApiModelProperty(value = "提出者电子邮箱")

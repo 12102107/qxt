@@ -6,13 +6,16 @@ import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.us.entity.TSDepartEntity;
 import io.renren.modules.us.entity.TSTypeEntity;
+import io.renren.modules.us.entity.UsSmsEntity;
 import io.renren.modules.us.entity.UsUserEntity;
 import io.renren.modules.us.param.*;
 import io.renren.modules.us.service.TSDepartService;
 import io.renren.modules.us.service.TSTypeService;
 import io.renren.modules.us.service.UsSmsService;
 import io.renren.modules.us.service.UsUserService;
+import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsSessionUtil;
+import io.renren.modules.us.util.UsSmsUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -20,11 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 
 
 /**
@@ -119,6 +118,90 @@ public class UsUserController {
             return R.error(Constant.Result.REG_MOBILE.getValue(),Constant.Message.REG_MOBILE.getValue());
         }else{
             return R.ok();
+        }
+
+    }
+
+    /**
+     * 找回密码
+     */
+    @PostMapping("findPassword")
+    @ApiOperation("找回密码")
+    public R findPassword(@RequestBody UsIsRegParam form ) {
+        //表单校验
+        ValidatorUtils.validateEntity(form);
+        Map hp = new HashMap();
+        hp.put("mobile_phone", form.getMobilePhone());
+        List rs = usUserService.selectByMap(hp);
+        //判断手机号码是否注册
+        if (rs.isEmpty()) {
+            return R.error(Constant.Result.NO_REG_MOBILE.getValue(), Constant.Message.NO_REG_MOBILE.getValue());
+        } else if (rs.size() == 1) {
+            //如果已经注册，发送短信验证码
+            String smsCode = UsSmsUtil.getCode(form.getMobilePhone());//发送短信验证码
+
+            if (!smsCode.equals(Constant.Message.SMS_FAIL.getValue())) {
+                UsSmsEntity smsEntity = new UsSmsEntity();
+
+                smsEntity.setId(UsIdUtil.generateId());
+                smsEntity.setAppid(form.getAppid());
+                smsEntity.setMobile(form.getMobilePhone());
+                smsEntity.setCode(smsCode);
+                long now = System.currentTimeMillis();
+                smsEntity.setCreateDate(new Date(now));
+                long expire = now + 5 * 60 * 1000;
+                smsEntity.setExpireDate(new Date(expire));
+                boolean b = usSmsService.insert(smsEntity);
+                if (b) {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("smsCode", smsCode);
+                    map.put("mobile_phone", form.getMobilePhone());
+                    return R.ok(map);
+                } else {
+                    return R.error(Constant.Message.SMS_FAIL.getValue());
+                }
+            }
+            return R.error(Constant.Message.SMS_FAIL.getValue());
+        }
+        return R.error(Constant.Message.FAIL.getValue());
+    }
+
+
+    /**
+     * 重置密码
+     */
+    @PostMapping("resetPassword")
+    @ApiOperation("重置密码")
+    public R resetPassword(@RequestBody UsResetpwdParam form ) {
+        //表单校验
+        ValidatorUtils.validateEntity(form);
+
+        //输入的短信验证码是否正确
+        Integer smsCode = usSmsService.checkCode(form.getAppid(),form.getMobilePhone(),form.getSmsCode());
+
+        if (smsCode == Constant.Result.SMS_CODE_CORRECT.getValue()){
+            //修改密码
+            Map hp = new HashMap();
+            hp.put("mobile_phone", form.getMobilePhone());
+            List<UsUserEntity> rs = usUserService.selectByMap(hp);
+            if (rs.isEmpty()) {
+                return R.error(Constant.Result.NO_REG_MOBILE.getValue(), Constant.Message.NO_REG_MOBILE.getValue());
+            } else if (rs.size() == 1) {
+                UsUserEntity user = rs.get(0);
+                user.setPassword(form.getNewPassword());
+                user.setAppid(form.getAppid());
+                usUserService.updateById(user);
+                return R.ok();
+            }else {
+                return R.error(Constant.Message.FAIL.getValue());
+            }
+
+        }else if(smsCode == Constant.Result.SMS_CODE_ERROR.getValue()){
+            return R.error(Constant.Result.SMS_CODE_ERROR.getValue(),"验证码不正确");
+        }else if(smsCode == Constant.Result.SMS_CODE_EXPIRE.getValue()){
+            return R.error(Constant.Result.SMS_CODE_EXPIRE.getValue(),"验证码过期");
+        }else{
+            return R.error(Constant.Result.SMS_CODE_NULL.getValue(),"验证码查询结果为空");
         }
 
     }

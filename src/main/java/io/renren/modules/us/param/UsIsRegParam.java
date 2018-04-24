@@ -8,8 +8,8 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 public class UsIsRegParam extends UsBaseParam{
 
-    @ApiModelProperty(value = "手机号")
-    @NotBlank(message="手机号不能为空")
+    @ApiModelProperty(value = "手机号码")
+    @NotBlank(message="手机号码不能为空")
     private String mobilePhone;
 
     public String getMobilePhone() {

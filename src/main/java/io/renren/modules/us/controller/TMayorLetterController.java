@@ -114,8 +114,9 @@ public class TMayorLetterController {
             return R.error("session格式不正确");
         }
 
-        if (user.getStatus() != 1){
-            return R.error("创建人未实名认证，请先实名认证再操作");
+        boolean isR = this.queryRel(user);
+        if (isR == false){
+            return R.error("用户未实名认证，请先实名认证再操作");
         }
 
         tMayorLetterService.sendLetter(user,form);
@@ -138,8 +139,9 @@ public class TMayorLetterController {
             return R.error("session格式不正确");
         }
 
-        if (user.getStatus() != 1){
-            return R.error("创建人未实名认证，请先实名认证再操作");
+        boolean isR = this.queryRel(user);
+        if (isR == false){
+            return R.error("用户未实名认证，请先实名认证再操作");
         }
 
         Map<String, Object> params = new HashMap<>();
@@ -150,8 +152,9 @@ public class TMayorLetterController {
         params.put("limit",pageSize);
         params.put("page",pageNo);
 
+        String senderId = user.getId();
         //参数
-        params.put("senderId",user.getId());
+        params.put("senderId",senderId);
 
         PageUtils page = tMayorLetterService.queryPage(params);
 
@@ -168,6 +171,25 @@ public class TMayorLetterController {
 
     }
 
+
+    /**
+     * 用户状态是否实名
+     * @param user status
+     * 0：初始值，跳过实名认证步骤
+     * 1：实名（未调接口）
+     * 2：认证通过，人证合一
+     * 3：认证未通过，人证不合一
+     * 4：认证查无此人，仅实名
+     * @return
+     */
+    public boolean queryRel(UsUserEntity user) {
+
+        if (user.getStatus() != 1 && user.getStatus() != 2 && user.getStatus() != 4){
+            return false;
+        }else{
+            return true;
+        }
+    }
 
     /**
      * 根据工作单位id获取名称等
@@ -209,10 +231,10 @@ public class TMayorLetterController {
             return R.error("session格式不正确");
         }
 
-        if (user.getStatus() != 1){
-            return R.error("创建人未实名认证，请先实名认证再操作");
+        boolean isR = this.queryRel(user);
+        if (isR == false){
+            return R.error("用户未实名认证，请先实名认证再操作");
         }
-
         Map<String, Object> params = new HashMap<>();
 
         String pageNo = (form.getPageNo() == null || "".equals(form.getPageNo())) ? "1" : form.getPageNo();
@@ -258,8 +280,9 @@ public class TMayorLetterController {
             return R.error("session格式不正确");
         }
 
-        if (user.getStatus() != 1){
-            return R.error("创建人未实名认证，请先实名认证再操作");
+        boolean isR = this.queryRel(user);
+        if (isR == false){
+            return R.error("用户未实名认证，请先实名认证再操作");
         }
 
         TMayorLetterEntity tl = new TMayorLetterEntity();
@@ -297,8 +320,9 @@ public class TMayorLetterController {
             return R.error("session格式不正确");
         }
 
-        if (user.getStatus() != 1){
-            return R.error("创建人未实名认证，请先实名认证再操作");
+        boolean isR = this.queryRel(user);
+        if (isR == false){
+            return R.error("用户未实名认证，请先实名认证再操作");
         }
 
         TInfoEntity ti = tInfoService.queryByCode("szxx");//查询市长信箱说明
@@ -324,8 +348,9 @@ public class TMayorLetterController {
             return R.error("session格式不正确");
         }
 
-        if (user.getStatus() != 1){
-            return R.error("创建人未实名认证，请先实名认证再操作");
+        boolean isR = this.queryRel(user);
+        if (isR == false){
+            return R.error("用户未实名认证，请先实名认证再操作");
         }
 
         List<LinkedHashMap<Object, Object>>  list = usRegionsProService.queryList();
