@@ -7,6 +7,7 @@ import io.renren.common.utils.R;
 import io.renren.modules.us.dao.UsUserCooperationDao;
 import io.renren.modules.us.entity.UsUserCooperationEntity;
 import io.renren.modules.us.entity.UsUserEntity;
+import io.renren.modules.us.param.UsUserCooperationBindParam;
 import io.renren.modules.us.param.UsUserCooperationSignInParam;
 import io.renren.modules.us.param.UsUserCooperationSignUpParam;
 import io.renren.modules.us.service.UsSmsService;
@@ -42,14 +43,18 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
         return this.selectList(wrapper);
     }
 
-    private R signUpWithoutPassword(UsUserCooperationSignUpParam signUpParam) {
-        //验证手机号码关联的用户是否存在
+    private UsUserEntity getUsUser(String appid, String mobile) {
         EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
-        wrapper.where("mobile_phone={0}", signUpParam.getMobile())
-                .and("appid={0}", signUpParam.getAppid())
+        wrapper.where("mobile_phone={0}", mobile)
+                .and("appid={0}", appid)
                 .last("limit 1");
         wrapper.setEntity(new UsUserEntity());
-        UsUserEntity userEntity = userService.selectOne(wrapper);
+        return userService.selectOne(wrapper);
+    }
+
+    private R signUpWithoutPassword(UsUserCooperationSignUpParam signUpParam) {
+        //验证手机号码关联的用户是否存在
+        UsUserEntity userEntity = getUsUser(signUpParam.getAppid(), signUpParam.getMobile());
         if (userEntity == null || userEntity.getId() == null) {
             return R.error(Constant.Result.NO_REG_MOBILE.getValue(), Constant.Message.NO_REG_MOBILE.getValue());
         }
@@ -74,12 +79,7 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
 
     private R signUpWithPassword(UsUserCooperationSignUpParam signUpParam) {
         //验证手机号码关联的用户是否存在
-        EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
-        wrapper.where("mobile_phone={0}", signUpParam.getMobile())
-                .and("appid={0}", signUpParam.getAppid())
-                .last("limit 1");
-        wrapper.setEntity(new UsUserEntity());
-        UsUserEntity userEntity = userService.selectOne(wrapper);
+        UsUserEntity userEntity = getUsUser(signUpParam.getAppid(), signUpParam.getMobile());
         if (userEntity != null) {
             return R.error(Constant.Result.REG_MOBILE.getValue(), Constant.Message.REG_MOBILE.getValue());
         }
@@ -153,6 +153,30 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
         } else {
             return signUpWithPassword(signUpParam);
         }
+    }
+
+    @Override
+    public R bind(UsUserCooperationBindParam bindParam) {
+        //验证第三方帐号是否注册
+        List<UsUserCooperationEntity> list = getUserCooperation(bindParam.getAppid(), bindParam.getType(), bindParam.getOpenid());
+        if (!list.isEmpty()) {
+            return R.error(Constant.Result.COOPERATION_EXIST.getValue(), Constant.Message.COOPERATION_EXIST.getValue());
+        }
+        //验证手机号码关联的用户是否存在
+        UsUserEntity userEntity = getUsUser(bindParam.getAppid(), bindParam.getMobile());
+        if (userEntity == null || userEntity.getId() == null) {
+            return R.error(Constant.Result.NO_REG_MOBILE.getValue(), Constant.Message.NO_REG_MOBILE.getValue());
+        }
+        UsUserCooperationEntity cooperationEntity = new UsUserCooperationEntity();
+        cooperationEntity.setId(UsIdUtil.generateId());
+        cooperationEntity.setUserId(userEntity.getId());
+        cooperationEntity.setAppid(bindParam.getAppid());
+        cooperationEntity.setType(bindParam.getType());
+        cooperationEntity.setOpenid(bindParam.getOpenid());
+        cooperationEntity.setAccessToken(bindParam.getAccessToken());
+        cooperationEntity.setCreateDate(new Date());
+        this.insert(cooperationEntity);
+        return R.ok();
     }
 
     @Autowired

@@ -2,6 +2,7 @@ package io.renren.modules.us.controller;
 
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.us.param.UsUserCooperationBindParam;
 import io.renren.modules.us.param.UsUserCooperationSignInParam;
 import io.renren.modules.us.param.UsUserCooperationSignUpParam;
 import io.renren.modules.us.service.UsUserCooperationService;
@@ -42,6 +43,16 @@ public class UsUserCooperationController {
     public R signUp(@RequestBody UsUserCooperationSignUpParam signUpParam) {
         ValidatorUtils.validateEntity(signUpParam);
         return cooperationService.signUp(signUpParam);
+    }
+
+    /**
+     * 第三方绑定接口
+     */
+    @PostMapping("bind")
+    @ApiOperation("第三方绑定接口")
+    public R bing(@RequestBody UsUserCooperationBindParam bindParam) {
+        ValidatorUtils.validateEntity(bindParam);
+        return cooperationService.bind(bindParam);
     }
 
     @Autowired
