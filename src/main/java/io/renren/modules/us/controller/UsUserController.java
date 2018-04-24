@@ -320,14 +320,18 @@ public class UsUserController {
      */
     public UsUserEntity queryName(UsUserEntity user) {
         //工作单位
-        if (null != user.getUDepartid()  &&  !"".equals(user.getUDepartid())){
-            TSDepartEntity tSDepart =  tSDepartService.selectById(user.getUDepartid());
-            user.setPersonDepartname(tSDepart.getDepartname());
+        if (null != user.getuDepartid()  &&  !"".equals(user.getuDepartid())){
+            TSDepartEntity tSDepart =  tSDepartService.selectById(user.getuDepartid());
+            if (tSDepart!=null){
+                user.setPersonDepartname(tSDepart.getDepartname());
+            }
         }
         //职业
-        if (null != user.getUJobid()  &&  !"".equals(user.getUJobid())){
-            TSTypeEntity ts = tSTypeService.queryByCode(user.getUJobid(),"job_list");
-            user.setPersonJob(ts.getTypename());
+        if (null != user.getuJobid()  &&  !"".equals(user.getuJobid())){
+            TSTypeEntity ts = tSTypeService.queryByCode(user.getuJobid(),"job_list");
+            if(ts!=null){
+                user.setPersonJob(ts.getTypename());
+            }
         }
         return user;
     }

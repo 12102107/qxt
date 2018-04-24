@@ -99,8 +99,8 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         user_.setStatus(user.getStatus());
         user_.setPersonDepartname(user.getPersonDepartname());
         user_.setPersonJob(user.getPersonJob());
-        user_.setUJobid(user.getUJobid());
-        user_.setUDepartid(user.getUDepartid());
+        user_.setuJobid(user.getuJobid());
+        user_.setuDepartid(user.getuDepartid());
         user_.setRemark(user.getRemark());
 
         user_.setRealname(user.getRealname());
@@ -153,13 +153,13 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         user.setAddress(form.getAddress());
         user.setRemark(form.getRemark());
 
-        user.setUDepartid(form.getuDepartid());
+        user.setuDepartid(form.getuDepartid());
         //工作单位
         if (null != form.getuDepartid()  &&  !"".equals(form.getuDepartid())){
             TSDepartEntity tSDepart =  tSDepartService.selectById(form.getuDepartid());
             user.setPersonDepartname(tSDepart.getDepartname());
         }
-        user.setUJobid(form.getuJobid());
+        user.setuJobid(form.getuJobid());
         //职业
         if (null != form.getuJobid()  &&  !"".equals(form.getuJobid())){
             TSTypeEntity ts = tSTypeService.queryByCode(form.getuJobid(),"job_list");
@@ -188,8 +188,8 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         user.setEmail(form.getEmail());
         user.setAddress(form.getAddress());
 
-        user.setUJobid(form.getuJobid());
-        user.setUDepartid(form.getuDepartid());
+        user.setuJobid(form.getuJobid());
+        user.setuDepartid(form.getuDepartid());
 
 
         //工作单位

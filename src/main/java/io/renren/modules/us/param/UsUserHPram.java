@@ -228,18 +228,7 @@ public class UsUserHPram{
 	public String getSession() {
 		return session;
 	}
-	/**
-	 * 设置：职业id
-	 */
-	public void setUJobid(String uJobid) {
-		this.uJobid = uJobid;
-	}
-	/**
-	 * 获取：职业id
-	 */
-	public String getUJobid() {
-		return uJobid;
-	}
+
 	/**
 	 * 设置：职业
 	 */
@@ -252,18 +241,23 @@ public class UsUserHPram{
 	public String getPersonJob() {
 		return personJob;
 	}
-	/**
-	 * 设置：工作单位
-	 */
-	public void setUDepartid(String uDepartid) {
-		this.uDepartid = uDepartid;
+
+	public String getuJobid() {
+		return uJobid;
 	}
-	/**
-	 * 获取：工作单位
-	 */
-	public String getUDepartid() {
+
+	public void setuJobid(String uJobid) {
+		this.uJobid = uJobid;
+	}
+
+	public String getuDepartid() {
 		return uDepartid;
 	}
+
+	public void setuDepartid(String uDepartid) {
+		this.uDepartid = uDepartid;
+	}
+
 	/**
 	 * 设置：工作单位
 	 */
