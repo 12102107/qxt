@@ -126,7 +126,7 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
             userEntity.setSession(session);
             userService.updateById(userEntity);
             //更新session缓存
-            return R.ok();
+            return R.ok(session);
         } else {
             return R.error();
         }
