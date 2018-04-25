@@ -37,6 +37,7 @@
         <swagger.version>2.2.2</swagger.version>
         <joda.time.version>2.9.9</joda.time.version>
         <squareup.okhttp3.version>3.10.0</squareup.okhttp3.version>
+        <alibaba.fastjson>1.2.47</alibaba.fastjson>
 
         <!--wagon plugin 配置-->
         <service-path>/work/renren</service-path>
@@ -194,6 +195,11 @@
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
             <version>${squareup.okhttp3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${alibaba.fastjson}</version>
         </dependency>
 
     </dependencies>
