@@ -1,5 +1,6 @@
 package io.renren.modules.us.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import io.renren.common.utils.Constant;
@@ -8,6 +9,7 @@ import io.renren.modules.us.dao.UsUserCooperationDao;
 import io.renren.modules.us.entity.UsUserCooperationEntity;
 import io.renren.modules.us.entity.UsUserEntity;
 import io.renren.modules.us.param.UsUserCooperationBindParam;
+import io.renren.modules.us.param.UsUserCooperationInfoParam;
 import io.renren.modules.us.param.UsUserCooperationSignInParam;
 import io.renren.modules.us.param.UsUserCooperationSignUpParam;
 import io.renren.modules.us.service.UsSmsService;
@@ -15,6 +17,7 @@ import io.renren.modules.us.service.UsUserCooperationService;
 import io.renren.modules.us.service.UsUserService;
 import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsSessionUtil;
+import io.renren.modules.us.util.UsWebSignInUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +36,8 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
     private UsUserService userService;
 
     private UsSmsService smsService;
+
+    private UsWebSignInUtil webSignInUtil;
 
     private List<UsUserCooperationEntity> getUserCooperation(String appid, String type, String openid) {
         EntityWrapper<UsUserCooperationEntity> wrapper = new EntityWrapper<>();
@@ -111,6 +116,7 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
 
     @Override
     public R signIn(UsUserCooperationSignInParam signInParam) {
+        //验证第三方帐号是否注册
         List<UsUserCooperationEntity> list = getUserCooperation(signInParam.getAppid(), signInParam.getType(), signInParam.getOpenid());
         if (list.isEmpty()) {
             return R.error(Constant.Result.COOPERATION_NOT_EXIST.getValue(), Constant.Message.COOPERATION_NOT_EXIST.getValue());
@@ -126,9 +132,23 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
             userEntity.setSession(session);
             userService.updateById(userEntity);
             //更新session缓存
-            return R.ok(session);
+
+            Map<String, Object> map = new HashMap<>(1);
+            map.put("session", session);
+            return R.ok(map);
         } else {
             return R.error();
+        }
+    }
+
+    @Override
+    public R info(UsUserCooperationInfoParam infoParam) {
+        JSONObject object = webSignInUtil.getInfo(infoParam);
+        if (object == null) {
+            return R.error();
+        } else {
+            object.put("type", infoParam.getType());
+            return R.ok(object);
         }
     }
 
@@ -187,5 +207,10 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
     @Autowired
     public void setSmsService(UsSmsService smsService) {
         this.smsService = smsService;
+    }
+
+    @Autowired
+    public void setWebSignInUtil(UsWebSignInUtil webSignInUtil) {
+        this.webSignInUtil = webSignInUtil;
     }
 }

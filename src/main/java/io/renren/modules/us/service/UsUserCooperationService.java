@@ -6,6 +6,7 @@ import io.renren.modules.us.entity.UsUserCooperationEntity;
 import io.renren.modules.us.param.UsUserCooperationBindParam;
 import io.renren.modules.us.param.UsUserCooperationSignInParam;
 import io.renren.modules.us.param.UsUserCooperationSignUpParam;
+import io.renren.modules.us.param.UsUserCooperationInfoParam;
 
 /**
  * @author sys
@@ -14,6 +15,8 @@ import io.renren.modules.us.param.UsUserCooperationSignUpParam;
 public interface UsUserCooperationService extends IService<UsUserCooperationEntity> {
 
     R signIn(UsUserCooperationSignInParam signInParam);
+
+    R info(UsUserCooperationInfoParam webSignInParam);
 
     R signUp(UsUserCooperationSignUpParam signUpParam);
 
