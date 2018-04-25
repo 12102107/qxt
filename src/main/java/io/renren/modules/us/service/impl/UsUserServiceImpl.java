@@ -8,7 +8,10 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.common.utils.R;
 import io.renren.modules.us.dao.UsUserDao;
-import io.renren.modules.us.entity.*;
+import io.renren.modules.us.entity.TSDepartEntity;
+import io.renren.modules.us.entity.TSTypeEntity;
+import io.renren.modules.us.entity.UsUserEntity;
+import io.renren.modules.us.entity.UsUserPlantParamEntity;
 import io.renren.modules.us.param.*;
 import io.renren.modules.us.service.TSDepartService;
 import io.renren.modules.us.service.TSTypeService;
@@ -22,7 +25,6 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 
 
@@ -66,7 +68,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             //保存设备信息
             UsUserPlantParamEntity userPlant = new UsUserPlantParamEntity();
             userPlant.setUserId(entity.getId());
-            userPlant.setId(UUID.randomUUID().toString().substring(0,10).replace("-",""));
+            userPlant.setId(UsIdUtil.generateId());
             userPlant.setUnitType(form.getUnitType());
             userPlant.setEquipmentManufacturer(form.getEquipmentManufacturer());
             userPlant.setScreenResolution(form.getScreenResolution());
@@ -112,7 +114,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
         user_.setAddress(user.getAddress());
         user_.setPortrait(user.getPortrait());
-
+        user_.setSex(user.getSex());
         return user_;
     }
 

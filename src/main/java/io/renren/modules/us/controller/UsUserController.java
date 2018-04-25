@@ -333,8 +333,8 @@ public class UsUserController {
         }
 
         user = usUserService.updatePersonalInfo(user,form);
-
-        user = usUserService.queryName(user);
+        UsUserEntity usUser_ = usUserService.selectById(user.getId());
+        user = usUserService.queryName(usUser);
         //返回user隐藏部分字段
         UsUserHPram user_ = usUserService.usHiddenProperty(user);
         return R.ok(user_);
