@@ -154,7 +154,7 @@ public class UsUserController {
                 boolean b = usSmsService.insert(smsEntity);
                 if (b) {
                     Map<String, Object> map = new HashMap<>();
-                    map.put("smsCode", smsCode);
+                    //map.put("smsCode", smsCode);
                     map.put("mobile_phone", form.getMobilePhone());
                     return R.ok(map);
                 } else {
