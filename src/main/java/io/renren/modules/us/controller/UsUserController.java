@@ -311,11 +311,6 @@ public class UsUserController {
         return R.ok(user_);
     }
 
-
-
-
-
-
     @PostMapping("editPersonalInfo")
     @ApiOperation("修改个人信息")
     public R editPersonalInfo(@RequestBody UsUserParam form){
@@ -333,10 +328,12 @@ public class UsUserController {
         }
 
         user = usUserService.updatePersonalInfo(user,form);
-        UsUserEntity usUser_ = usUserService.selectById(user.getId());
-        user = usUserService.queryName(usUser);
+
+        UsUserEntity usUser_ = usUserService.selectById(user.getId());//获得全量信息
+
+        UsUserEntity user0 = usUserService.queryName(usUser_);
         //返回user隐藏部分字段
-        UsUserHPram user_ = usUserService.usHiddenProperty(user);
+        UsUserHPram user_ = usUserService.usHiddenProperty(user0);
         return R.ok(user_);
     }
 
