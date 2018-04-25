@@ -213,18 +213,7 @@ public class TMayorLetterEntity implements Serializable {
 	public String getPersonSex() {
 		return personSex;
 	}
-	/**
-	 * 设置：发信人职业id
-	 */
-	public void setUJobid(String uJobid) {
-		this.uJobid = uJobid;
-	}
-	/**
-	 * 获取：发信人职业id
-	 */
-	public String getUJobid() {
-		return uJobid;
-	}
+
 	/**
 	 * 设置：提出者职业
 	 */
@@ -237,18 +226,7 @@ public class TMayorLetterEntity implements Serializable {
 	public String getPersonJob() {
 		return personJob;
 	}
-	/**
-	 * 设置：发信人工作单位id
-	 */
-	public void setUDepartid(String uDepartid) {
-		this.uDepartid = uDepartid;
-	}
-	/**
-	 * 获取：发信人工作单位id
-	 */
-	public String getUDepartid() {
-		return uDepartid;
-	}
+
 	/**
 	 * 设置：发信人工作单位
 	 */
@@ -429,18 +407,7 @@ public class TMayorLetterEntity implements Serializable {
 	public String getReplyName() {
 		return replyName;
 	}
-	/**
-	 * 设置：回复人部门id
-	 */
-	public void setReplyDepartid(String replyDepartid) {
-		this.replyDepartid = replyDepartid;
-	}
-	/**
-	 * 获取：回复人部门id
-	 */
-	public String getReplyDepartid() {
-		return replyDepartid;
-	}
+
 	/**
 	 * 设置：回复人部门
 	 */
@@ -460,5 +427,29 @@ public class TMayorLetterEntity implements Serializable {
 
 	public void setAppid(String appid) {
 		this.appid = appid;
+	}
+
+	public String getuJobid() {
+		return uJobid;
+	}
+
+	public void setuJobid(String uJobid) {
+		this.uJobid = uJobid;
+	}
+
+	public String getuDepartid() {
+		return uDepartid;
+	}
+
+	public void setuDepartid(String uDepartid) {
+		this.uDepartid = uDepartid;
+	}
+
+	public String getReplyDepartid() {
+		return replyDepartid;
+	}
+
+	public void setReplyDepartid(String replyDepartid) {
+		this.replyDepartid = replyDepartid;
 	}
 }

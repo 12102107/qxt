@@ -31,5 +31,6 @@ public interface UsUserService extends IService<UsUserEntity> {
 
     UsUserHPram usHiddenProperty (UsUserEntity user);
 
+    UsUserEntity queryName(UsUserEntity user);
 }
 

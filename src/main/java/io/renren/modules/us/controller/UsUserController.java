@@ -304,7 +304,7 @@ public class UsUserController {
         }
 
         //获取工作单位/职业名称
-        user = this.queryName(user);
+        user = usUserService.queryName(user);
 
         //返回user隐藏部分字段
         UsUserHPram user_ = usUserService.usHiddenProperty(user);
@@ -313,28 +313,7 @@ public class UsUserController {
 
 
 
-    /**
-     * 根据工作单位id获取名称等
-     * @param
-     * @return
-     */
-    public UsUserEntity queryName(UsUserEntity user) {
-        //工作单位
-        if (null != user.getuDepartid()  &&  !"".equals(user.getuDepartid())){
-            TSDepartEntity tSDepart =  tSDepartService.selectById(user.getuDepartid());
-            if (tSDepart!=null){
-                user.setPersonDepartname(tSDepart.getDepartname());
-            }
-        }
-        //职业
-        if (null != user.getuJobid()  &&  !"".equals(user.getuJobid())){
-            TSTypeEntity ts = tSTypeService.queryByCode(user.getuJobid(),"job_list");
-            if(ts!=null){
-                user.setPersonJob(ts.getTypename());
-            }
-        }
-        return user;
-    }
+
 
 
     @PostMapping("editPersonalInfo")
@@ -355,7 +334,7 @@ public class UsUserController {
 
         user = usUserService.updatePersonalInfo(user,form);
 
-        user = this.queryName(user);
+        user = usUserService.queryName(user);
         //返回user隐藏部分字段
         UsUserHPram user_ = usUserService.usHiddenProperty(user);
         return R.ok(user_);
@@ -423,7 +402,7 @@ public class UsUserController {
 
         user = usUserService.realnameCert(user,form);
 
-        user = this.queryName(user);
+        user = usUserService.queryName(user);
         //返回user隐藏部分字段
         UsUserHPram user_ = usUserService.usHiddenProperty(user);
         return R.ok(user_);

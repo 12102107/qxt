@@ -154,21 +154,39 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         user.setRemark(form.getRemark());
 
         user.setuDepartid(form.getuDepartid());
-        //工作单位
-        if (null != form.getuDepartid()  &&  !"".equals(form.getuDepartid())){
-            TSDepartEntity tSDepart =  tSDepartService.selectById(form.getuDepartid());
-            user.setPersonDepartname(tSDepart.getDepartname());
-        }
         user.setuJobid(form.getuJobid());
-        //职业
-        if (null != form.getuJobid()  &&  !"".equals(form.getuJobid())){
-            TSTypeEntity ts = tSTypeService.queryByCode(form.getuJobid(),"job_list");
-            user.setPersonJob(ts.getTypename());
-        }
+
+        user = this.queryName(user);
+
         user.setAppid(form.getAppid());
         this.updateById(user);
         return user;
     }
+
+    /**
+     * 根据工作单位id获取名称等
+     * @param
+     * @return
+     */
+    public UsUserEntity queryName(UsUserEntity user) {
+        //工作单位
+        if (null != user.getuDepartid()  &&  !"".equals(user.getuDepartid())){
+            TSDepartEntity tSDepart =  tSDepartService.selectById(user.getuDepartid());
+            if (tSDepart!=null){
+                user.setPersonDepartname(tSDepart.getDepartname());
+            }
+        }
+        //职业
+        if (null != user.getuJobid()  &&  !"".equals(user.getuJobid())){
+            TSTypeEntity ts = tSTypeService.queryByCode(user.getuJobid(),"job_list");
+            if(ts!=null){
+                user.setPersonJob(ts.getTypename());
+            }
+        }
+        return user;
+    }
+
+
 
     /**
      * 实名认证
@@ -191,17 +209,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         user.setuJobid(form.getuJobid());
         user.setuDepartid(form.getuDepartid());
 
-
-        //工作单位
-        if (null != form.getuDepartid()  &&  !"".equals(form.getuDepartid())){
-            TSDepartEntity tSDepart =  tSDepartService.selectById(form.getuDepartid());
-            user.setPersonDepartname(tSDepart.getDepartname());
-        }
-        //职业
-        if (null != form.getuJobid()  &&  !"".equals(form.getuJobid())){
-            TSTypeEntity ts = tSTypeService.queryByCode(form.getuJobid(),"job_list");
-            user.setPersonJob(ts.getTypename());
-        }
+        user = this.queryName(user);
 
         user.setStatus(1);//已实名认证
         user.setAppid(form.getAppid());

@@ -74,8 +74,8 @@ public class TMayorLetterServiceImpl extends ServiceImpl<TMayorLetterDao, TMayor
         tmay.setPersonName(form.getPersonName());
         tmay.setPersonSex(form.getPersonSex());
 
-        tmay.setUJobid(form.getuJobid());
-        tmay.setUDepartid(form.getuDepartid());
+        tmay.setuJobid(form.getuJobid());
+        tmay.setuDepartid(form.getuDepartid());
 
         tmay.setPersonIdCard(form.getPersonIdCard());
         tmay.setPersonMobile(form.getPersonMobile());

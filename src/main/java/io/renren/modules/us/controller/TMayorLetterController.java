@@ -198,19 +198,25 @@ public class TMayorLetterController {
      */
     public TMayorLetterEntity queryName(TMayorLetterEntity tl) {
         //工作单位
-        if (null != tl.getUDepartid()  &&  !"".equals(tl.getUDepartid())){
-            TSDepartEntity tSDepart =  tSDepartService.selectById(tl.getUDepartid());
-            tl.setPersonDepartname(tSDepart.getDepartname());
+        if (null != tl.getuDepartid()  &&  !"".equals(tl.getuDepartid())){
+            TSDepartEntity tSDepart =  tSDepartService.selectById(tl.getuDepartid());
+            if (tSDepart!=null) {
+                tl.setPersonDepartname(tSDepart.getDepartname());
+            }
         }
         //职业
-        if (null != tl.getUJobid()  &&  !"".equals(tl.getUJobid())){
-            TSTypeEntity ts = tSTypeService.queryByCode(tl.getUJobid(),"job_list");
-            tl.setPersonJob(ts.getTypename());
+        if (null != tl.getuJobid()  &&  !"".equals(tl.getuJobid())){
+            TSTypeEntity ts = tSTypeService.queryByCode(tl.getuJobid(),"job_list");
+            if (ts!=null){
+                tl.setPersonJob(ts.getTypename());
+            }
         }
         //回复单位
         if (null != tl.getReplyDepartid()  &&  !"".equals(tl.getReplyDepartid())){
-            TSDepartEntity tSDepart =  tSDepartService.selectById(tl.getReplyDepartid());
-            tl.setReplyDepartname(tSDepart.getDepartname());
+            TSDepartEntity tSDepart_ =  tSDepartService.selectById(tl.getReplyDepartid());
+            if (tSDepart_!=null){
+                tl.setReplyDepartname(tSDepart_.getDepartname());
+            }
         }
         return tl;
     }
