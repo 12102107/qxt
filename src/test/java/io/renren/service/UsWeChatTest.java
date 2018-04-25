@@ -1,10 +1,13 @@
 package io.renren.service;
 
 import com.alibaba.fastjson.JSONObject;
+import io.renren.modules.us.param.UsUserCooperationInfoParam;
 import io.renren.modules.us.util.UsOkHttpUtil;
+import io.renren.modules.us.util.UsWebSignInUtil;
 import okhttp3.Response;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -13,6 +16,9 @@ import java.io.IOException;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class UsWeChatTest {
+
+    @Autowired
+    private UsWebSignInUtil webSignInUtil;
 
     @Test
     public void getOpenid() throws IOException {
@@ -52,5 +58,14 @@ public class UsWeChatTest {
         } catch (IOException e) {
             System.out.println("短信接口==============================" + e.getMessage());
         }
+    }
+
+    @Test
+    public void testWeChat(){
+        UsUserCooperationInfoParam webSignInParam=new UsUserCooperationInfoParam();
+        webSignInParam.setType("4");
+        webSignInParam.setCode("021kF4Hb17RGLt0xq3Ib1DwNGb1kF4HB");
+        JSONObject object = webSignInUtil.getInfo(webSignInParam);
+        System.out.println("web登录接口==============================" + object.toString());
     }
 }
