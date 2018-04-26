@@ -154,7 +154,7 @@ public class UsUserController {
                 boolean b = usSmsService.insert(smsEntity);
                 if (b) {
                     Map<String, Object> map = new HashMap<>();
-                    map.put("smsCode", smsCode);
+                    //map.put("smsCode", smsCode);
                     map.put("mobile_phone", form.getMobilePhone());
                     return R.ok(map);
                 } else {
@@ -311,11 +311,6 @@ public class UsUserController {
         return R.ok(user_);
     }
 
-
-
-
-
-
     @PostMapping("editPersonalInfo")
     @ApiOperation("修改个人信息")
     public R editPersonalInfo(@RequestBody UsUserParam form){
@@ -334,9 +329,11 @@ public class UsUserController {
 
         user = usUserService.updatePersonalInfo(user,form);
 
-        user = usUserService.queryName(user);
+        UsUserEntity usUser_ = usUserService.selectById(user.getId());//获得全量信息
+
+        UsUserEntity user0 = usUserService.queryName(usUser_);
         //返回user隐藏部分字段
-        UsUserHPram user_ = usUserService.usHiddenProperty(user);
+        UsUserHPram user_ = usUserService.usHiddenProperty(user0);
         return R.ok(user_);
     }
 

@@ -10,6 +10,7 @@ import io.renren.modules.us.entity.TMayorLetterEntity;
 import io.renren.modules.us.entity.UsUserEntity;
 import io.renren.modules.us.param.UsSendLetterParam;
 import io.renren.modules.us.service.TMayorLetterService;
+import io.renren.modules.us.util.UsIdUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -87,6 +88,7 @@ public class TMayorLetterServiceImpl extends ServiceImpl<TMayorLetterDao, TMayor
         tmay.setQuestionContent(form.getQuestionContent());
 
         tmay.setAppid(form.getAppid());
+        tmay.setId(UsIdUtil.generateId());
         this.insert(tmay);
         return tmay;
     }
