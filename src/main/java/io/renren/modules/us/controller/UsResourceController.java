@@ -23,7 +23,7 @@ import io.renren.common.utils.R;
  *
  * @author sys
  * @email 
- * @date 2018-04-12 16:21:17
+ * @date 2018-04-25 14:29:11
  */
 @RestController
 @RequestMapping("us/usresource")

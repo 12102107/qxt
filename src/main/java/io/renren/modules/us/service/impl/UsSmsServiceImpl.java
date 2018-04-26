@@ -58,7 +58,6 @@ public class UsSmsServiceImpl extends ServiceImpl<UsSmsDao, UsSmsEntity> impleme
                 .and("mobile={0}", mobile)
                 .orderBy("create_date", false)
                 .last("limit 1");
-        wrapper.setEntity(new UsSmsEntity());
         UsSmsEntity smsEntity = this.selectOne(wrapper);
         if (smsEntity != null) {
             if (!code.equals(smsEntity.getCode())) {

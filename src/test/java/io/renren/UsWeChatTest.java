@@ -1,4 +1,4 @@
-package io.renren.service;
+package io.renren;
 
 import com.alibaba.fastjson.JSONObject;
 import io.renren.modules.us.param.UsUserCooperationInfoParam;

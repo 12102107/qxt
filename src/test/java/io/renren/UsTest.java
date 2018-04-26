@@ -1,8 +1,12 @@
 package io.renren;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+import io.renren.common.utils.Query;
+import io.renren.modules.us.entity.TSCategoryEntity;
 import io.renren.modules.us.entity.UsSmsEntity;
 import io.renren.modules.us.entity.UsUserCooperationEntity;
+import io.renren.modules.us.service.TSCategoryService;
 import io.renren.modules.us.service.UsSmsService;
 import io.renren.modules.us.service.UsUserCooperationService;
 import io.renren.modules.us.util.UsIdUtil;
@@ -18,8 +22,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -31,6 +37,8 @@ public class UsTest {
     private UsUserCooperationService cooperationService;
     @Autowired
     private UsSmsService smsService;
+    @Autowired
+    private TSCategoryService categoryService;
 
     @Test
     public void test1() {
@@ -69,7 +77,7 @@ public class UsTest {
                 .last("limit 1");
         wrapper.setEntity(new UsSmsEntity());
         UsSmsEntity smsEntity = smsService.selectOne(wrapper);
-        System.out.println("测试代码==========="+(smsEntity==null));
+        System.out.println("测试代码===========" + (smsEntity == null));
 //        Date expireDate = smsEntity.getCreateDate();
 //        Date now = new Date();
 //        System.out.println("日期比较=====" + now.before(expireDate));
@@ -137,5 +145,47 @@ public class UsTest {
         System.out.println("短信接口==============================" + code);
         code = smsService.checkCode("12345", "15904607121", "138584");
         System.out.println("短信接口==============================" + code);
+    }
+
+    @Test
+    public void test10() {
+        EntityWrapper<TSCategoryEntity> wrapper = new EntityWrapper<>();
+        wrapper.where("code REGEXP {0}", "^[A]{1}[0-9]{1,}$");
+        //wrapper.setEntity(new TSCategoryEntity());
+        wrapper.setSqlSelect("id", "code", "name");
+        List<Map<String, Object>> list = categoryService.selectMaps(wrapper);
+        for (Map<String, Object> map : list) {
+            for (String s : map.keySet()) {
+                System.out.println(map.get(s));
+            }
+        }
+    }
+
+    @Test
+    public void test11() {
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("limit", "10");
+        map.put("page", "1");
+        EntityWrapper<TSCategoryEntity> wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("id", "icon_id", "code", "name", "parent_code");
+        wrapper.where("parent_code like {0}", "A01%");
+        Page<Map<String, Object>> page = categoryService.selectMapsPage(new Query<TSCategoryEntity>(map).getPage(), wrapper);
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Map<String, Object> m1 : page.getRecords()) {
+            //如果是二级分类
+            if (m1.get("parent_code").toString().matches("^[A]{1}[0-9]{1,}$")) {
+                List<Map<String, Object>> tempList = new ArrayList<>();
+                String code = m1.get("code").toString();
+                for (Map<String, Object> m2 : page.getRecords()) {
+                    if (m2.get("parent_code").toString().equals(code)) {
+                        tempList.add(m2);
+                    }
+                }
+                m1.put("list", tempList);
+                list.add(m1);
+            }
+        }
+        page.setRecords(list);
+        System.out.println("1");
     }
 }

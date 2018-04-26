@@ -14,6 +14,7 @@
         <result property="type" column="type"/>
         <result property="status" column="status"/>
         <result property="createDate" column="create_date"/>
+        <result property="categoryId" column="category_id"/>
     </resultMap>
 
 

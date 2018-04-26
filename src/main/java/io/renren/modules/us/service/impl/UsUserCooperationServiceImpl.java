@@ -41,7 +41,6 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
 
     private List<UsUserCooperationEntity> getUserCooperation(String appid, String type, String openid) {
         EntityWrapper<UsUserCooperationEntity> wrapper = new EntityWrapper<>();
-        wrapper.setEntity(new UsUserCooperationEntity());
         wrapper.where("appid={0}", appid)
                 .and("type={0}", type)
                 .and("openid={0}", openid);
@@ -53,7 +52,6 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
         wrapper.where("mobile_phone={0}", mobile)
                 .and("appid={0}", appid)
                 .last("limit 1");
-        wrapper.setEntity(new UsUserEntity());
         return userService.selectOne(wrapper);
     }
 
