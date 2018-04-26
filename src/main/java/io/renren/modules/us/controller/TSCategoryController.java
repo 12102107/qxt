@@ -1,6 +1,7 @@
 package io.renren.modules.us.controller;
 
 import io.renren.common.utils.R;
+import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.us.param.UsChildCategoryParam;
 import io.renren.modules.us.param.UsPageParam;
 import io.renren.modules.us.service.TSCategoryService;
@@ -32,6 +33,7 @@ public class TSCategoryController {
     @PostMapping("list")
     @ApiOperation("分类接口")
     public R list(@RequestBody UsPageParam pageParam) {
+        ValidatorUtils.validateEntity(pageParam);
         return tSCategoryService.list(pageParam);
     }
 
@@ -41,6 +43,7 @@ public class TSCategoryController {
     @PostMapping("childList")
     @ApiOperation("子类接口")
     public R childList(@RequestBody UsChildCategoryParam childCategoryParam) {
+        ValidatorUtils.validateEntity(childCategoryParam);
         return tSCategoryService.childList(childCategoryParam);
     }
 

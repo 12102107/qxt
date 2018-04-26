@@ -188,4 +188,18 @@ public class UsTest {
         page.setRecords(list);
         System.out.println("1");
     }
+
+    @Test
+    public void test12() {
+        EntityWrapper<TSCategoryEntity> wrapper = new EntityWrapper<>();
+        wrapper.where("find_in_set({0},code)", "A01A01");
+        //wrapper.setEntity(new TSCategoryEntity());
+        wrapper.setSqlSelect("id", "code", "name");
+        List<Map<String, Object>> list = categoryService.selectMaps(wrapper);
+        for (Map<String, Object> map : list) {
+            for (String s : map.keySet()) {
+                System.out.println(map.get(s));
+            }
+        }
+    }
 }
