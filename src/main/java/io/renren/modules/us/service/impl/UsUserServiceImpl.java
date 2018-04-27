@@ -36,7 +36,8 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
     private TSTypeService tSTypeService;
     @Autowired
     private UsUserPlantParamService usUserPlantParamService;
-
+    public static final int INITIALIZE_USER_STATUS = 0;//注册后初始状态
+    public static final int REAL_USER_STATUS = 1;//实名状态
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         Page<UsUserEntity> page = this.selectPage(
@@ -213,7 +214,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
         user = this.queryName(user);
 
-        user.setStatus(1);//已实名认证
+        user.setStatus(REAL_USER_STATUS);//已实名认证
         user.setAppid(form.getAppid());
 
         this.updateById(user);
@@ -228,7 +229,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         user.setPassword(form.getPassword());
         user.setId(UsIdUtil.generateId());
         user.setCreateDate(new Date());
-        user.setStatus(0);//初始未认证
+        user.setStatus(INITIALIZE_USER_STATUS);//初始未认证
         String session = UsSessionUtil.generateSession();//生成session
         user.setSession(session);
         user.setAppid(form.getAppid());

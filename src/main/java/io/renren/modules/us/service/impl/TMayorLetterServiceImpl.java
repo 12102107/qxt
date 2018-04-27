@@ -14,6 +14,7 @@ import io.renren.modules.us.util.UsIdUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import java.util.Map;
 @Service("tMayorLetterService")
 public class TMayorLetterServiceImpl extends ServiceImpl<TMayorLetterDao, TMayorLetterEntity> implements TMayorLetterService {
 
+    public static final String INITIALIZE_SEND_STATUS = "1";//发信后初始状态
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         String senderId = (String)params.get("senderId");
@@ -70,7 +72,7 @@ public class TMayorLetterServiceImpl extends ServiceImpl<TMayorLetterDao, TMayor
         tmay.setCreateName(user.getRealname());
         tmay.setSenderId(user.getId());//创建人id
 
-        tmay.setBpmStatus("1");//已发送初始状态
+        tmay.setBpmStatus(INITIALIZE_SEND_STATUS);//已发送初始状态
 
         tmay.setPersonName(form.getPersonName());
         tmay.setPersonSex(form.getPersonSex());
@@ -86,7 +88,10 @@ public class TMayorLetterServiceImpl extends ServiceImpl<TMayorLetterDao, TMayor
         tmay.setQuestionCity(form.getQuestionCity());
         tmay.setQuestionTitle(form.getQuestionTitle());
         tmay.setQuestionContent(form.getQuestionContent());
-
+        SimpleDateFormat simpledateformat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        synchronized(this) {
+            tmay.setLetterCode(simpledateformat.format(new Date()));
+        }
         tmay.setAppid(form.getAppid());
         tmay.setId(UsIdUtil.generateId());
         this.insert(tmay);

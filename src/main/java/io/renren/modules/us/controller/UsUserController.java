@@ -311,6 +311,28 @@ public class UsUserController {
         return R.ok(user_);
     }
 
+    @PostMapping("queryStatusBySession")
+    @ApiOperation("查询用户状态信息")
+    public R queryStatusBySession(@RequestBody UsSessionParam form){
+        //表单校验
+        ValidatorUtils.validateEntity(form);
+
+        String userId = UsSessionUtil.getUserid(form.getSession());
+        if (userId == null){
+            return R.error("session格式不正确");
+        }
+
+        UsUserEntity user = usUserService.selectById(userId);
+        if(user == null){
+            return R.error("session格式不正确");
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", user.getStatus());//用户状态
+        TSTypeEntity ts = tSTypeService.queryByCode(user.getStatus().toString(),"usStatus");
+        map.put("statusName", ts.getTypename());//用户状态名称（查询数据字典）
+        return R.ok(map);
+    }
+
     @PostMapping("editPersonalInfo")
     @ApiOperation("修改个人信息")
     public R editPersonalInfo(@RequestBody UsUserParam form){
