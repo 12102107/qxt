@@ -128,7 +128,12 @@ public class Constant {
         //第三方帐号已存在
         COOPERATION_EXIST(209),
         //第三方帐号不存在
-        COOPERATION_NOT_EXIST(210);
+        COOPERATION_NOT_EXIST(210),
+        //Session过期
+        SESSION_EXPIRE(211),
+        //Session错误
+        SESSION_ERROR(212);
+
 
         private int value;
 

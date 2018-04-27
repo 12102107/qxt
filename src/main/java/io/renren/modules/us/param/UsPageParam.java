@@ -1,16 +1,16 @@
 package io.renren.modules.us.param;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Li
  */
 public class UsPageParam extends UsBaseParam {
 
-    @NotBlank(message = "pageNo不能为空")
+    @NotNull(message = "pageNo不能为空")
     private Integer pageNo;
 
-    @NotBlank(message = "pageSize不能为空")
+    @NotNull(message = "pageSize不能为空")
     private Integer pageSize;
 
     public Integer getPageNo() {

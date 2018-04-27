@@ -202,4 +202,21 @@ public class UsTest {
             }
         }
     }
+
+    @Test
+    public void test13() throws IOException {
+        //公积金个人基本信息
+        String url = "http://10.66.68.15:8087/gateway/api/open/zggjjgrjbxx_hmrhggfwxm/1.0" +
+                "?api_key=32303137303831363134353832353130373730302361306539646562622d376238342d343132622d623830652d6539a1f70ba3a3fd01c86ccb" +
+                "&ZGXM=杨晓圆" +
+                "&SFZH=152104198803022847";
+        UsOkHttpUtil okHttpUtil = UsOkHttpUtil.getInstance();
+        Response response = okHttpUtil.getDataSync(url);
+        try {
+            String reulst = response.body().string();
+            System.out.println("接口==============================" + reulst);
+        } catch (IOException e) {
+            System.out.println("接口==============================" + e.getMessage());
+        }
+    }
 }
