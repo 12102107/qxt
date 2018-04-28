@@ -3,10 +3,7 @@ package io.renren.modules.us.service.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import io.renren.common.utils.Constant;
-import io.renren.common.utils.PageUtils;
-import io.renren.common.utils.Query;
-import io.renren.common.utils.R;
+import io.renren.common.utils.*;
 import io.renren.modules.us.dao.UsUserDao;
 import io.renren.modules.us.entity.TSDepartEntity;
 import io.renren.modules.us.entity.TSTypeEntity;
@@ -25,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sun.misc.BASE64Decoder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -266,12 +264,12 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         String ret_fileName = "";//返回给前端已修改的图片名称
         String base64Img = form.getPortraitData();
         // 临时文件路径
-        String dirTemp = "\\upload";
-        String uploadImg = "\\upload";
         //String realPath = ClassUtils.getDefaultClassLoader().getResource("").getPath();获取绝对路径 例/D:renren-fast/..
 
-        String realPath = "C:/hm_photo";
-        String tempPath =  "C:/hm_photo/"+ dirTemp;
+        String realPath = "C:";
+        String uploadImg = "\\hmPhotos\\upload";
+        String dirTemp = "\\hmPhotos\\upload";
+        String tempPath =  "C:/"+ dirTemp;
 
         File file_normer = new File(realPath + uploadImg);
         if (!file_normer.exists()) {
@@ -306,13 +304,16 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         }
         //--------上传头像成功-----------
         //存取图片路径
-        String image_url = realPath + "/upload/" + ret_fileName;
+        //处理查询数据
+        HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
+        String path = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/hmPhotos" + "/";
+        String image_url =  "upload/" + ret_fileName;
 
         user.setPortrait(image_url);
         user.setUpdateDate(new Date());
         this.updateById(user);
 
-
-        return image_url;
+        String portrait = path + image_url;
+        return portrait;
     }
 }
