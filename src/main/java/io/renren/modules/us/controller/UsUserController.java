@@ -428,6 +428,31 @@ public class UsUserController {
     }
 
 
+    @PostMapping("editPortrait")
+    @ApiOperation("修改头像")
+        public R editPortrait(@RequestBody UsUserPortraiParam form){
 
+        //表单校验
+        ValidatorUtils.validateEntity(form);
+
+        String userId = UsSessionUtil.getUserid(form.getSession());
+        if (userId == null){
+            return R.error("session格式不正确");
+        }
+
+        UsUserEntity user = usUserService.selectById(userId);
+        if(user == null){
+            return R.error("session格式不正确");
+        }
+
+        String image_url =  usUserService.uploadPortrait(user,form);
+        // 将已修改的图片url对应的id返回前端
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("portrait", image_url);//头像路径
+        return  R.ok(map);
+    }
 
 }
+
+
