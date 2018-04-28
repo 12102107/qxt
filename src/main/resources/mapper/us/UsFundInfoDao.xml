@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.us.dao.UsFundInfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.us.entity.UsFundInfoEntity" id="usFundInfoMap">
+        <result property="id" column="id"/>
+        <result property="sfdj" column="SFDJ"/>
+        <result property="zgxm" column="ZGXM"/>
+        <result property="sfyc" column="SFYC"/>
+        <result property="dwzh" column="DWZH"/>
+        <result property="sfbzxdk" column="SFBZXDK"/>
+        <result property="dwmc" column="DWMC"/>
+        <result property="dwyje" column="DWYJE"/>
+        <result property="khrq" column="KHRQ"/>
+        <result property="yjce" column="YJCE"/>
+        <result property="dwjjbl" column="DWJJBL"/>
+        <result property="grzhzt" column="GRZHZT"/>
+        <result property="sfzh" column="SFZH"/>
+        <result property="grzh" column="GRZH"/>
+        <result property="gryje" column="GRYJE"/>
+        <result property="grjjbl" column="GRJJBL"/>
+        <result property="jzny" column="JZNY"/>
+    </resultMap>
+
+
+</mapper>
