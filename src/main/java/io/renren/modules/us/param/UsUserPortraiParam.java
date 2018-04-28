@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 public class UsUserPortraiParam extends UsSessionParam{
 
-    @NotBlank(message = "头像数据不能为空")
+    @NotBlank(message = "请上传图片")
     private String portraitData;
 
     public String getPortraitData() {

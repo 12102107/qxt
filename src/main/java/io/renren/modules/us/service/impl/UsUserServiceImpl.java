@@ -3,10 +3,7 @@ package io.renren.modules.us.service.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import io.renren.common.utils.Constant;
-import io.renren.common.utils.PageUtils;
-import io.renren.common.utils.Query;
-import io.renren.common.utils.R;
+import io.renren.common.utils.*;
 import io.renren.modules.us.dao.UsUserDao;
 import io.renren.modules.us.entity.TSDepartEntity;
 import io.renren.modules.us.entity.TSTypeEntity;
@@ -19,9 +16,17 @@ import io.renren.modules.us.service.UsUserPlantParamService;
 import io.renren.modules.us.service.UsUserService;
 import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsSessionUtil;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.misc.BASE64Decoder;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -251,5 +256,64 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         usUserPlantParamService.insert(userPlant);
 
         return user;
+    }
+
+    public String uploadPortrait(UsUserEntity user, UsUserPortraiParam form){
+
+        //String customerId ="";//加多层文件夹,暂时用不到
+        String ret_fileName = "";//返回给前端已修改的图片名称
+        String base64Img = form.getPortraitData();
+        // 临时文件路径
+        //String realPath = ClassUtils.getDefaultClassLoader().getResource("").getPath();获取绝对路径 例/D:renren-fast/..
+
+        String realPath = "C:";
+        String uploadImg = "\\hmPhotos\\upload";
+        String dirTemp = "\\hmPhotos\\upload";
+        String tempPath =  "C:/"+ dirTemp;
+
+        File file_normer = new File(realPath + uploadImg);
+        if (!file_normer.exists()) {
+            file_normer.mkdirs();
+        }
+        // 用于设置图片过大，存入临时文件
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        factory.setSizeThreshold(20 * 1024 * 1024); // 设定使用内存超过5M时，将产生临时文件并存储于临时目录中。
+        factory.setRepository(new File(tempPath)); // 设定存储临时文件的目录。
+
+        ServletFileUpload upload = new ServletFileUpload(factory);
+        upload.setHeaderEncoding("UTF-8");
+        base64Img = base64Img.replaceAll("data:image/jpeg;base64,", "");
+        BASE64Decoder decoder = new BASE64Decoder();
+        try {
+            // Base64解码
+            byte[] b = decoder.decodeBuffer(base64Img);
+            for (int i = 0; i < b.length; ++i) {
+                if (b[i] < 0) {// 调整异常数据
+                    b[i] += 256;
+                }
+            }
+            // 生成jpeg图片
+            ret_fileName = new String((new SimpleDateFormat("yyyyMMddhhmmssSSS").format(new Date())+".jpg").getBytes("gb2312"), "ISO8859-1" ) ;
+            File file = new File(realPath + uploadImg+"/" + ret_fileName);
+            OutputStream out = new FileOutputStream(file);
+            out.write(b);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //--------上传头像成功-----------
+        //存取图片路径
+        //处理查询数据
+        HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
+        String path = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/hmPhotos" + "/";
+        String image_url =  "upload/" + ret_fileName;
+
+        user.setPortrait(image_url);
+        user.setUpdateDate(new Date());
+        this.updateById(user);
+
+        String portrait = path + image_url;
+        return portrait;
     }
 }
