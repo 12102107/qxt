@@ -26,7 +26,7 @@ public class UsSessionUtil {
     public static String getUserid(String session) {
         EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
         wrapper.setEntity(new UsUserEntity());
-        wrapper.where("session={0}", session);
+        wrapper.where("session = {0}", session);
         UsUserService userService = (UsUserService) SpringContextUtils.getBean("usUserService");
         List<UsUserEntity> list = userService.selectList(wrapper);
         if (list.isEmpty()) {
