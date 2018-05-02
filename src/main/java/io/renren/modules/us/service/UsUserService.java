@@ -33,6 +33,6 @@ public interface UsUserService extends IService<UsUserEntity> {
 
     UsUserEntity queryName(UsUserEntity user);
 
-    String uploadPortrait(UsUserEntity user, UsUserPortraiParam form);
+    R uploadPortrait(UsUserEntity user, UsUserPortraiParam form);
 }
 
