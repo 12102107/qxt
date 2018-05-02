@@ -448,12 +448,10 @@ public class UsUserController {
             return R.error("session格式不正确");
         }
 
-        String portrait =  usUserService.uploadPortrait(user,form);
+        return usUserService.uploadPortrait(user,form);
         // 将已修改的图片url对应的id返回前端
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("portrait", portrait);//头像路径
-        return  R.ok(map);
+
     }
 
 

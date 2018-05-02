@@ -29,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +45,13 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
     private UsUserPlantParamService usUserPlantParamService;
     public static final int INITIALIZE_USER_STATUS = 0;//注册后初始状态
     public static final int REAL_USER_STATUS = 1;//实名状态
+
+    private   static final String   UPLOADImg  = "\\apache-tomcat-8.5.24\\webapps\\hmPhotos\\upload";
+    private   static final String  DIRTEMP = "\\apache-tomcat-8.5.24\\webapps\\hmPhotos\\upload";
+
+
+
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         Page<UsUserEntity> page = this.selectPage(
@@ -261,20 +269,21 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         return user;
     }
 
-    public String uploadPortrait(UsUserEntity user, UsUserPortraiParam form){
+    public R uploadPortrait(UsUserEntity user, UsUserPortraiParam form){
 
         //String customerId ="";//加多层文件夹,暂时用不到
         String ret_fileName = "";//返回给前端已修改的图片名称
         String base64Img = form.getPortraitData();
+
+        if(base64Img.substring(11,14).equals("png") || base64Img.substring(11,15).equals("jpeg") ){
+
         // 临时文件路径
         //String realPath = ClassUtils.getDefaultClassLoader().getResource("").getPath();获取绝对路径 例/D:renren-fast/..
 
         String realPath = "C:";
-        String uploadImg = "\\hmPhotos\\upload";
-        String dirTemp = "\\hmPhotos\\upload";
-        String tempPath =  "C:/"+ dirTemp;
+        String tempPath =  "C:/"+ DIRTEMP;
 
-        File file_normer = new File(realPath + uploadImg);
+        File file_normer = new File(realPath + UPLOADImg);
         if (!file_normer.exists()) {
             file_normer.mkdirs();
         }
@@ -285,7 +294,15 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
         ServletFileUpload upload = new ServletFileUpload(factory);
         upload.setHeaderEncoding("UTF-8");
-        base64Img = base64Img.replaceAll("data:image/jpeg;base64,", "");
+        if (base64Img.substring(11,14).equals("png")){
+            base64Img = base64Img.replaceAll("data:image/png;base64,", "");
+        }else{
+            base64Img = base64Img.replaceAll("data:image/jpeg;base64,", "");
+        }
+
+        if (base64Img == null && "".equals(base64Img)){
+            return R.error("上传的图片数据为空");
+        }
         BASE64Decoder decoder = new BASE64Decoder();
         try {
             // Base64解码
@@ -297,7 +314,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             }
             // 生成jpeg图片
             ret_fileName = new String((new SimpleDateFormat("yyyyMMddhhmmssSSS").format(new Date())+".jpg").getBytes("gb2312"), "ISO8859-1" ) ;
-            File file = new File(realPath + uploadImg+"/" + ret_fileName);
+            File file = new File(realPath + UPLOADImg+"/" + ret_fileName);
             OutputStream out = new FileOutputStream(file);
             out.write(b);
             out.flush();
@@ -317,6 +334,13 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         this.updateById(user);
 
         String portrait = path + image_url;
-        return portrait;
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("portrait", portrait);//头像路径
+        return  R.ok(map);
+
+        }else{
+            return R.error("上传的图片格式不支持，仅支持png或jpeg格式");
+        }
     }
 }
