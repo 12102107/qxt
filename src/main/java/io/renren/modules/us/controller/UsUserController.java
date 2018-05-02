@@ -46,6 +46,9 @@ public class UsUserController {
     @Autowired
     private UsSmsService usSmsService;
 
+    //默认的取大庆生活通下面的部门列表
+    private static final String DEPART_PARENTID = "297eb468623bd89b01623ce8a17d000f";
+
     /**
      * 列表
      */
@@ -375,7 +378,7 @@ public class UsUserController {
             return R.error("session格式不正确");
         }
 
-        List<TSDepartEntity> list = tSDepartService.queryDepartListByPid("297eb468623bd89b01623ce8a17d000f");
+        List<TSDepartEntity> list = tSDepartService.queryDepartListByPid(DEPART_PARENTID);
 
         return R.ok(list);
     }
