@@ -131,6 +131,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         user_.setAddress(user.getAddress());
         user_.setPortrait(user.getPortrait());
         user_.setSex(user.getSex());
+        user_.setStatus(user.getStatus());
         return user_;
     }
 
@@ -274,73 +275,84 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         //String customerId ="";//加多层文件夹,暂时用不到
         String ret_fileName = "";//返回给前端已修改的图片名称
         String base64Img = form.getPortraitData();
-
-        if(base64Img.substring(11,14).equals("png") || base64Img.substring(11,15).equals("jpeg") ){
-
-        // 临时文件路径
-        //String realPath = ClassUtils.getDefaultClassLoader().getResource("").getPath();获取绝对路径 例/D:renren-fast/..
-
-        String realPath = "C:";
-        String tempPath =  "C:/"+ DIRTEMP;
-
-        File file_normer = new File(realPath + UPLOADImg);
-        if (!file_normer.exists()) {
-            file_normer.mkdirs();
-        }
-        // 用于设置图片过大，存入临时文件
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        factory.setSizeThreshold(20 * 1024 * 1024); // 设定使用内存超过5M时，将产生临时文件并存储于临时目录中。
-        factory.setRepository(new File(tempPath)); // 设定存储临时文件的目录。
-
-        ServletFileUpload upload = new ServletFileUpload(factory);
-        upload.setHeaderEncoding("UTF-8");
-        if (base64Img.substring(11,14).equals("png")){
-            base64Img = base64Img.replaceAll("data:image/png;base64,", "");
-        }else{
-            base64Img = base64Img.replaceAll("data:image/jpeg;base64,", "");
-        }
-
-        if (base64Img == null && "".equals(base64Img)){
-            return R.error("上传的图片数据为空");
-        }
-        BASE64Decoder decoder = new BASE64Decoder();
-        try {
-            // Base64解码
-            byte[] b = decoder.decodeBuffer(base64Img);
-            for (int i = 0; i < b.length; ++i) {
-                if (b[i] < 0) {// 调整异常数据
-                    b[i] += 256;
+        String type = "";
+        if (base64Img.length()>22){
+            if(base64Img.substring(11,14).equals("png") || base64Img.substring(11,15).equals("jpeg") ){
+                if(base64Img.substring(11,14).equals("png")){
+                    type = "png";
+                }else{
+                    type = "jpeg";
                 }
+                // 临时文件路径
+                //String realPath = ClassUtils.getDefaultClassLoader().getResource("").getPath();获取绝对路径 例/D:renren-fast/..
+
+                String realPath = "C:";
+                String tempPath =  "C:/"+ DIRTEMP;
+
+                File file_normer = new File(realPath + UPLOADImg);
+                if (!file_normer.exists()) {
+                    file_normer.mkdirs();
+                }
+                // 用于设置图片过大，存入临时文件
+                DiskFileItemFactory factory = new DiskFileItemFactory();
+                factory.setSizeThreshold(20 * 1024 * 1024); // 设定使用内存超过5M时，将产生临时文件并存储于临时目录中。
+                factory.setRepository(new File(tempPath)); // 设定存储临时文件的目录。
+
+                ServletFileUpload upload = new ServletFileUpload(factory);
+                upload.setHeaderEncoding("UTF-8");
+                if (type.equals("png")){
+                    base64Img = base64Img.replaceAll("data:image/png;base64,", "");
+
+                }else{
+                    base64Img = base64Img.replaceAll("data:image/jpeg;base64,", "");
+                }
+
+                if (base64Img == null || "".equals(base64Img) || "data:image/jpeg;base64".equals(base64Img) || "data:image/png;base64".equals(base64Img)){
+                    return R.error("上传的图片数据为空");
+                }
+                BASE64Decoder decoder = new BASE64Decoder();
+                try {
+                    // Base64解码
+                    byte[] b = decoder.decodeBuffer(base64Img);
+                    for (int i = 0; i < b.length; ++i) {
+                        if (b[i] < 0) {// 调整异常数据
+                            b[i] += 256;
+                        }
+                    }
+                    // 生成jpeg图片
+
+                    ret_fileName = new String((new SimpleDateFormat("yyyyMMddhhmmssSSS").format(new Date())+"."+type).getBytes("gb2312"), "ISO8859-1" ) ;
+
+                    File file = new File(realPath + UPLOADImg+"/" + ret_fileName);
+                    OutputStream out = new FileOutputStream(file);
+                    out.write(b);
+                    out.flush();
+                    out.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                //--------上传头像成功-----------
+                //存取图片路径
+                //处理查询数据
+                HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
+                String path = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/hmPhotos" + "/";
+                String image_url =  "upload/" + ret_fileName;
+
+                user.setPortrait(image_url);
+                user.setUpdateDate(new Date());
+                this.updateById(user);
+
+                String portrait = path + image_url;
+
+                Map<String, Object> map = new HashMap<>();
+                map.put("portrait", portrait);//头像路径
+                return  R.ok(map);
+
+            }else{
+                return R.error("上传的图片格式不支持，仅支持png或jpeg格式");
             }
-            // 生成jpeg图片
-            ret_fileName = new String((new SimpleDateFormat("yyyyMMddhhmmssSSS").format(new Date())+".jpg").getBytes("gb2312"), "ISO8859-1" ) ;
-            File file = new File(realPath + UPLOADImg+"/" + ret_fileName);
-            OutputStream out = new FileOutputStream(file);
-            out.write(b);
-            out.flush();
-            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        //--------上传头像成功-----------
-        //存取图片路径
-        //处理查询数据
-        HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
-        String path = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/hmPhotos" + "/";
-        String image_url =  "upload/" + ret_fileName;
-
-        user.setPortrait(image_url);
-        user.setUpdateDate(new Date());
-        this.updateById(user);
-
-        String portrait = path + image_url;
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("portrait", portrait);//头像路径
-        return  R.ok(map);
-
-        }else{
-            return R.error("上传的图片格式不支持，仅支持png或jpeg格式");
+        }else {
+            return R.error("上传的图片数据为空");
         }
     }
 }
