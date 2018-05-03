@@ -37,7 +37,8 @@
         <swagger.version>2.2.2</swagger.version>
         <joda.time.version>2.9.9</joda.time.version>
         <squareup.okhttp3.version>3.10.0</squareup.okhttp3.version>
-        <alibaba.fastjson>1.2.47</alibaba.fastjson>
+        <alibaba.fastjson.version>1.2.47</alibaba.fastjson.version>
+        <springframework.version>4.3.13.RELEASE</springframework.version>
 
         <!--wagon plugin 配置-->
         <service-path>/work/renren</service-path>
@@ -199,7 +200,12 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>${alibaba.fastjson}</version>
+            <version>${alibaba.fastjson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${springframework.version}</version>
         </dependency>
 
     </dependencies>

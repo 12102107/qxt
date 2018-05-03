@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.us.dao.UsAppApiDao">
+
+    <select id="countId" resultType="Integer">
+        select count(appapi.id) from us_app_api appapi
+        join us_app app on appapi.appid = app.id
+        join us_api api on appapi.apiid = api.id
+        where app.appkey = #{appid} and api.url = #{url}
+    </select>
+
+</mapper>

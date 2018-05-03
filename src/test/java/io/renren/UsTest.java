@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import io.renren.common.utils.Query;
 import io.renren.modules.us.entity.TSCategoryEntity;
+import io.renren.modules.us.entity.UsAppApiEntity;
 import io.renren.modules.us.entity.UsSmsEntity;
 import io.renren.modules.us.entity.UsUserCooperationEntity;
 import io.renren.modules.us.service.TSCategoryService;
+import io.renren.modules.us.service.UsAppApiService;
 import io.renren.modules.us.service.UsSmsService;
 import io.renren.modules.us.service.UsUserCooperationService;
 import io.renren.modules.us.util.UsIdUtil;
@@ -39,6 +41,8 @@ public class UsTest {
     private UsSmsService smsService;
     @Autowired
     private TSCategoryService categoryService;
+    @Autowired
+    private UsAppApiService appApiService;
 
     @Test
     public void test1() {
@@ -219,4 +223,32 @@ public class UsTest {
             System.out.println("接口==============================" + e.getMessage());
         }
     }
+
+    @Test
+    public void test14() {
+        EntityWrapper<UsAppApiEntity> wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("select count(appapi.id) from us_app_api as appapi,us_app as app,us_api as api");
+//        wrapper.addFilter("select count(appapi.id) from us_app_api appapi \n" +
+//                "join us_app app on appapi.appid = app.id\n" +
+//                "join us_api api on appapi.apiid = api.id\n" +
+//                "where app.appkey = {0} and api.url = {1}", "12345", "/api/category/list");
+        wrapper.addFilter("join us_app as app on appapi.appid = app.id " +
+                "join us_api as api on appapi.apiid = api.id");
+        wrapper.where("app.appkey = {0}", "12345")
+                .and("api.url = {0}", "/api/category/list")
+                .and("appapi.appid = app.id")
+                .and("appapi.apiid = api.id");
+        int i = appApiService.selectCount(wrapper);
+        System.out.println("测试测试测试测试测试测试测试测试测试=====" + i);
+    }
+
+    @Test
+    public void test15() {
+        Map<String, String> map = new HashMap<>();
+        map.put("appid", "123456");
+        map.put("url", "/api/category/list");
+        int i = appApiService.countId("123456", "/api/category/list");
+        System.out.println("测试测试测试测试测试测试测试测试测试=====" + i);
+    }
+
 }
