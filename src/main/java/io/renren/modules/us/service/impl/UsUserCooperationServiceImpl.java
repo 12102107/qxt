@@ -144,6 +144,8 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
         JSONObject object = webSignInUtil.getInfo(infoParam);
         if (object == null) {
             return R.error();
+        } else if (object.containsKey("errcode")) {
+            return R.error(Constant.Result.INFO_ERROR.getValue(), object.toJSONString());
         } else {
             object.put("type", infoParam.getType());
             return R.ok(object);

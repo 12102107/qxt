@@ -42,6 +42,7 @@ public class UsUserCooperationController {
     @PostMapping("info")
     @ApiOperation("第三方信息接口")
     public R info(@RequestBody UsUserCooperationInfoParam infoParam) {
+        System.out.println(System.currentTimeMillis() + "获取第三方信息======" + infoParam.toString());
         ValidatorUtils.validateEntity(infoParam);
         return cooperationService.info(infoParam);
     }

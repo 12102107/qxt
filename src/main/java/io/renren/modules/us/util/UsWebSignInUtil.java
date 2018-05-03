@@ -30,7 +30,7 @@ public class UsWebSignInUtil {
                     String reulst = response.body().string();
                     JSONObject object = JSONObject.parseObject(reulst);
                     if (object.containsKey("errcode")) {
-                        return null;
+                        return object;
                     }
                     //获取accessToken
                     String accessToken = object.getString("access_token");
@@ -40,13 +40,15 @@ public class UsWebSignInUtil {
                     reulst = response.body().string();
                     object = JSONObject.parseObject(reulst);
                     if (object.containsKey("errcode")) {
-                        return null;
+                        return object;
                     }
                     object.put("accessToken", accessToken);
                     return object;
                 } catch (IOException e) {
                     e.printStackTrace();
-                    return null;
+                    JSONObject object = new JSONObject();
+                    object.put("errcode", e.getMessage());
+                    return object;
                 }
             }
             default: {

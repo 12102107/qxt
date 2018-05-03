@@ -132,8 +132,9 @@ public class Constant {
         //Session过期
         SESSION_EXPIRE(211),
         //Session错误
-        SESSION_ERROR(212);
-
+        SESSION_ERROR(212),
+        //获取第三方信息错误
+        INFO_ERROR(213);
 
         private int value;
 

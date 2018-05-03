@@ -28,4 +28,12 @@ public class UsUserCooperationInfoParam extends UsBaseParam {
     public void setType(String type) {
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        return "UsUserCooperationInfoParam{" +
+                "code='" + code + '\'' +
+                ", type='" + type + '\'' +
+                '}';
+    }
 }
