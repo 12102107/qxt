@@ -4,12 +4,10 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.us.entity.UsNoticeEntity;
-import io.renren.modules.us.entity.UsUserEntity;
 import io.renren.modules.us.param.UsNoticeDetailPram;
 import io.renren.modules.us.param.UsNoticePram;
 import io.renren.modules.us.service.UsNoticeService;
 import io.renren.modules.us.service.UsUserService;
-import io.renren.modules.us.util.UsSessionUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -94,20 +92,10 @@ public class UsNoticeController {
     }
 
     @PostMapping("noticeList")
-    @ApiOperation("消息/公告列表")
+    @ApiOperation("通知/公告列表")
     public R noticeList(@RequestBody UsNoticePram form){
         //表单校验
         ValidatorUtils.validateEntity(form);
-
-        String userId = UsSessionUtil.getUserid(form.getSession());
-        if (userId == null){
-            return R.error("session格式不正确");
-        }
-
-        UsUserEntity user = usUserService.selectById(userId);
-        if(user == null){
-            return R.error("session格式不正确");
-        }
 
         Map<String, Object> params = new HashMap<>();
         params.put("noticeType",form.getNoticeType());
@@ -126,20 +114,10 @@ public class UsNoticeController {
     }
 
     @PostMapping("noticeDetail")
-    @ApiOperation("消息公告明细")
+    @ApiOperation("通知公告明细")
     public R noticeDetail(@RequestBody UsNoticeDetailPram form){
         //表单校验
         ValidatorUtils.validateEntity(form);
-
-        String userId = UsSessionUtil.getUserid(form.getSession());
-        if (userId == null){
-            return R.error("session格式不正确");
-        }
-
-        UsUserEntity user = usUserService.selectById(userId);
-        if(user == null){
-            return R.error("session格式不正确");
-        }
 
         UsNoticeEntity tl = new UsNoticeEntity();
 

@@ -10,7 +10,7 @@ import org.hibernate.validator.constraints.NotBlank;
  * @email
  * @date 2018-04-18 13:42:29
  */
-public class UsNoticePram extends UsSessionParam{
+public class UsNoticePram extends UsBaseParam{
 
 	@ApiModelProperty(value = "类型")
 	@NotBlank(message="类型不能为空")
