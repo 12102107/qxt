@@ -20,6 +20,7 @@ import io.renren.modules.us.util.UsSessionUtil;
 import io.renren.modules.us.util.UsWebSignInUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -112,6 +113,7 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
         return R.ok(map);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public R signIn(UsUserCooperationSignInParam signInParam) {
         //验证第三方帐号是否注册
@@ -152,6 +154,7 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public R signUp(UsUserCooperationSignUpParam signUpParam) {
         //验证第三方帐号是否注册

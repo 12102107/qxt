@@ -9,7 +9,7 @@ spring:
                 password: 12345
             second:  #数据源2
                 url: jdbc:mysql://221.207.236.225:3306/jeecg?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
-                username: root
+                username: us
                 password: 12345
             initial-size: 10
             max-active: 100

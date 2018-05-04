@@ -6,6 +6,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 /**
  * request wrapper: 可重复读取request.getInputStream
@@ -36,7 +37,7 @@ public class PermissionHttpServletRequestWrapper extends HttpServletRequestWrapp
             e.printStackTrace();
         }
         if (inputStream != null) {
-            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
                 char[] charBuffer = new char[CHAR_BUFFER_LENGTH];
                 int bytesRead;
                 while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
@@ -51,7 +52,7 @@ public class PermissionHttpServletRequestWrapper extends HttpServletRequestWrapp
 
     @Override
     public ServletInputStream getInputStream() {
-        final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(body.getBytes());
+        final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8));
         return new DelegatingServletInputStream(byteArrayInputStream);
     }
 
