@@ -422,11 +422,13 @@ public class UsUserController {
             return R.error("session格式不正确");
         }
 
-        user = usUserService.realnameCert(user,form);
+        usUserService.realnameCert(user,form);
 
-        user = usUserService.queryName(user);
+        UsUserEntity usUser_ = usUserService.selectById(user.getId());//获得全量信息
+
+        UsUserEntity user0 = usUserService.queryName(usUser_);
         //返回user隐藏部分字段
-        UsUserHPram user_ = usUserService.usHiddenProperty(user);
+        UsUserHPram user_ = usUserService.usHiddenProperty(user0);
         return R.ok(user_);
     }
 
