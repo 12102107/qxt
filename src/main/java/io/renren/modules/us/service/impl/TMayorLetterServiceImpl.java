@@ -62,7 +62,7 @@ public class TMayorLetterServiceImpl extends ServiceImpl<TMayorLetterDao, TMayor
      * @param form
      * @return
      */
-    public TMayorLetterEntity sendLetter(UsUserEntity user, UsSendLetterParam form){
+    public synchronized TMayorLetterEntity sendLetter(UsUserEntity user, UsSendLetterParam form){
 
 
         TMayorLetterEntity tmay = new TMayorLetterEntity();
@@ -89,9 +89,7 @@ public class TMayorLetterServiceImpl extends ServiceImpl<TMayorLetterDao, TMayor
         tmay.setQuestionTitle(form.getQuestionTitle());
         tmay.setQuestionContent(form.getQuestionContent());
         SimpleDateFormat simpledateformat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        synchronized(this) {
-            tmay.setLetterCode(simpledateformat.format(new Date()));
-        }
+        tmay.setLetterCode(simpledateformat.format(new Date()));
         tmay.setAppid(form.getAppid());
         tmay.setId(UsIdUtil.generateId());
         this.insert(tmay);

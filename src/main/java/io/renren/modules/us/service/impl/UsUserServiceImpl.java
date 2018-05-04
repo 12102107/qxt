@@ -129,7 +129,10 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         user_.setCitizenNo(user.getCitizenNo());
 
         user_.setAddress(user.getAddress());
-        user_.setPortrait(user.getPortrait());
+        //存取图片路径
+        HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
+        String path = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/hmPhotos" + "/";
+        user_.setPortrait(path + user.getPortrait());
         user_.setSex(user.getSex());
         user_.setStatus(user.getStatus());
         return user_;
