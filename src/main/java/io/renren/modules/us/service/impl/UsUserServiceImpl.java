@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import io.renren.common.utils.*;
 import io.renren.modules.us.dao.UsUserDao;
-import io.renren.modules.us.entity.TSDepartEntity;
 import io.renren.modules.us.entity.TSTypeEntity;
 import io.renren.modules.us.entity.UsUserEntity;
 import io.renren.modules.us.entity.UsUserPlantParamEntity;
@@ -204,10 +203,11 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
     public UsUserEntity queryName(UsUserEntity user) {
         //工作单位
         if (null != user.getuDepartid()  &&  !"".equals(user.getuDepartid())){
-            TSDepartEntity tSDepart =  tSDepartService.selectById(user.getuDepartid());
-            if (tSDepart!=null){
-                user.setPersonDepartname(tSDepart.getDepartname());
+            TSTypeEntity ts_ = tSTypeService.queryByCode(user.getuJobid(),"dep_list");
+            if(ts_!=null){
+                user.setPersonDepartname(ts_.getTypename());
             }
+
         }
         //职业
         if (null != user.getuJobid()  &&  !"".equals(user.getuJobid())){

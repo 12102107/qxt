@@ -106,12 +106,12 @@ public class TMayorLetterController {
 
         String userId = UsSessionUtil.getUserid(form.getSession());
         if (userId == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         UsUserEntity user = usUserService.selectById(userId);
         if(user == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         boolean isR = this.queryRel(user);
@@ -131,12 +131,12 @@ public class TMayorLetterController {
 
         String userId = UsSessionUtil.getUserid(form.getSession());
         if (userId == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         UsUserEntity user = usUserService.selectById(userId);
         if(user == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         boolean isR = this.queryRel(user);
@@ -199,9 +199,9 @@ public class TMayorLetterController {
     public TMayorLetterEntity queryName(TMayorLetterEntity tl) {
         //工作单位
         if (null != tl.getuDepartid()  &&  !"".equals(tl.getuDepartid())){
-            TSDepartEntity tSDepart =  tSDepartService.selectById(tl.getuDepartid());
-            if (tSDepart!=null) {
-                tl.setPersonDepartname(tSDepart.getDepartname());
+            TSTypeEntity ts_ = tSTypeService.queryByCode(tl.getuJobid(),"dep_list");
+            if (ts_!=null){
+                tl.setPersonDepartname(ts_.getTypename());
             }
         }
         //职业
@@ -229,12 +229,12 @@ public class TMayorLetterController {
 
         String userId = UsSessionUtil.getUserid(form.getSession());
         if (userId == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         UsUserEntity user = usUserService.selectById(userId);
         if(user == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         boolean isR = this.queryRel(user);
@@ -278,12 +278,12 @@ public class TMayorLetterController {
 
         String userId = UsSessionUtil.getUserid(form.getSession());
         if (userId == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         UsUserEntity user = usUserService.selectById(userId);
         if(user == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         boolean isR = this.queryRel(user);
@@ -318,12 +318,12 @@ public class TMayorLetterController {
 
         String userId = UsSessionUtil.getUserid(form.getSession());
         if (userId == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         UsUserEntity user = usUserService.selectById(userId);
         if(user == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         boolean isR = this.queryRel(user);
@@ -346,12 +346,12 @@ public class TMayorLetterController {
 
         String userId = UsSessionUtil.getUserid(form.getSession());
         if (userId == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         UsUserEntity user = usUserService.selectById(userId);
         if(user == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         boolean isR = this.queryRel(user);

@@ -4,7 +4,6 @@ import io.renren.common.utils.Constant;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
-import io.renren.modules.us.entity.TSDepartEntity;
 import io.renren.modules.us.entity.TSTypeEntity;
 import io.renren.modules.us.entity.UsSmsEntity;
 import io.renren.modules.us.entity.UsUserEntity;
@@ -218,7 +217,7 @@ public class UsUserController {
         //表单校验
         ValidatorUtils.validateEntity(form);
         //短信验证码是否正确
-/*        Integer code = usSmsService.checkCode(form.getAppid(),form.getMobilePhone(),form.getSmsCode());
+       Integer code = usSmsService.checkCode(form.getAppid(),form.getMobilePhone(),form.getSmsCode());
 
         if (code == Constant.Result.SMS_CODE_CORRECT.getValue()){
             UsUserEntity us = usUserService.reg(form);
@@ -233,14 +232,7 @@ public class UsUserController {
             return R.error(Constant.Result.SMS_CODE_EXPIRE.getValue(),"验证码过期");
         }else{
             return R.error(Constant.Result.SMS_CODE_NULL.getValue(),"验证码查询结果为空");
-        }*/
-
-        UsUserEntity us = usUserService.reg(form);
-        Map<String, Object> map = new HashMap<>();
-        map.put("mobilePhone", us.getMobilePhone());
-        map.put("session",us.getSession());
-        return R.ok(map);
-
+        }
     }
 
 
@@ -272,12 +264,12 @@ public class UsUserController {
 
         String userId = UsSessionUtil.getUserid(session);
         if (userId == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         UsUserEntity user = usUserService.selectById(userId);
         if(user == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         UsUserEntity user0 = usUserService.checkUserExits(userId, oldPassword);
@@ -298,12 +290,12 @@ public class UsUserController {
 
         String userId = UsSessionUtil.getUserid(form.getSession());
         if (userId == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         UsUserEntity user = usUserService.selectById(userId);
         if(user == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         //获取工作单位/职业名称
@@ -322,12 +314,12 @@ public class UsUserController {
 
         String userId = UsSessionUtil.getUserid(form.getSession());
         if (userId == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         UsUserEntity user = usUserService.selectById(userId);
         if(user == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
         Map<String, Object> map = new HashMap<>();
         map.put("status", user.getStatus());//用户状态
@@ -344,12 +336,12 @@ public class UsUserController {
 
         String userId = UsSessionUtil.getUserid(form.getSession());
         if (userId == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         UsUserEntity user = usUserService.selectById(userId);
         if(user == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         user = usUserService.updatePersonalInfo(user,form);
@@ -370,16 +362,16 @@ public class UsUserController {
         //验证是否登录
         String userId = UsSessionUtil.getUserid(form.getSession());
         if (userId == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         UsUserEntity user = usUserService.selectById(userId);
         if(user == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
-        List<TSDepartEntity> list = tSDepartService.queryDepartListByPid(DEPART_PARENTID);
-
+        //List<TSDepartEntity> list = tSDepartService.queryDepartListByPid(DEPART_PARENTID);
+        List<TSTypeEntity> list = tSTypeService.queryList("dep_list");
         return R.ok(list);
     }
 
@@ -392,12 +384,12 @@ public class UsUserController {
         //验证是否登录
         String userId = UsSessionUtil.getUserid(form.getSession());
         if (userId == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         UsUserEntity user = usUserService.selectById(userId);
         if(user == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         List<TSTypeEntity> list = tSTypeService.queryList("job_list");
@@ -414,12 +406,12 @@ public class UsUserController {
 
         String userId = UsSessionUtil.getUserid(form.getSession());
         if (userId == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         UsUserEntity user = usUserService.selectById(userId);
         if(user == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         usUserService.realnameCert(user,form);
@@ -442,12 +434,12 @@ public class UsUserController {
 
         String userId = UsSessionUtil.getUserid(form.getSession());
         if (userId == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         UsUserEntity user = usUserService.selectById(userId);
         if(user == null){
-            return R.error("session格式不正确");
+            return R.error("查询不到此用户");
         }
 
         return usUserService.uploadPortrait(user,form);
@@ -455,6 +447,9 @@ public class UsUserController {
 
 
     }
+
+
+
 
 
 
