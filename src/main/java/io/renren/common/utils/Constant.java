@@ -174,7 +174,9 @@ public class Constant {
         //第三方帐号已存在
         COOPERATION_EXIST("第三方帐号已存在"),
         //第三方帐号不存在
-        COOPERATION_NOT_EXIST("第三方帐号不存在");
+        COOPERATION_NOT_EXIST("第三方帐号不存在"),
+        //session错误
+        SESSION_ERROR("Session错误");
 
         private String value;
 

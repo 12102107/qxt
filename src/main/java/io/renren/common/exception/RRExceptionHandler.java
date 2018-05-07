@@ -1,7 +1,9 @@
 package io.renren.common.exception;
 
+import io.renren.common.utils.Constant;
 import io.renren.common.utils.R;
 import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.session.SessionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
@@ -42,6 +44,12 @@ public class RRExceptionHandler {
     public R handleAuthorizationException(AuthorizationException e) {
         logger.error(e.getMessage(), e);
         return R.error("没有权限,请联系管理员授权");
+    }
+
+    @ExceptionHandler(SessionException.class)
+    public R handleSessionException(SessionException e) {
+        logger.error(e.getMessage(), e);
+        return R.error(Constant.Result.SESSION_ERROR.getValue(), Constant.Message.SESSION_ERROR.getValue());
     }
 
     @ExceptionHandler(Exception.class)

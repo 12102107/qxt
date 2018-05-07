@@ -52,7 +52,7 @@ public class UsWeChatTest {
         Response response = okHttpUtil.getDataSync(url);
         try {
             String reulst = response.body().string();
-            JSONObject object=JSONObject.parseObject(reulst);
+            JSONObject object = JSONObject.parseObject(reulst);
             System.out.println("短信接口==============================" + object.get("openid"));
             System.out.println("短信接口==============================" + reulst);
         } catch (IOException e) {
@@ -61,11 +61,84 @@ public class UsWeChatTest {
     }
 
     @Test
-    public void testWeChat(){
-        UsUserCooperationInfoParam webSignInParam=new UsUserCooperationInfoParam();
+    public void testWeChat() {
+        UsUserCooperationInfoParam webSignInParam = new UsUserCooperationInfoParam();
         webSignInParam.setType("4");
         webSignInParam.setCode("021kF4Hb17RGLt0xq3Ib1DwNGb1kF4HB");
         JSONObject object = webSignInUtil.getInfo(webSignInParam);
         System.out.println("web登录接口==============================" + object.toString());
+    }
+
+    @Test
+    public void testTokenQQ() throws IOException {
+        //access_token=1D976DEAFFE44DBF9AE358BFADC1DBAB&expires_in=7776000&refresh_token=CDABAD5788911FC5F14A143457CBA019
+        String url = "https://graph.qq.com/oauth2.0/token" +
+                "?grant_type=authorization_code" +
+                "&client_id=101474222" +
+                "&client_secret=89b6fd82cd2aedee1c6567ca9d15e0de" +
+                "&code=A9F360BF1B62E64E6EACBDCFE64EE120" +
+                "&redirect_uri=http://www.dq-city.com/pages/login/login.html";
+        UsOkHttpUtil okHttpUtil = UsOkHttpUtil.getInstance();
+        Response response = okHttpUtil.getDataSync(url);
+        String reulst = response.body().string();
+        System.out.println("QQ接口=" + reulst);
+    }
+
+    @Test
+    public void testOpenIdQQ() throws IOException {
+        //callback( {"client_id":"101474222","openid":"D11B246F053569687480C725F17FCDCA"} );
+        String url = "https://graph.qq.com/oauth2.0/me" +
+                "?access_token=1D976DEAFFE44DBF9AE358BFADC1DBAB";
+        UsOkHttpUtil okHttpUtil = UsOkHttpUtil.getInstance();
+        Response response = okHttpUtil.getDataSync(url);
+        String reulst = response.body().string();
+        System.out.println("QQ接口=" + reulst);
+    }
+
+    @Test
+    public void testOpenIdJson() {
+        String str = "callback( {\"client_id\":\"101474222\",\"openid\":\"D11B246F053569687480C725F17FCDCA\"} );";
+//        JSONObject object = JSONObject.parseObject(str);
+//        System.out.println(object);
+        String s = str.substring(str.indexOf("{"), str.indexOf("}") + 1);
+        System.out.println(s);
+    }
+
+    @Test
+    public void testJsonObject() {
+        JSONObject o1 = new JSONObject();
+        o1.put("o1", "o1");
+        o1.put("o2", "o2");
+        JSONObject o2 = new JSONObject();
+        o2.put("o2", "o2");
+        o2.put("o21", "o21");
+        o1.putAll(o2);
+        System.out.println(o1);
+    }
+
+    @Test
+    public void test1() {
+        UsUserCooperationInfoParam webSignInParam = new UsUserCooperationInfoParam();
+        webSignInParam.setType("3");
+        webSignInParam.setCode("260C96144197B610CBBDC78F29792D43");
+        JSONObject object = webSignInUtil.getInfo(webSignInParam);
+        System.out.println("web登录接口==============================" + object.toString());
+    }
+
+    @Test
+    public void test2() {
+        String str = "access_token=1D976DEAFFE44DBF9AE358BFADC1DBAB&expires_in=7776000&refresh_token=CDABAD5788911FC5F14A143457CBA019";
+        JSONObject object = new JSONObject();
+        for (String s : str.split("&")) {
+            String[] temp = s.split("=");
+            object.put(temp[0], temp[1]);
+        }
+        System.out.println(object);
+    }
+
+    @Test
+    public void test3() {
+        String str = "";
+        System.out.println("测试==========================" + str.isEmpty());
     }
 }

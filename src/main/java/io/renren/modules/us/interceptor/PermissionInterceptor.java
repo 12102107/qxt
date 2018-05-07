@@ -1,10 +1,12 @@
 package io.renren.modules.us.interceptor;
 
 import com.alibaba.fastjson.JSONObject;
+import io.renren.common.utils.SpringContextUtils;
 import io.renren.modules.us.service.UsAppApiService;
+import io.renren.modules.us.util.UsSessionUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.shiro.authz.AuthorizationException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.shiro.session.SessionException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -18,8 +20,6 @@ import java.nio.charset.StandardCharsets;
 @Component
 public class PermissionInterceptor extends HandlerInterceptorAdapter {
 
-    private UsAppApiService appApiService;
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
@@ -29,16 +29,24 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter {
         }
         String appid = object.getString("appid");
         String url = request.getServletPath();
+        UsAppApiService appApiService = (UsAppApiService) SpringContextUtils.getBean("usAppApiService");
         Integer i = appApiService.countId(appid, url);
+        //没有权限
         if (i == null || i != 1) {
             throw new AuthorizationException();
+        }
+        //有权限,请求参数没有session
+        if (!object.containsKey("session")) {
+            return super.preHandle(request, response, handler);
+        }
+        //有权限,请求参数有session
+        String session = object.getString("session");
+        String userid = UsSessionUtil.getUserid(session);
+        if (userid.isEmpty()) {
+            throw new SessionException();
         } else {
             return super.preHandle(request, response, handler);
         }
     }
 
-    @Autowired
-    public void setAppApiService(UsAppApiService appApiService) {
-        this.appApiService = appApiService;
-    }
 }

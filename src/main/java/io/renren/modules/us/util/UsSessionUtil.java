@@ -6,8 +6,6 @@ import io.renren.modules.us.entity.UsUserEntity;
 import io.renren.modules.us.service.UsUserService;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 /**
  * @author Li
  */
@@ -25,17 +23,11 @@ public class UsSessionUtil {
 
     public static String getUserid(String session) {
         EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
-        wrapper.setEntity(new UsUserEntity());
+        wrapper.setSqlSelect("id");
         wrapper.where("session = {0}", session);
         UsUserService userService = (UsUserService) SpringContextUtils.getBean("usUserService");
-        List<UsUserEntity> list = userService.selectList(wrapper);
-        if (list.isEmpty()) {
-            return "";
-        } else if (list.size() == 1) {
-            return list.get(0).getId();
-        } else {
-            return "";
-        }
+        Object obj = userService.selectObj(wrapper);
+        return obj == null ? "" : obj.toString();
     }
 
 }
