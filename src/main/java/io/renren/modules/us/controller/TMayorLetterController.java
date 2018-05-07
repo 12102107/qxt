@@ -312,24 +312,9 @@ public class TMayorLetterController {
 
     @PostMapping("letterInfo")
     @ApiOperation("信件说明")
-    public R letterInfo(@RequestBody UsSessionParam form){
+    public R letterInfo(@RequestBody UsBaseParam form){
         //表单校验
         ValidatorUtils.validateEntity(form);
-
-        String userId = UsSessionUtil.getUserid(form.getSession());
-        if (userId == null){
-            return R.error("查询不到此用户");
-        }
-
-        UsUserEntity user = usUserService.selectById(userId);
-        if(user == null){
-            return R.error("查询不到此用户");
-        }
-
-        boolean isR = this.queryRel(user);
-        if (isR == false){
-            return R.error("用户未实名认证，请先实名认证再操作");
-        }
 
         TInfoEntity ti = tInfoService.queryByCode("szxx");//查询市长信箱说明
 
