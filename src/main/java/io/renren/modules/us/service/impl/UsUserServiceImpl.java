@@ -97,7 +97,13 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             usUserPlantParamService.insert(userPlant);
 
             //返回user隐藏部分字段
-           UsUserHPram user_ = this.usHiddenProperty(entity);
+
+
+            UsUserEntity usUser_ = this.selectById(entity.getId());//获得全量信息
+
+            UsUserEntity user0 = this.queryName(usUser_);
+
+           UsUserHPram user_ = this.usHiddenProperty(user0);
             return R.ok(user_);
         } else {
             return R.error();
@@ -129,10 +135,15 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         user_.setCitizenNo(user.getCitizenNo());
 
         user_.setAddress(user.getAddress());
+
         //存取图片路径
-        HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
-        String path = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/hmPhotos" + "/";
-        user_.setPortrait(path + user.getPortrait());
+        if(null != user.getPortrait() && !"".equals(user.getPortrait())){
+            HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
+            String path = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/hmPhotos" + "/";
+            user_.setPortrait(path + user.getPortrait());
+        }else{
+            user_.setPortrait(user.getPortrait());
+        }
         user_.setSex(user.getSex());
         user_.setStatus(user.getStatus());
         return user_;
