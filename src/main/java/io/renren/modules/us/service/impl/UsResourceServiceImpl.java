@@ -3,6 +3,7 @@ package io.renren.modules.us.service.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import io.renren.common.utils.HttpContextUtils;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.common.utils.R;
@@ -12,8 +13,11 @@ import io.renren.modules.us.param.UsResourceParam;
 import io.renren.modules.us.service.UsResourceService;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
 
 
 /**
@@ -33,6 +37,22 @@ public class UsResourceServiceImpl extends ServiceImpl<UsResourceDao, UsResource
         wrapper.where("find_in_set({0},category_id)", resourceParam.getCategory());
         //查询数据
         Page<Map<String, Object>> page = this.selectMapsPage(new Query<UsResourceEntity>(map).getPage(), wrapper);
+
+        List list = page.getRecords();
+
+
+        HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
+        String path = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/hmPhotos" + "/";
+        for (int j = 0 ;j < list.size(); j++){
+
+            HashMap tr = (HashMap)list.get(j);
+            //存取图片路径
+            if(null != tr.get("icon") && !"".equals(tr.get("icon"))){
+                String ic = tr.get("icon").toString();
+                tr.put("icon",path + ic);
+            }
+        }
+
         return R.ok(new PageUtils(page));
     }
 
