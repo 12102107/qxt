@@ -73,7 +73,7 @@ public class TSCategoryServiceImpl extends ServiceImpl<TSCategoryDao, TSCategory
         List<UsResourceEntity> resourceList = resourceService.selectList(w2);
         //处理查询数据
         HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
-        String path = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/";
+        String path = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/jeecg" + "/";
         for (Map<String, Object> m2 : page.getRecords()) {
             String code = m2.get("code").toString();
             List<UsResourceEntity> list = new ArrayList<>();
