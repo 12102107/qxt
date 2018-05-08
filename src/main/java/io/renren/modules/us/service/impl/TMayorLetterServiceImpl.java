@@ -92,6 +92,8 @@ public class TMayorLetterServiceImpl extends ServiceImpl<TMayorLetterDao, TMayor
         tmay.setLetterCode(simpledateformat.format(new Date()));
         tmay.setAppid(form.getAppid());
         tmay.setId(UsIdUtil.generateId());
+
+        tmay.setDeleteFlag("0");//初始值
         this.insert(tmay);
         return tmay;
     }

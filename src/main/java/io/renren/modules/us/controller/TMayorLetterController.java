@@ -199,7 +199,7 @@ public class TMayorLetterController {
     public TMayorLetterEntity queryName(TMayorLetterEntity tl) {
         //工作单位
         if (null != tl.getuDepartid()  &&  !"".equals(tl.getuDepartid())){
-            TSTypeEntity ts_ = tSTypeService.queryByCode(tl.getuJobid(),"dep_list");
+            TSTypeEntity ts_ = tSTypeService.queryByCode(tl.getuDepartid(),"dep_list");
             if (ts_!=null){
                 tl.setPersonDepartname(ts_.getTypename());
             }

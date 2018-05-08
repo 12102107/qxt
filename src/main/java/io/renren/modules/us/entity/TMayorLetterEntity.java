@@ -129,6 +129,9 @@ public class TMayorLetterEntity implements Serializable {
 	 */
 	private String replyDepartname;
 
+	//删除标识
+	private String deleteFlag;
+
 	/**
 	 * 设置：主键
 	 */
@@ -451,5 +454,13 @@ public class TMayorLetterEntity implements Serializable {
 
 	public void setReplyDepartid(String replyDepartid) {
 		this.replyDepartid = replyDepartid;
+	}
+
+	public String getDeleteFlag() {
+		return deleteFlag;
+	}
+
+	public void setDeleteFlag(String deleteFlag) {
+		this.deleteFlag = deleteFlag;
 	}
 }

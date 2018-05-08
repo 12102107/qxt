@@ -203,7 +203,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
     public UsUserEntity queryName(UsUserEntity user) {
         //工作单位
         if (null != user.getuDepartid()  &&  !"".equals(user.getuDepartid())){
-            TSTypeEntity ts_ = tSTypeService.queryByCode(user.getuJobid(),"dep_list");
+            TSTypeEntity ts_ = tSTypeService.queryByCode(user.getuDepartid(),"dep_list");
             if(ts_!=null){
                 user.setPersonDepartname(ts_.getTypename());
             }
