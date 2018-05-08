@@ -42,7 +42,7 @@ public class UsResourceServiceImpl extends ServiceImpl<UsResourceDao, UsResource
 
 
         HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
-        String path = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/jeecg/upload/files" + "/";
+        String path = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/jeecg" + "/";
         for (int j = 0 ;j < list.size(); j++){
 
             HashMap tr = (HashMap)list.get(j);
