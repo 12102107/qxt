@@ -12,16 +12,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @Configuration
 public class InterceptorConfig extends WebMvcConfigurerAdapter {
 
-    private PermissionInterceptor permissionInterceptor;
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(permissionInterceptor).addPathPatterns("/api/**");
-    }
-
-    @Autowired
-    public void setPermissionInterceptor(PermissionInterceptor permissionInterceptor) {
-        this.permissionInterceptor = permissionInterceptor;
-    }
+//    private PermissionInterceptor permissionInterceptor;
+//
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(permissionInterceptor).addPathPatterns("/api/**");
+//    }
+//
+//    @Autowired
+//    public void setPermissionInterceptor(PermissionInterceptor permissionInterceptor) {
+//        this.permissionInterceptor = permissionInterceptor;
+//    }
 
 }

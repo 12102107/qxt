@@ -42,20 +42,20 @@ public class FilterConfig {
         return registration;
     }
 
-    @Bean
-    public FilterRegistrationBean permissionFilterRegistration() {
-        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-        //注入过滤器
-        filterRegistrationBean.setFilter(new PermissionFilter());
-        //拦截规则
-        filterRegistrationBean.addUrlPatterns("/api/**");
-        //过滤器名称
-        filterRegistrationBean.setName("permissionFilter");
-        //是否自动注册 false 取消Filter的自动注册
-        filterRegistrationBean.setEnabled(false);
-        //过滤器顺序
-        filterRegistrationBean.setOrder(1);
-        return filterRegistrationBean;
-    }
+//    @Bean
+//    public FilterRegistrationBean permissionFilterRegistration() {
+//        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+//        //注入过滤器
+//        filterRegistrationBean.setFilter(new PermissionFilter());
+//        //拦截规则
+//        filterRegistrationBean.addUrlPatterns("/api/**");
+//        //过滤器名称
+//        filterRegistrationBean.setName("permissionFilter");
+//        //是否自动注册 false 取消Filter的自动注册
+//        filterRegistrationBean.setEnabled(false);
+//        //过滤器顺序
+//        filterRegistrationBean.setOrder(1);
+//        return filterRegistrationBean;
+//    }
 
 }
