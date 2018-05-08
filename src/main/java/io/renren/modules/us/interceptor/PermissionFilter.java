@@ -19,9 +19,9 @@ public class PermissionFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-//        if (request instanceof HttpServletRequest) {
-//            request = new PermissionHttpServletRequestWrapper((HttpServletRequest) request);
-//        }
+        if (request instanceof HttpServletRequest) {
+            request = new PermissionHttpServletRequestWrapper((HttpServletRequest) request);
+        }
         chain.doFilter(request, response);
     }
 
@@ -29,5 +29,5 @@ public class PermissionFilter implements Filter {
     public void destroy() {
 
     }
-    
+
 }
