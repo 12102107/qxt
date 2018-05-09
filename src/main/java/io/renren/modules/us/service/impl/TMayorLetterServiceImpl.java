@@ -30,7 +30,7 @@ public class TMayorLetterServiceImpl extends ServiceImpl<TMayorLetterDao, TMayor
         Page<TMayorLetterEntity> page = this.selectPage(
                 new Query<TMayorLetterEntity>(params).getPage(),
                 new EntityWrapper<TMayorLetterEntity>().eq(StringUtils.isNotBlank(senderId),"sender_id", senderId)
-                        .orderBy("create_date")
+                        .orderBy("create_date",false)
         );
 
         return new PageUtils(page);
@@ -46,7 +46,7 @@ public class TMayorLetterServiceImpl extends ServiceImpl<TMayorLetterDao, TMayor
                 new Query<TMayorLetterEntity>(params).getPage(),
                 new EntityWrapper<TMayorLetterEntity>().like(StringUtils.isNotBlank(personIdCard),"person_id_card", personIdCard)
                         .and(StringUtils.isNotBlank(letterCode),"letter_code={0}",letterCode)
-                        .orderBy("create_date")
+                        .orderBy("create_date",false)
 
         );
 
