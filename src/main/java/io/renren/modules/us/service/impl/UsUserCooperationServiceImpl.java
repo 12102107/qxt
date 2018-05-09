@@ -8,10 +8,7 @@ import io.renren.common.utils.R;
 import io.renren.modules.us.dao.UsUserCooperationDao;
 import io.renren.modules.us.entity.UsUserCooperationEntity;
 import io.renren.modules.us.entity.UsUserEntity;
-import io.renren.modules.us.param.UsUserCooperationBindParam;
-import io.renren.modules.us.param.UsUserCooperationInfoParam;
-import io.renren.modules.us.param.UsUserCooperationSignInParam;
-import io.renren.modules.us.param.UsUserCooperationSignUpParam;
+import io.renren.modules.us.param.*;
 import io.renren.modules.us.service.UsSmsService;
 import io.renren.modules.us.service.UsUserCooperationService;
 import io.renren.modules.us.service.UsUserService;
@@ -131,11 +128,11 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
             UsUserEntity userEntity = userService.selectById(entity.getUserId());
             userEntity.setSession(session);
             userService.updateById(userEntity);
+            userEntity = userService.queryName(userEntity);
+            UsUserHPram userHPram = userService.usHiddenProperty(userEntity);
             //更新session缓存
 
-            Map<String, Object> map = new HashMap<>(1);
-            map.put("session", session);
-            return R.ok(map);
+            return R.ok(userHPram);
         } else {
             return R.error();
         }
