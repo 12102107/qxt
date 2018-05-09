@@ -298,11 +298,8 @@ public class UsUserController {
             return R.error("查询不到此用户");
         }
 
-        //获取工作单位/职业名称
-        user = usUserService.queryName(user);
-
         //返回user隐藏部分字段
-        UsUserHPram user_ = usUserService.usHiddenProperty(user);
+        Map<String, Object>  user_ = usUserService.usHidden(user.getId());
         return R.ok(user_);
     }
 
@@ -345,12 +342,8 @@ public class UsUserController {
         }
 
         user = usUserService.updatePersonalInfo(user,form);
-
-        UsUserEntity usUser_ = usUserService.selectById(user.getId());//获得全量信息
-
-        UsUserEntity user0 = usUserService.queryName(usUser_);
         //返回user隐藏部分字段
-        UsUserHPram user_ = usUserService.usHiddenProperty(user0);
+        Map<String, Object>  user_ = usUserService.usHidden(user.getId());
         return R.ok(user_);
     }
 
@@ -416,11 +409,8 @@ public class UsUserController {
 
         usUserService.realnameCert(user,form);
 
-        UsUserEntity usUser_ = usUserService.selectById(user.getId());//获得全量信息
-
-        UsUserEntity user0 = usUserService.queryName(usUser_);
         //返回user隐藏部分字段
-        UsUserHPram user_ = usUserService.usHiddenProperty(user0);
+        Map<String, Object>  user_ = usUserService.usHidden(user.getId());
         return R.ok(user_);
     }
 

@@ -96,13 +96,8 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             usUserPlantParamService.insert(userPlant);
 
             //返回user隐藏部分字段
+            Map<String, Object> user_ = this.usHidden(entity.getId());
 
-
-            UsUserEntity usUser_ = this.selectById(entity.getId());//获得全量信息
-
-            UsUserEntity user0 = this.queryName(usUser_);
-
-           UsUserHPram user_ = this.usHiddenProperty(user0);
             return R.ok(user_);
         } else {
             return R.error();
@@ -110,44 +105,49 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
     }
 
     /**
-     * 调用隐藏返回不需要的属性
-     * @param user
+     * 返回user对象部分属性
+     * @param id
      * @return
      */
-    public UsUserHPram usHiddenProperty (UsUserEntity user) {
+    public Map<String, Object> usHidden (String id) {
 
-        UsUserHPram user_ = new UsUserHPram();
-        user_.setSession(user.getSession());
+        EntityWrapper<UsUserEntity> w1 = new EntityWrapper<>();
+        w1.setSqlSelect("session", "status","u_jobid as uJobid",
+                "u_departid as uDepartid","remark","realname","id","email","nickname","mobile_phone as mobilePhone","citizen_no as citizenNo","address","portrait","sex");
+        w1.where("id = {0}", id);
+        List<Map<String, Object>> list = this.selectMaps(w1);
+        if (list == null || list.isEmpty() || list.size() == 0) {
+            return null;
+        }
+        Map<String, Object> map = list.get(0);
+        //工作单位
+        String personDepartname_ = null;
+        if (null != map.get("uDepartid")  &&  !"".equals(map.get("uDepartid"))){
+            TSTypeEntity ts_ = tSTypeService.queryByCode(map.get("uDepartid").toString(),"dep_list");
+            if(ts_!=null){
+                personDepartname_ = ts_.getTypename();
+            }
+        }
+        map.put("personDepartname",personDepartname_);
 
-        user_.setStatus(user.getStatus());
-        user_.setPersonDepartname(user.getPersonDepartname());
-        user_.setPersonJob(user.getPersonJob());
-        user_.setuJobid(user.getuJobid());
-        user_.setuDepartid(user.getuDepartid());
-        user_.setRemark(user.getRemark());
-
-        user_.setRealname(user.getRealname());
-        user_.setId(user.getId());
-        user_.setEmail(user.getEmail());
-        user_.setNickname(user.getNickname());
-        user_.setMobilePhone(user.getMobilePhone());
-        user_.setCitizenNo(user.getCitizenNo());
-
-        user_.setAddress(user.getAddress());
-
+        //职业
+        String personJob_ = null;
+        if (null != map.get("uJobid")  &&  !"".equals(map.get("uJobid"))){
+            TSTypeEntity ts = tSTypeService.queryByCode(map.get("uJobid").toString(),"job_list");
+            if(ts!=null){
+                personJob_ = ts.getTypename();
+            }
+        }
+        map.put("personJob",personJob_);
         //存取图片路径
-        if(null != user.getPortrait() && !"".equals(user.getPortrait())){
+        if(null != map.get("portrait") && !"".equals(map.get("portrait"))){
             HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
             String path = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/hmPhotos" + "/";
-            user_.setPortrait(path + user.getPortrait());
-        }else{
-            user_.setPortrait(user.getPortrait());
+            map.put("portrait",path + map.get("portrait").toString());
         }
-        user_.setSex(user.getSex());
-        user_.setStatus(user.getStatus());
-        return user_;
-    }
 
+        return map;
+    }
 
     /**
      * 检查用户是否存在

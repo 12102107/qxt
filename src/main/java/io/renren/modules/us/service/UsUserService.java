@@ -29,10 +29,10 @@ public interface UsUserService extends IService<UsUserEntity> {
 
     UsUserEntity realnameCert(UsUserEntity user, UsUserRealCertParam form);
 
-    UsUserHPram usHiddenProperty (UsUserEntity user);
-
     UsUserEntity queryName(UsUserEntity user);
 
     R uploadPortrait(UsUserEntity user, UsUserPortraiParam form);
+
+    public Map<String, Object>  usHidden (String id);
 }
 
