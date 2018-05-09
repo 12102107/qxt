@@ -91,6 +91,7 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
         userEntity.setPassword(signUpParam.getPassword());
         userEntity.setMobilePhone(signUpParam.getMobile());
         userEntity.setCreateDate(new Date());
+        userEntity.setAppid(signUpParam.getAppid());
         //更新session,保存数据
         String session = UsSessionUtil.generateSession();
         userEntity.setSession(session);
