@@ -54,8 +54,8 @@ public class UsSmsServiceImpl extends ServiceImpl<UsSmsDao, UsSmsEntity> impleme
     @Override
     public int checkCode(String appid, String mobile, String code) {
         EntityWrapper<UsSmsEntity> wrapper = new EntityWrapper<>();
-        wrapper.where("appid={0}", appid)
-                .and("mobile={0}", mobile)
+        wrapper.where("appid = {0}", appid)
+                .and("mobile = {0}", mobile)
                 .orderBy("create_date", false)
                 .last("limit 1");
         UsSmsEntity smsEntity = this.selectOne(wrapper);

@@ -27,8 +27,8 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter {
             response.setHeader("Access-Control-Allow-Origin", "*");
             response.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
             response.setHeader("Access-Control-Max-Age", "3600");
-            response.setHeader("Access-Control-Allow-Headers", "Origin,X-Requested-With,Content-Type");
-            response.setHeader("Access-Control-Allow-Credentials", "false");
+            response.setHeader("Access-Control-Allow-Headers", "Origin,X-Requested-With,Content-Type,Accept");
+            //response.setHeader("Access-Control-Allow-Credentials", "false");
             return true;
         }
         String requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
