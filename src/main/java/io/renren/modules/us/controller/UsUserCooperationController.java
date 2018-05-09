@@ -59,7 +59,7 @@ public class UsUserCooperationController {
     /**
      * 第三方绑定接口
      */
-    @PostMapping("bind")
+//    @PostMapping("bind")
     @ApiOperation("第三方绑定接口")
     public R bing(@RequestBody UsUserCooperationBindParam bindParam) {
         ValidatorUtils.validateEntity(bindParam);

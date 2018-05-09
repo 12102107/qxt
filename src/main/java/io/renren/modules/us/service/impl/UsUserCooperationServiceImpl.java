@@ -8,7 +8,10 @@ import io.renren.common.utils.R;
 import io.renren.modules.us.dao.UsUserCooperationDao;
 import io.renren.modules.us.entity.UsUserCooperationEntity;
 import io.renren.modules.us.entity.UsUserEntity;
-import io.renren.modules.us.param.*;
+import io.renren.modules.us.param.UsUserCooperationBindParam;
+import io.renren.modules.us.param.UsUserCooperationInfoParam;
+import io.renren.modules.us.param.UsUserCooperationSignInParam;
+import io.renren.modules.us.param.UsUserCooperationSignUpParam;
 import io.renren.modules.us.service.UsSmsService;
 import io.renren.modules.us.service.UsUserCooperationService;
 import io.renren.modules.us.service.UsUserService;
@@ -20,9 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -73,9 +74,7 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
         cooperationEntity.setAppid(signUpParam.getAppid());
         cooperationEntity.setCreateDate(new Date());
         this.insert(cooperationEntity);
-        Map<String, Object> map = new HashMap<>(1);
-        map.put("session", session);
-        return R.ok(map);
+        return R.ok(userService.usHidden(userEntity.getId()));
     }
 
     private R signUpWithPassword(UsUserCooperationSignUpParam signUpParam) {
@@ -106,9 +105,7 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
         cooperationEntity.setAppid(signUpParam.getAppid());
         cooperationEntity.setCreateDate(new Date());
         this.insert(cooperationEntity);
-        Map<String, Object> map = new HashMap<>(1);
-        map.put("session", session);
-        return R.ok(map);
+        return R.ok(userService.usHidden(userEntity.getId()));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -129,11 +126,8 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
             UsUserEntity userEntity = userService.selectById(entity.getUserId());
             userEntity.setSession(session);
             userService.updateById(userEntity);
-            userEntity = userService.queryName(userEntity);
-            UsUserHPram userHPram = userService.usHiddenProperty(userEntity);
             //更新session缓存
-
-            return R.ok(userHPram);
+            return R.ok(userService.usHidden(userEntity.getId()));
         } else {
             return R.error();
         }
