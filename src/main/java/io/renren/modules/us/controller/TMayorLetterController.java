@@ -159,7 +159,7 @@ public class TMayorLetterController {
         PageUtils page = tMayorLetterService.queryPage(params);
 
         List list = page.getList();
-        //赋值返回职业/工作单位/回复单位名称
+        //赋值返回职业/工作单位/回复单位名称/信件状态
         for (int j = 0 ;j < list.size(); j++){
             TMayorLetterEntity tl = (TMayorLetterEntity)list.get(j);
 
@@ -218,6 +218,15 @@ public class TMayorLetterController {
                 tl.setReplyDepartname(tSDepart_.getDepartname());
             }
         }
+
+        //信件状态汉字
+        if (null != tl.getBpmStatus()  &&  !"".equals(tl.getBpmStatus())){
+            TSTypeEntity ts_0 = tSTypeService.queryByCode(tl.getBpmStatus(),"lettStatus");
+            if (ts_0!=null){
+                tl.setBpmStatus(ts_0.getTypename());
+            }
+        }
+
         return tl;
     }
 
@@ -256,7 +265,7 @@ public class TMayorLetterController {
         PageUtils page = tMayorLetterService.queryPageOther(params);
 
         List list = page.getList();
-        //赋值返回职业/工作单位/回复单位名称
+        //赋值返回职业/工作单位/回复单位名称/信件状态
         for (int j = 0 ;j < list.size(); j++){
             TMayorLetterEntity tl = (TMayorLetterEntity)list.get(j);
 
