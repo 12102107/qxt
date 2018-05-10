@@ -1,27 +1,44 @@
 package io.renren.modules.us.param;
 
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.Length;
 
 public class UsUserParam extends UsSessionParam {
 
     @ApiModelProperty(value = "真实姓名")
+    @Length(max = 50)
     private String realname;
+
     @ApiModelProperty(value = "昵称")
+    @Length(max = 50)
     private String nickname;
+
     @ApiModelProperty(value = "身份证号码")
+    @Length(max = 20)
     private String citizenNo;
+
     @ApiModelProperty(value = "性别")
+    @Length(max = 2)
     private  String sex;
+
     @ApiModelProperty(value = "电子邮箱")
+    @Length(max = 50)
     private String email;
+
     @ApiModelProperty(value = "地址")
+    @Length(max = 1000)
     private  String address;
+
     @ApiModelProperty(value = "备注")
+    @Length(max = 255)
     private String remark;
+
     @ApiModelProperty(value = "职业id")
+    @Length(max = 32)
     private String uJobid;
 
     @ApiModelProperty(value = "工作单位id")
+    @Length(max = 32)
     private String uDepartid;
 
 

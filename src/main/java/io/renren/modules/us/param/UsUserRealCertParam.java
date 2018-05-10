@@ -1,34 +1,43 @@
 package io.renren.modules.us.param;
 
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 public class UsUserRealCertParam extends UsSessionParam {
 
     @ApiModelProperty(value = "真实姓名")
     @NotBlank(message = "真实姓名不能为空")
+    @Length(min = 1, max = 50)
     private String realname;
 
     @ApiModelProperty(value = "昵称")
+    @Length(max = 50)
     private String nickname;
 
     @ApiModelProperty(value = "身份证号码")
     @NotBlank(message = "身份证号码不能为空")
+    @Length(min = 1, max = 20)
     private String citizenNo;
 
     @ApiModelProperty(value = "性别")
+    @Length(max = 2)
     private  String sex;
 
     @ApiModelProperty(value = "电子邮箱")
+    @Length(max = 50)
     private String email;
 
     @ApiModelProperty(value = "地址")
+    @Length(max = 1000)
     private  String address;
 
     @ApiModelProperty(value = "职业")
+    @Length(max = 32)
     private String uJobid;
 
     @ApiModelProperty(value = "工作单位")
+    @Length(max = 32)
     private String uDepartid;
 
 
