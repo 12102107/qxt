@@ -14,8 +14,8 @@ import java.io.IOException;
 public class UsWebSignInUtil {
 
     private String weChatOpenIdUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?grant_type=authorization_code";
-    private String weChatAppid = "wx93f27b60fc14fef6";
-    private String weChatSecret = "0e7f028970e083307cd238ab73803f26";
+    private String weChatAppid = "wxccfd726d286bca91";
+    private String weChatSecret = "5b09aab1013e54c261373d2fe0f1fe16";
     private String weChatInfoUrl = "https://api.weixin.qq.com/sns/userinfo?lang=zh_CN";
     private String qqTokenUrl = "https://graph.qq.com/oauth2.0/token?grant_type=authorization_code";
     private String qqClientId = "101474222";
