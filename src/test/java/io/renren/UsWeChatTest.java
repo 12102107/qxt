@@ -141,4 +141,10 @@ public class UsWeChatTest {
         String str = "";
         System.out.println("测试==========================" + str.isEmpty());
     }
+
+    @Test
+    public void test4() {
+        Integer refundableGoodsNum = (160 + 1) * 14 / 100;
+        System.out.println("refundableGoodsNum = " + refundableGoodsNum);
+    }
 }
