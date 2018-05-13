@@ -14,7 +14,7 @@ public class PermissionFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -27,7 +27,7 @@ public class PermissionFilter implements Filter {
 
     @Override
     public void destroy() {
-
+        throw new UnsupportedOperationException();
     }
 
 }

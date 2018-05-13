@@ -9,6 +9,8 @@ import io.renren.modules.us.param.UsFundInfoParam;
 import io.renren.modules.us.service.UsFundInfoService;
 import io.renren.modules.us.util.UsOkHttpUtil;
 import okhttp3.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -19,6 +21,8 @@ import java.io.IOException;
  */
 @Service("usFundInfoService")
 public class UsFundInfoServiceImpl extends ServiceImpl<UsFundInfoDao, UsFundInfoEntity> implements UsFundInfoService {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public R info(UsFundInfoParam fundInfoParam) {
@@ -37,7 +41,7 @@ public class UsFundInfoServiceImpl extends ServiceImpl<UsFundInfoDao, UsFundInfo
                 return R.ok(object.get("data"));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             return R.error();
         }
     }

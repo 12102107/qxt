@@ -3,6 +3,7 @@ package io.renren;
 import com.alibaba.fastjson.JSONObject;
 import io.renren.modules.us.param.UsUserCooperationInfoParam;
 import io.renren.modules.us.util.UsOkHttpUtil;
+import io.renren.modules.us.util.UsRandomUtil;
 import io.renren.modules.us.util.UsWebSignInUtil;
 import okhttp3.Response;
 import org.junit.Test;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.util.Random;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -146,5 +148,21 @@ public class UsWeChatTest {
     public void test4() {
         Integer refundableGoodsNum = (160 + 1) * 14 / 100;
         System.out.println("refundableGoodsNum = " + refundableGoodsNum);
+    }
+
+    @Test
+    public void test5() {
+        Random r = new Random();
+        System.out.println(r.nextInt(999999));
+        System.out.println(r.nextInt(999999));
+        System.out.println(r.nextInt(999999));
+        System.out.println(r.nextInt(999999));
+        System.out.println(r.nextInt(999999));
+
+        System.out.println(UsRandomUtil.getRandom(100000, 999999));
+        System.out.println(UsRandomUtil.getRandom(100000, 999999));
+        System.out.println(UsRandomUtil.getRandom(100000, 999999));
+        System.out.println(UsRandomUtil.getRandom(100000, 999999));
+        System.out.println(UsRandomUtil.getRandom(100000, 999999));
     }
 }
