@@ -1,6 +1,8 @@
 package io.renren.modules.us.interceptor;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.DelegatingServletInputStream;
 
 import javax.servlet.ServletInputStream;
@@ -15,6 +17,8 @@ import java.nio.charset.StandardCharsets;
  */
 public class PermissionHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
+    private static Logger logger = LoggerFactory.getLogger(PermissionHttpServletRequestWrapper.class);
+
     private String body;
 
     PermissionHttpServletRequestWrapper(HttpServletRequest request) {
@@ -22,7 +26,7 @@ public class PermissionHttpServletRequestWrapper extends HttpServletRequestWrapp
         try {
             body = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
     }
 

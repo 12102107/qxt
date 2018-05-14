@@ -10,7 +10,12 @@ import java.util.UUID;
 @Component
 public class UsIdUtil {
 
+    private UsIdUtil() {
+
+    }
+
     public static String generateId() {
         return UUID.randomUUID().toString().replaceAll("-", "").substring(0, 32);
     }
+    
 }
