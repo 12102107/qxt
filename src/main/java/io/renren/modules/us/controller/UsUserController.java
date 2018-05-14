@@ -115,6 +115,7 @@ public class UsUserController {
         ValidatorUtils.validateEntity(form);
         Map hp = new HashMap();
         hp.put("mobile_phone",form.getMobilePhone());
+        hp.put("appid",form.getAppid());
         List rs = usUserService.selectByMap(hp);
         if (rs.size()>0){
             return R.error(Constant.Result.REG_MOBILE.getValue(),Constant.Message.REG_MOBILE.getValue());
