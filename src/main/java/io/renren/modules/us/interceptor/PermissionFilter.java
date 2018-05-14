@@ -14,7 +14,7 @@ public class PermissionFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {
-        throw new UnsupportedOperationException();
+        //不需要执行自定义业务逻辑
     }
 
     @Override
@@ -27,7 +27,7 @@ public class PermissionFilter implements Filter {
 
     @Override
     public void destroy() {
-        throw new UnsupportedOperationException();
+        //不需要执行自定义业务逻辑
     }
 
 }
