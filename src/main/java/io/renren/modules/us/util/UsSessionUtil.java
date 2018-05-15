@@ -56,7 +56,7 @@ public class UsSessionUtil {
 
     public void saveSession(String userId, String session) {
         if (userId != null && session != null && !userId.isEmpty() && !session.isEmpty()) {
-            redisUtil.set(SESSION_KEY_PREFIX + session, userId);
+            redisUtil.set(SESSION_KEY_PREFIX + session, userId, -1);
         } else {
             throw new SessionException("用户ID或Session为空");
         }
@@ -81,7 +81,7 @@ public class UsSessionUtil {
                     redisUtil.delete(key);
                 }
             }
-            redisUtil.set(SESSION_KEY_PREFIX + session, userId);
+            redisUtil.set(SESSION_KEY_PREFIX + session, userId, -1);
         }
     }
 
