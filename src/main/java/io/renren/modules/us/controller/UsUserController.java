@@ -44,6 +44,8 @@ public class UsUserController {
     private TSTypeService tSTypeService;
     @Autowired
     private UsSmsService usSmsService;
+    @Autowired
+    private UsSessionUtil sessionUtil;
 
     //默认的取大庆生活通下面的部门列表
     private static final String DEPART_PARENTID = "297eb468623bd89b01623ce8a17d000f";
@@ -263,7 +265,7 @@ public class UsUserController {
 
         String session = form.getSession();
 
-        String userId = UsSessionUtil.getUserid(session);
+        String userId = sessionUtil.getUserId(session);
         if (userId == null){
             return R.error("查询不到此用户");
         }
@@ -289,7 +291,7 @@ public class UsUserController {
         //表单校验
         ValidatorUtils.validateEntity(form);
 
-        String userId = UsSessionUtil.getUserid(form.getSession());
+        String userId = sessionUtil.getUserId(form.getSession());
         if (userId == null){
             return R.error("查询不到此用户");
         }
@@ -310,7 +312,7 @@ public class UsUserController {
         //表单校验
         ValidatorUtils.validateEntity(form);
 
-        String userId = UsSessionUtil.getUserid(form.getSession());
+        String userId = sessionUtil.getUserId(form.getSession());
         if (userId == null){
             return R.error("查询不到此用户");
         }
@@ -332,7 +334,7 @@ public class UsUserController {
         //表单校验
         ValidatorUtils.validateEntity(form);
 
-        String userId = UsSessionUtil.getUserid(form.getSession());
+        String userId = sessionUtil.getUserId(form.getSession());
         if (userId == null){
             return R.error("查询不到此用户");
         }
@@ -354,7 +356,7 @@ public class UsUserController {
 
         ValidatorUtils.validateEntity(form);
         //验证是否登录
-        String userId = UsSessionUtil.getUserid(form.getSession());
+        String userId = sessionUtil.getUserId(form.getSession());
         if (userId == null){
             return R.error("查询不到此用户");
         }
@@ -376,7 +378,7 @@ public class UsUserController {
 
         ValidatorUtils.validateEntity(form);
         //验证是否登录
-        String userId = UsSessionUtil.getUserid(form.getSession());
+        String userId = sessionUtil.getUserId(form.getSession());
         if (userId == null){
             return R.error("查询不到此用户");
         }
@@ -398,7 +400,7 @@ public class UsUserController {
         //表单校验
         ValidatorUtils.validateEntity(form);
 
-        String userId = UsSessionUtil.getUserid(form.getSession());
+        String userId = sessionUtil.getUserId(form.getSession());
         if (userId == null){
             return R.error("查询不到此用户");
         }
@@ -423,7 +425,7 @@ public class UsUserController {
         //表单校验
         ValidatorUtils.validateEntity(form);
 
-        String userId = UsSessionUtil.getUserid(form.getSession());
+        String userId = sessionUtil.getUserId(form.getSession());
         if (userId == null){
             return R.error("查询不到此用户");
         }

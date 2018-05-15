@@ -43,6 +43,8 @@ public class UsTest {
     private TSCategoryService categoryService;
     @Autowired
     private UsAppApiService appApiService;
+    @Autowired
+    private UsSessionUtil sessionUtil;
 
     @Test
     public void test1() {
@@ -89,7 +91,7 @@ public class UsTest {
 
     @Test
     public void test3() {
-        String session = UsSessionUtil.getUserid("3210a0abe5c73c042fb5d520e46a07b3e2aa7de41eae9695b8aeea732954cddb5743d46aaf3dce1c15413c19e880d2ee");
+        String session = sessionUtil.getUserId("3210a0abe5c73c042fb5d520e46a07b3e2aa7de41eae9695b8aeea732954cddb5743d46aaf3dce1c15413c19e880d2ee");
         System.out.println("===========" + session);
     }
 

@@ -39,6 +39,8 @@ public class TMayorLetterController {
     private TInfoService tInfoService;
     @Autowired
     private UsRegionsProService usRegionsProService;
+    @Autowired
+    private UsSessionUtil sessionUtil;
 
 
     /**
@@ -104,7 +106,7 @@ public class TMayorLetterController {
         //表单校验
         ValidatorUtils.validateEntity(form);
 
-        String userId = UsSessionUtil.getUserid(form.getSession());
+        String userId = sessionUtil.getUserId(form.getSession());
         if (userId == null){
             return R.error("查询不到此用户");
         }
@@ -129,7 +131,7 @@ public class TMayorLetterController {
         //表单校验
         ValidatorUtils.validateEntity(form);
 
-        String userId = UsSessionUtil.getUserid(form.getSession());
+        String userId = sessionUtil.getUserId(form.getSession());
         if (userId == null){
             return R.error("查询不到此用户");
         }
@@ -236,7 +238,7 @@ public class TMayorLetterController {
         //表单校验
         ValidatorUtils.validateEntity(form);
 
-        String userId = UsSessionUtil.getUserid(form.getSession());
+        String userId = sessionUtil.getUserId(form.getSession());
         if (userId == null){
             return R.error("查询不到此用户");
         }
@@ -285,7 +287,7 @@ public class TMayorLetterController {
         //表单校验
         ValidatorUtils.validateEntity(form);
 
-        String userId = UsSessionUtil.getUserid(form.getSession());
+        String userId = sessionUtil.getUserId(form.getSession());
         if (userId == null){
             return R.error("查询不到此用户");
         }
@@ -338,7 +340,7 @@ public class TMayorLetterController {
         //表单校验
         ValidatorUtils.validateEntity(form);
 
-        String userId = UsSessionUtil.getUserid(form.getSession());
+        String userId = sessionUtil.getUserId(form.getSession());
         if (userId == null){
             return R.error("查询不到此用户");
         }

@@ -7,6 +7,7 @@ import io.renren.modules.us.util.UsSessionUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.session.SessionException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -19,6 +20,8 @@ import java.nio.charset.StandardCharsets;
  */
 @Component
 public class PermissionInterceptor extends HandlerInterceptorAdapter {
+
+    private UsSessionUtil sessionUtil;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -49,12 +52,17 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter {
         }
         //有权限,请求参数有session
         String session = object.getString("session");
-        String userid = UsSessionUtil.getUserid(session);
-        if (userid.isEmpty()) {
+        String userId = sessionUtil.getUserId(session);
+        if (userId == null) {
             throw new SessionException();
         } else {
             return super.preHandle(request, response, handler);
         }
+    }
+
+    @Autowired
+    public void setSessionUtil(UsSessionUtil sessionUtil) {
+        this.sessionUtil = sessionUtil;
     }
 
 }
