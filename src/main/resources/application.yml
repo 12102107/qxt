@@ -77,3 +77,16 @@ renren:
 #日志
 logging:
   path: C:\Log
+
+#配置
+us :
+ cooperation:
+  weChatOpenIdUrl : https://api.weixin.qq.com/sns/oauth2/access_token?grant_type=authorization_code
+  weChatAppid : wxccfd726d286bca91
+  weChatSecret : 5b09aab1013e54c261373d2fe0f1fe16
+  weChatInfoUrl : https://api.weixin.qq.com/sns/userinfo?lang=zh_CN
+  qqTokenUrl : https://graph.qq.com/oauth2.0/token?grant_type=authorization_code
+  qqClientId : 101474222
+  qqClientSecret : 89b6fd82cd2aedee1c6567ca9d15e0de
+  qqRedirectUri : http://www.dq-city.com/pages/login/login.html
+  qqOpenIdUrl : https://graph.qq.com/oauth2.0/me

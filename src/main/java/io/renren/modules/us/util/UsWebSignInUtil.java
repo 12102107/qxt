@@ -5,6 +5,7 @@ import io.renren.modules.us.param.UsUserCooperationInfoParam;
 import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -16,16 +17,35 @@ import java.io.IOException;
 public class UsWebSignInUtil {
 
     private static final String ERROR_CODE = "errcode";
+
     private Logger logger = LoggerFactory.getLogger(UsWebSignInUtil.class);
-    private String weChatOpenIdUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?grant_type=authorization_code";
-    private String weChatAppid = "wxccfd726d286bca91";
-    private String weChatSecret = "5b09aab1013e54c261373d2fe0f1fe16";
-    private String weChatInfoUrl = "https://api.weixin.qq.com/sns/userinfo?lang=zh_CN";
-    private String qqTokenUrl = "https://graph.qq.com/oauth2.0/token?grant_type=authorization_code";
-    private String qqClientId = "101474222";
-    private String qqClientSecret = "89b6fd82cd2aedee1c6567ca9d15e0de";
-    private String qqRedirectUri = "http://www.dq-city.com/pages/login/login.html";
-    private String qqOpenIdUrl = "https://graph.qq.com/oauth2.0/me";
+
+    @Value("${us.cooperation.weChatOpenIdUrl}")
+    private String weChatOpenIdUrl;
+
+    @Value("${us.cooperation.weChatAppid}")
+    private String weChatAppid;
+
+    @Value("${us.cooperation.weChatSecret}")
+    private String weChatSecret;
+
+    @Value("${us.cooperation.weChatInfoUrl}")
+    private String weChatInfoUrl;
+
+    @Value("${us.cooperation.qqTokenUrl}")
+    private String qqTokenUrl;
+
+    @Value("${us.cooperation.qqClientId}")
+    private String qqClientId;
+
+    @Value("${us.cooperation.qqClientSecret}")
+    private String qqClientSecret;
+
+    @Value("${us.cooperation.qqRedirectUri}")
+    private String qqRedirectUri;
+
+    @Value("${us.cooperation.qqOpenIdUrl}")
+    private String qqOpenIdUrl;
 
     private JSONObject getWeChatOpenId(UsUserCooperationInfoParam infoParam) throws IOException {
         UsOkHttpUtil okHttp = UsOkHttpUtil.getInstance();

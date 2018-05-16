@@ -165,4 +165,11 @@ public class UsWeChatTest {
         System.out.println(UsRandomUtil.getRandom(100000, 999999));
         System.out.println(UsRandomUtil.getRandom(100000, 999999));
     }
+
+    @Test
+    public void test6() throws IOException {
+//        UsUserCooperationInfoParam param = new UsUserCooperationInfoParam();
+//        webSignInUtil.getWeChatOpenId(param);
+    }
+
 }
