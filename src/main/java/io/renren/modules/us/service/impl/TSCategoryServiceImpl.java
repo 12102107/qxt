@@ -3,7 +3,6 @@ package io.renren.modules.us.service.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import io.renren.common.utils.HttpContextUtils;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.common.utils.R;
@@ -15,9 +14,9 @@ import io.renren.modules.us.param.UsPageParam;
 import io.renren.modules.us.service.TSCategoryService;
 import io.renren.modules.us.service.UsResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +28,9 @@ import java.util.Map;
 @Service("tSCategoryService")
 public class TSCategoryServiceImpl extends ServiceImpl<TSCategoryDao, TSCategoryEntity> implements TSCategoryService {
 
+    @Value("${us.icon.path}")
+    private String path;
+
     private UsResourceService resourceService;
 
     @Override
@@ -39,8 +41,9 @@ public class TSCategoryServiceImpl extends ServiceImpl<TSCategoryDao, TSCategory
         map.put("page", pageParam.getPageNo().toString());
         //设置查询条件
         EntityWrapper<TSCategoryEntity> wrapper = new EntityWrapper<>();
-        wrapper.setSqlSelect("id", "code", "name", "icon_id");
+        wrapper.setSqlSelect("id", "code", "name", "icon_id", "order_num");
         wrapper.where("code REGEXP {0}", "^[A]{1}[0-9]{1,}$");
+        wrapper.orderBy("order_num", true);
         //查询数据
         Page<Map<String, Object>> page = this.selectMapsPage(new Query<TSCategoryEntity>(map).getPage(), wrapper);
         return R.ok(new PageUtils(page));
@@ -54,8 +57,9 @@ public class TSCategoryServiceImpl extends ServiceImpl<TSCategoryDao, TSCategory
         map.put("page", childCategoryParam.getPageNo().toString());
         //查询分类数据
         EntityWrapper<TSCategoryEntity> w1 = new EntityWrapper<>();
-        w1.setSqlSelect("id", "code", "name", "icon_id");
+        w1.setSqlSelect("id", "code", "name", "icon_id", "order_num");
         w1.where("parent_code = {0}", childCategoryParam.getCode());
+        w1.orderBy("order_num", true);
         Page<Map<String, Object>> page = this.selectMapsPage(new Query<TSCategoryEntity>(map).getPage(), w1);
         //查询资源数据
         EntityWrapper<UsResourceEntity> w2 = new EntityWrapper<>();
@@ -70,15 +74,15 @@ public class TSCategoryServiceImpl extends ServiceImpl<TSCategoryDao, TSCategory
             }
             i++;
         }
+        w2.orderBy("order_num", true);
         List<UsResourceEntity> resourceList = resourceService.selectList(w2);
         //处理查询数据
-        HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
-        String path = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/jeecg" + "/";
         for (Map<String, Object> m2 : page.getRecords()) {
             String code = m2.get("code").toString();
             List<UsResourceEntity> list = new ArrayList<>();
             for (UsResourceEntity resource : resourceList) {
                 if (resource.getCategoryId().contains(code)) {
+                    //补全icon路径
                     if (resource.getIcon() != null && !resource.getIcon().isEmpty()) {
                         resource.setIcon(path + resource.getIcon());
                     }

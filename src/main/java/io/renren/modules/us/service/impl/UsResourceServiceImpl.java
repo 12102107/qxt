@@ -3,7 +3,6 @@ package io.renren.modules.us.service.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import io.renren.common.utils.HttpContextUtils;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.common.utils.R;
@@ -11,13 +10,11 @@ import io.renren.modules.us.dao.UsResourceDao;
 import io.renren.modules.us.entity.UsResourceEntity;
 import io.renren.modules.us.param.UsResourceParam;
 import io.renren.modules.us.service.UsResourceService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 
 
 /**
@@ -25,6 +22,9 @@ import java.util.Map;
  */
 @Service("usResourceService")
 public class UsResourceServiceImpl extends ServiceImpl<UsResourceDao, UsResourceEntity> implements UsResourceService {
+
+    @Value("${us.icon.path}")
+    private String path;
 
     @Override
     public R list(UsResourceParam resourceParam) {
@@ -37,22 +37,13 @@ public class UsResourceServiceImpl extends ServiceImpl<UsResourceDao, UsResource
         wrapper.where("find_in_set({0},category_id)", resourceParam.getCategory());
         //查询数据
         Page<Map<String, Object>> page = this.selectMapsPage(new Query<UsResourceEntity>(map).getPage(), wrapper);
-
-        List list = page.getRecords();
-
-
-        HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
-        String path = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/jeecg" + "/";
-        for (int j = 0 ;j < list.size(); j++){
-
-            HashMap tr = (HashMap)list.get(j);
-            //存取图片路径
-            if(null != tr.get("icon") && !"".equals(tr.get("icon"))){
-                String ic = tr.get("icon").toString();
-                tr.put("icon",path + ic);
+        //补全icon路径
+        for (Map<String, Object> m : page.getRecords()) {
+            Object obj = m.get("icon");
+            if (obj != null && !obj.equals("")) {
+                m.put("icon", path + obj.toString());
             }
         }
-
         return R.ok(new PageUtils(page));
     }
 

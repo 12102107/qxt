@@ -22,17 +22,26 @@ spring:
             max-request-size: 100MB
             enabled: true
     redis:
-        open: true  # 是否开启redis缓存  true开启   false关闭
+        #是否开启redis缓存  true开启   false关闭
+        open: true
+        #哈尔滨0
+        #大庆1
+        #双鸭山2
         database: 0
         host: localhost
         port: 6379
-        password:       # 密码（默认为空）
-        timeout: 6000  # 连接超时时长（毫秒）
+        password:
+        #连接超时时长（毫秒）
+        timeout: 6000
         pool:
-            max-active: 1000  # 连接池最大连接数（使用负值表示没有限制）
-            max-wait: -1      # 连接池最大阻塞等待时间（使用负值表示没有限制）
-            max-idle: 10      # 连接池中的最大空闲连接
-            min-idle: 5       # 连接池中的最小空闲连接
+            #连接池最大连接数（使用负值表示没有限制）
+            max-active: 1000
+            #连接池最大阻塞等待时间（使用负值表示没有限制）
+            max-wait: -1
+            #连接池中的最大空闲连接
+            max-idle: 10
+            #连接池中的最小空闲连接
+            min-idle: 5
 
 
 #mybatis
@@ -76,17 +85,34 @@ renren:
 
 #日志
 logging:
+  #哈尔滨
+  #大庆 C:\Log_dq
+  #双鸭山 C:\Log_syss
   path: C:\Log
 
 #配置
 us :
- cooperation:
-  weChatOpenIdUrl : https://api.weixin.qq.com/sns/oauth2/access_token?grant_type=authorization_code
-  weChatAppid : wxccfd726d286bca91
-  weChatSecret : 5b09aab1013e54c261373d2fe0f1fe16
-  weChatInfoUrl : https://api.weixin.qq.com/sns/userinfo?lang=zh_CN
-  qqTokenUrl : https://graph.qq.com/oauth2.0/token?grant_type=authorization_code
-  qqClientId : 101474222
-  qqClientSecret : 89b6fd82cd2aedee1c6567ca9d15e0de
-  qqRedirectUri : http://www.dq-city.com/pages/login/login.html
-  qqOpenIdUrl : https://graph.qq.com/oauth2.0/me
+    cooperation:
+        weChatOpenIdUrl : https://api.weixin.qq.com/sns/oauth2/access_token?grant_type=authorization_code
+        #哈尔滨 wx93f27b60fc14fef6
+        #大庆 wxccfd726d286bca91
+        #双鸭山 wx848a9bec78d977be
+        weChatAppid : wxccfd726d286bca91
+        #哈尔滨 0e7f028970e083307cd238ab73803f26
+        #大庆 5b09aab1013e54c261373d2fe0f1fe16
+        #双鸭山 fd3447dd27dbdf32a6cb35575c13f465
+        weChatSecret : 5b09aab1013e54c261373d2fe0f1fe16
+        weChatInfoUrl : https://api.weixin.qq.com/sns/userinfo?lang=zh_CN
+        qqTokenUrl : https://graph.qq.com/oauth2.0/token?grant_type=authorization_code
+        qqClientId : 101474222
+        qqClientSecret : 89b6fd82cd2aedee1c6567ca9d15e0de
+        #哈尔滨
+        #大庆 http://www.dq-city.com/pages/login/login.html
+        #双鸭山 http://www.syss-city.com/pages/login/login.html
+        qqRedirectUri : http://www.dq-city.com/pages/login/login.html
+        qqOpenIdUrl : https://graph.qq.com/oauth2.0/me
+    icon:
+        #哈尔滨
+        #大庆 http://www.dq-city.com/jeecg/
+        #双鸭山 http://www.syss-city.com/jeecg/
+        path : http://www.dq-city.com/jeecg/
