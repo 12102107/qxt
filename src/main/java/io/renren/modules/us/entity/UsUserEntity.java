@@ -1,5 +1,6 @@
 package io.renren.modules.us.entity;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
@@ -17,6 +18,10 @@ import java.util.Date;
 public class UsUserEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+
+	@TableField(exist = false)
+	private  String cardNumber;  //电子卡号
+
 	/**
 	 * id
 	 */
@@ -24,6 +29,8 @@ public class UsUserEntity implements Serializable {
 	private String id;
 
 	private String appid;
+
+
 
 	/**
 	 * 手机号
@@ -361,5 +368,12 @@ public class UsUserEntity implements Serializable {
 
 	public void setuDepartid(String uDepartid) {
 		this.uDepartid = uDepartid;
+	}
+	public String getCardNumber() {
+		return cardNumber;
+	}
+
+	public void setCardNumber(String cardNumber) {
+		this.cardNumber = cardNumber;
 	}
 }

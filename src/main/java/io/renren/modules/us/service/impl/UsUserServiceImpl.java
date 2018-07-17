@@ -9,10 +9,7 @@ import io.renren.modules.us.entity.TSTypeEntity;
 import io.renren.modules.us.entity.UsUserEntity;
 import io.renren.modules.us.entity.UsUserPlantParamEntity;
 import io.renren.modules.us.param.*;
-import io.renren.modules.us.service.TSDepartService;
-import io.renren.modules.us.service.TSTypeService;
-import io.renren.modules.us.service.UsUserPlantParamService;
-import io.renren.modules.us.service.UsUserService;
+import io.renren.modules.us.service.*;
 import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsSessionUtil;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -38,6 +35,8 @@ import java.util.Map;
 public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> implements UsUserService {
     @Autowired
     private TSDepartService tSDepartService;
+    @Autowired
+    private UsElectronicCardNumberService usElectronicCardNumber;
     @Autowired
     private TSTypeService tSTypeService;
     @Autowired
@@ -228,6 +227,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
      * @return
      */
     @Override
+    @Transactional
     public UsUserEntity realnameCert(UsUserEntity user, UsUserRealCertParam form){
 
         user.setUpdateDate(new Date());
@@ -248,6 +248,10 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         user.setAppid(form.getAppid());
 
         this.updateById(user);
+        // 实名认证成功后返回电子卡号
+        String cardnumber=usElectronicCardNumber.electronicCardNumber(user.getId());
+        user.setCardNumber(cardnumber);
+
         return user;
     }
 
