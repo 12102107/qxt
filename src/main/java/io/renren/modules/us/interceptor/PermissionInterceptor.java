@@ -44,7 +44,7 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter {
         Integer i = appApiService.countId(appid, url);
         //没有权限
         if (i == null || i != 1) {
-        	return super.preHandle(request, response, handler);
+            throw new AuthorizationException();
         }
         //有权限,请求参数没有session
         if (!object.containsKey("session")) {
