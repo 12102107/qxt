@@ -4,6 +4,7 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.us.entity.UsNoticeEntity;
+import io.renren.modules.us.param.UsCompanyProfile;
 import io.renren.modules.us.param.UsNoticeDetailPram;
 import io.renren.modules.us.param.UsNoticePram;
 import io.renren.modules.us.service.UsNoticeService;
@@ -128,5 +129,36 @@ public class UsNoticeController {
         return R.ok(tl);
 
     }
+    @PostMapping("companyProfile")
+    @ApiOperation("公司简介")
+    public R companyProfile(@RequestBody UsCompanyProfile form){
+        //表单校验
+        ValidatorUtils.validateEntity(form);
+
+        UsNoticeEntity tl = new UsNoticeEntity();
+
+        if (form.getNoticeType()!=null){
+            tl = usNoticeService.findByNoticeType(form.getNoticeType());
+        }
+
+        return R.ok(tl);
+
+    }
+    @PostMapping("userProtocol")
+    @ApiOperation("用户协议")
+    public R userProtocol(@RequestBody UsCompanyProfile form){
+        //表单校验
+        ValidatorUtils.validateEntity(form);
+
+        UsNoticeEntity tl = new UsNoticeEntity();
+
+        if (form.getNoticeType()!=null){
+            tl = usNoticeService.findByNoticeType(form.getNoticeType());
+        }
+
+        return R.ok(tl);
+
+    }
+
 
 }

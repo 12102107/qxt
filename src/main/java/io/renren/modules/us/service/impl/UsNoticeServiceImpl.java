@@ -8,6 +8,7 @@ import io.renren.common.utils.Query;
 import io.renren.modules.us.dao.UsNoticeDao;
 import io.renren.modules.us.entity.UsNoticeEntity;
 import io.renren.modules.us.service.UsNoticeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -15,6 +16,8 @@ import java.util.Map;
 
 @Service("usNoticeService")
 public class UsNoticeServiceImpl extends ServiceImpl<UsNoticeDao, UsNoticeEntity> implements UsNoticeService {
+      @Autowired
+      private UsNoticeDao usNoticeDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -29,6 +32,11 @@ public class UsNoticeServiceImpl extends ServiceImpl<UsNoticeDao, UsNoticeEntity
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public UsNoticeEntity findByNoticeType(String noticeType) {
+        return usNoticeDao.findByNoticeType(noticeType);
     }
 
 }

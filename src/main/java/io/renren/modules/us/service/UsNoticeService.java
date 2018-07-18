@@ -16,5 +16,8 @@ import java.util.Map;
 public interface UsNoticeService extends IService<UsNoticeEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    //查询公司简介
+    UsNoticeEntity findByNoticeType(String noticeType);
 }
 
