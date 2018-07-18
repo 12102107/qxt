@@ -410,10 +410,12 @@ public class UsUserController {
             return R.error("查询不到此用户");
         }
 
-        usUserService.realnameCert(user,form);
+        UsUserEntity usUserEntity = usUserService.realnameCert(user, form);
+        String cardNumber = usUserEntity.getCardNumber();
 
         //返回user隐藏部分字段
         Map<String, Object>  user_ = usUserService.usHidden(user.getId());
+        user_.put("cardNumber",cardNumber);
         return R.ok(user_);
     }
 
