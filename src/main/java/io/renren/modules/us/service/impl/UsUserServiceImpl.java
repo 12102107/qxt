@@ -96,7 +96,9 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
             //返回user隐藏部分字段
             Map<String, Object> user_ = this.usHidden(entity.getId());
-
+            // 实名认证成功后返回电子卡号
+            String cardnumber=usElectronicCardNumber.electronicCardNumber(entity.getId());
+            user_.put("cardnumber",cardnumber);
             return R.ok(user_);
         } else {
             return R.error();
