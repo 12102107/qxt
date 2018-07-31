@@ -3,7 +3,6 @@ package io.renren.modules.us.service;
 import com.baomidou.mybatisplus.service.IService;
 import io.renren.common.utils.R;
 import io.renren.modules.us.entity.UsResourceEntity;
-import io.renren.modules.us.param.UsResourceListParam;
 import io.renren.modules.us.param.UsResourceParam;
 
 /**
@@ -12,7 +11,7 @@ import io.renren.modules.us.param.UsResourceParam;
  */
 public interface UsResourceService extends IService<UsResourceEntity> {
 
-    R list(UsResourceListParam resourceParam);
+    R list(UsResourceParam resourceParam);
 
 }
 

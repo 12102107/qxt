@@ -106,7 +106,6 @@ us :
         qqTokenUrl : https://graph.qq.com/oauth2.0/token?grant_type=authorization_code
         qqClientId : 101474222
         qqClientSecret : 89b6fd82cd2aedee1c6567ca9d15e0de
-        cardNumber : 622623
         #哈尔滨
         #大庆 http://www.dq-city.com/pages/login/login.html
         #双鸭山 http://www.syss-city.com/pages/login/login.html
