@@ -23,6 +23,8 @@ public class RedisUtils {
     private static final long NOT_EXPIRE = -1;
     //默认过期时长,单位:秒 60*60*24
     private static final long DEFAULT_EXPIRE = 86400;
+    //过期时长,单位:秒 3600
+    private static final long DEFAULT_EXPIRE_TIME = 3600;
 
     private static final Gson gson = new Gson();
 
@@ -65,6 +67,9 @@ public class RedisUtils {
 
     public void set(String key, Object value) {
         set(key, value, DEFAULT_EXPIRE);
+    }
+    public void setTimes(String key, Object value) {
+        set(key, value, DEFAULT_EXPIRE_TIME);
     }
 
     public boolean hasKey(String key) {
