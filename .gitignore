@@ -2,3 +2,8 @@
 /renren-fast.iml
 target
 /classes
+/.apt_generated/
+/.classpath
+.settings
+/.factorypath
+/.project
