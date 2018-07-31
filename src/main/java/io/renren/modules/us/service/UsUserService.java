@@ -34,5 +34,7 @@ public interface UsUserService extends IService<UsUserEntity> {
     R uploadPortrait(UsUserEntity user, UsUserPortraiParam form);
 
     public Map<String, Object>  usHidden (String id);
+
+	R eidLogin(UsSmsParam form);
 }
 

@@ -19,6 +19,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -35,6 +36,7 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/user")
 @Api("基础接口")
+
 public class UsUserController {
     @Autowired
     private UsUserService usUserService;
@@ -214,6 +216,7 @@ public class UsUserController {
     /**
      * 注册
      */
+    
     @PostMapping("register")
     @ApiOperation("注册")
     public R register(@RequestBody UsRegisterParam form ) throws ParseException {
@@ -249,6 +252,19 @@ public class UsUserController {
         ValidatorUtils.validateEntity(form);
         return usUserService.signIn(form);
     }
+    
+    /**
+     * 登录
+     */
+    @Scope("prototype")
+    @PostMapping("eidLogin")
+    @ApiOperation("登录")
+    public R eidLogin(@RequestBody UsSmsParam form) {
+        //表单校验
+        ValidatorUtils.validateEntity(form);
+        return usUserService.eidLogin(form);
+    }
+
 
     @PostMapping("modifypwd")
     @ApiOperation("修改密码")

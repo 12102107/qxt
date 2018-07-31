@@ -3,6 +3,13 @@ package io.renren.modules.us.service.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.eidlink.sdk.EidlinkService;
+import com.eidlink.sdk.pojo.request.MOMTRealNameParam;
+import com.eidlink.sdk.pojo.request.base.MOMTRealNameParameters;
+import com.eidlink.sdk.pojo.request.base.RealName;
+import com.eidlink.sdk.pojo.result.CommonResult;
+
+
 import io.renren.common.utils.*;
 import io.renren.modules.us.dao.UsUserDao;
 import io.renren.modules.us.entity.TSTypeEntity;
@@ -10,11 +17,15 @@ import io.renren.modules.us.entity.UsUserEntity;
 import io.renren.modules.us.entity.UsUserPlantParamEntity;
 import io.renren.modules.us.param.*;
 import io.renren.modules.us.service.*;
+import io.renren.modules.us.util.Base64Util;
 import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsSessionUtil;
+import net.sf.json.JSONObject;
+
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sun.misc.BASE64Decoder;
@@ -28,6 +39,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 
 
@@ -44,6 +56,15 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
     public static final int INITIALIZE_USER_STATUS = 0;//注册后初始状态
     public static final int REAL_USER_STATUS = 1;//实名状态
 
+    @Value("${us.cooperation.content}")
+    private String content;
+
+    @Value("${us.cooperation.displayed}")
+    private String displayed;
+    
+    @Value("${us.cooperation.returnUrl}")
+    private String url;
+    
     private   static final String   UPLOADImg  = "\\apache-tomcat-8.5.24\\webapps\\hmPhotos\\upload";
     private   static final String  DIRTEMP = "\\apache-tomcat-8.5.24\\webapps\\hmPhotos\\upload";
 
@@ -375,4 +396,75 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             return R.error("上传的图片数据为空");
         }
     }
+
+	/* 
+	 * eid注册验证
+	 */
+	@Override
+	public R eidLogin(UsSmsParam form) {
+		// TODO Auto-generated method stub
+		RedisUtils redis = new RedisUtils();
+		//查询用户信息
+		EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
+        wrapper.setEntity(new UsUserEntity());
+        wrapper.where("mobile_phone={0}", form.getMobile());
+        List<UsUserEntity> list = this.selectList(wrapper);
+        
+		if(list.isEmpty()){
+			return R.error("用户不存在");
+		}else{
+			for(UsUserEntity us:list){
+				String mobile = us.getMobilePhone();//手机号;
+				String name = us.getRealname();//姓名; 
+				String idnum = us.getCitizenNo();//"14070019770130819X";
+				SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
+				String datetime = df.format(new Date());// new Date()为获取当前系统时间
+				String seqno = UUID.randomUUID().toString().replaceAll("-", "");//业务id
+				String dataToSign = Base64Util.encodeData(datetime+":"+seqno+":"+content);//"MjAxNTA0MDExMTAzMzE6MTAwMDAwMDE6aGVsbG9UZXN0";//20150401110331:10000001:helloTest
+				String display = Base64Util.encodeData(displayed);//签名
+				String returnUrl = url+"?eid="+seqno;//异步接收路径
+				
+				RealName realName = new RealName(name, idnum);
+				MOMTRealNameParameters pkiParam = new MOMTRealNameParameters(mobile, dataToSign, display);
+				MOMTRealNameParam reqParam = new MOMTRealNameParam(pkiParam, realName);
+				reqParam.setReturnUrl(returnUrl);
+				String msg = "";
+				CommonResult result = EidlinkService.doPost(reqParam);
+				if(result.getResult().equals("00")){//eid调取成功
+					for(int i=0;i<6;i++){//循环获取redis中数据，根据业务id,如果没有数据10s一次，一共循环一分钟
+						if(redis.hasKey(seqno)){
+							String value = redis.get(seqno);
+							JSONObject json = JSONObject.fromObject(value);
+							if(json.get("result").equals("00")){
+								
+								us.setUpdateDate(new Date());
+								String session = UsSessionUtil.generateSession();
+								us.setSession(session);
+								us.setAppid(form.getAppid());
+								this.updateById(us);
+								
+								msg = "验证成功";
+								break;
+							}else{
+								msg = "验证失败";
+								break;
+							}
+						}else{
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					}
+					return R.ok(msg);
+				}else{
+					return R.error("验证失败");
+				}
+			}
+		}
+	
+	  return null;
+	}
 }

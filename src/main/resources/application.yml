@@ -112,8 +112,13 @@ us :
         #双鸭山 http://www.syss-city.com/pages/login/login.html
         qqRedirectUri : http://www.dq-city.com/pages/login/login.html
         qqOpenIdUrl : https://graph.qq.com/oauth2.0/me
+        
     icon:
         #哈尔滨
         #大庆 http://www.dq-city.com/jeecg/
         #双鸭山 http://www.syss-city.com/jeecg/
         path : http://www.dq-city.com/jeecg/
+    eid:
+      content : eidLogin
+      displayed: 注册
+      returnUrl: http://www.dq-city.com/hm/api/meth/callback
