@@ -37,6 +37,7 @@ import java.util.*;
 
 @Service("usUserService")
 public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> implements UsUserService {
+	private RedisUtils redisUtil;
     @Autowired
     private TSDepartService tSDepartService;
     @Autowired
@@ -393,7 +394,6 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
     @Override
     public R eidLogin(UsSmsParam form) {
         // TODO Auto-generated method stub
-        RedisUtils redis = new RedisUtils();
         //查询用户信息
         EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
         wrapper.setEntity(new UsUserEntity());
@@ -422,8 +422,8 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
                 CommonResult result = EidlinkService.doPost(reqParam);
                 if(result.getResult().equals("00")){//eid调取成功
                     for(int i=0;i<6;i++){//循环获取redis中数据，根据业务id,如果没有数据10s一次，一共循环一分钟
-                        if(redis.hasKey(seqno)){
-                            String value = redis.get(seqno);
+                        if(redisUtil.hasKey(seqno)){
+                            String value = redisUtil.get(seqno);
                             JSONObject json = JSONObject.fromObject(value);
                             if(json.get("result").equals("00")){
 
@@ -475,6 +475,11 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             }
 
         }
+    }
+
+    @Autowired
+    public void setRedisUtil(RedisUtils redisUtil) {
+        this.redisUtil = redisUtil;
     }
 
 }
