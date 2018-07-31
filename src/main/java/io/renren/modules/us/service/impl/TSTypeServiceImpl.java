@@ -7,7 +7,6 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.modules.us.dao.TSTypeDao;
 import io.renren.modules.us.entity.TSTypeEntity;
-import io.renren.modules.us.entity.UsUserEntity;
 import io.renren.modules.us.service.TSTypeService;
 import io.renren.modules.us.service.TSTypegroupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,5 +70,4 @@ public class TSTypeServiceImpl extends ServiceImpl<TSTypeDao, TSTypeEntity> impl
         List<TSTypeEntity> list = this.selectList(wrapper);
         return list;
     }
-    
 }

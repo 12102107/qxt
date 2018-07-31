@@ -30,7 +30,7 @@ public class UsElectronicCardNumberServiceImpl extends ServiceImpl<UsElectronicC
     @Override
     public String electronicCardNumber(String uid) {
 
-        StringBuffer sb=new StringBuffer("622623");
+        StringBuffer sb=new StringBuffer(cardNumber);
         //生成12位整数
         String substring = getCardNumbers();
         sb.append(substring);
@@ -50,9 +50,9 @@ public class UsElectronicCardNumberServiceImpl extends ServiceImpl<UsElectronicC
     
     public synchronized  String getCardNumbers (){
         Calendar calendar = Calendar.getInstance();
-        long cardNumber = calendar.getTime().getTime();
+        long cardNumbers = calendar.getTime().getTime();
 //        long card=cardNumber+1L;
-        String s = String.valueOf(cardNumber);
+        String s = String.valueOf(cardNumbers);
         //截取掉前一位
         String substring = s.substring(1);
 

@@ -23,6 +23,5 @@ public interface TSTypeService extends IService<TSTypeEntity> {
 
     //查询某个数据字典列表
     List<TSTypeEntity> queryList(String typegroupcode);
-  
 }
 

@@ -21,5 +21,4 @@ public class RenrenApplication extends SpringBootServletInitializer {
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(RenrenApplication.class);
 	}
-	
 }
