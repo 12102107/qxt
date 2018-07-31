@@ -34,30 +34,39 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter {
             return true;
         }
         String requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
-        JSONObject object = JSONObject.parseObject(requestBody);
-        if (!object.containsKey("appid")) {
-            throw new AuthorizationException();
-        }
-        String appid = object.getString("appid");
         String url = request.getServletPath();
-        UsAppApiService appApiService = (UsAppApiService) SpringContextUtils.getBean("usAppApiService");
-        Integer i = appApiService.countId(appid, url);
-        //没有权限
-        if (i == null || i != 1) {
-            throw new AuthorizationException();
+        System.out.println("url=="+url);
+        if(!url.contains("/api/meth/callback")){
+	        JSONObject object = JSONObject.parseObject(requestBody);
+	        if (!object.containsKey("appid")) {
+	            throw new AuthorizationException();
+	        }
+       
+        	String appid = object.getString("appid");
+        	UsAppApiService appApiService = (UsAppApiService) SpringContextUtils.getBean("usAppApiService");
+        	Integer i = appApiService.countId(appid, url);
+       
+        	//没有权限
+            if (i == null || i != 1) {
+                throw new AuthorizationException();
+            }
+            //有权限,请求参数没有session
+            if (!object.containsKey("session")) {
+                return super.preHandle(request, response, handler);
+            }
+            //有权限,请求参数有session
+            String session = object.getString("session");
+            String userId = sessionUtil.getUserId(session);
+            if (userId == null) {
+                throw new SessionException();
+            } else {
+                return super.preHandle(request, response, handler);
+            }
+        }else{
+        	return super.preHandle(request, response, handler);
         }
-        //有权限,请求参数没有session
-        if (!object.containsKey("session")) {
-            return super.preHandle(request, response, handler);
-        }
-        //有权限,请求参数有session
-        String session = object.getString("session");
-        String userId = sessionUtil.getUserId(session);
-        if (userId == null) {
-            throw new SessionException();
-        } else {
-            return super.preHandle(request, response, handler);
-        }
+        
+       
     }
 
     @Autowired

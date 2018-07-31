@@ -426,7 +426,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
                             String value = redisUtil.get(seqno);
                             JSONObject json = JSONObject.fromObject(value);
                             if(json.get("result").equals("00")){
-
+System.out.println("us======="+us);
                                 us.setUpdateDate(new Date());
                                 String session = UsSessionUtil.generateSession();
                                 us.setSession(session);
@@ -434,6 +434,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
                                 this.updateById(us);
 
                                 msg = "验证成功";
+                           
                                 break;
                             }else{
                                 msg = "验证失败";
@@ -441,12 +442,16 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
                             }
                         }else{
                             try {
-                                Thread.sleep(1000);
+                                Thread.sleep(10000);
                             } catch (InterruptedException e) {
                                 // TODO Auto-generated catch block
                                 e.printStackTrace();
                             }
                         }
+                    }
+                    System.out.println("msg======="+msg);   
+                    if(msg.equals("")){
+                    	msg = "验证失败";
                     }
                     return R.ok(msg);
                 }else{

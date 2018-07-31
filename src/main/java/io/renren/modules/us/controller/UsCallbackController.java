@@ -28,10 +28,10 @@ import java.util.Date;
 @RequestMapping("/api/meth")
 @Api("回调函数接口")
 public class UsCallbackController {
-    @Autowired
+    
     private RedisUtils redisUtils;
     
-    @GetMapping("callback")
+    @RequestMapping("callback")
     @ApiOperation("回调函数接口")
     public void getUrl(HttpServletRequest request) {
         try {
@@ -52,6 +52,10 @@ public class UsCallbackController {
             e.printStackTrace();
         }
 
+    }
+    @Autowired
+    public void setRedisUtil(RedisUtils redisUtils) {
+        this.redisUtils = redisUtils;
     }
 
 
