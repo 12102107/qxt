@@ -5,7 +5,6 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.modules.us.entity.UsUserEntity;
 import io.renren.modules.us.param.*;
-
 import java.util.Map;
 
 /**
@@ -34,5 +33,9 @@ public interface UsUserService extends IService<UsUserEntity> {
     R uploadPortrait(UsUserEntity user, UsUserPortraiParam form);
 
     public Map<String, Object>  usHidden (String id);
+
+	R queryMobile(String id);
+
+
 }
 

@@ -36,5 +36,10 @@ public class UsModifypwdParam extends UsSessionParam{
         this.newPassword = newPassword;
     }
 
+	public String getSession() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

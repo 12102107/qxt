@@ -443,10 +443,16 @@ public class UsUserController {
 
     }
 
+ 
+    @PostMapping("eID")
+    @ApiOperation("eID认证")
+    public R eID(@RequestBody UseSessionParam session){
+        
 
-
-
-
+        R r = usUserService.queryMobile(sessionUtil.getUserId(session.getSession()));
+		return r;
+  
+    }
 
 
 }

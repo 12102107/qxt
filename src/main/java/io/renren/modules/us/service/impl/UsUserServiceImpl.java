@@ -12,6 +12,8 @@ import io.renren.modules.us.param.*;
 import io.renren.modules.us.service.*;
 import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsSessionUtil;
+import io.swagger.models.auth.In;
+
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -373,4 +375,24 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             return R.error("上传的图片数据为空");
         }
     }
+
+	@Override
+	public R queryMobile(String  id) {
+		EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
+        wrapper.setEntity(new UsUserEntity());
+        wrapper.where("id={0}", id);
+        List<UsUserEntity> list = this.selectList(wrapper);
+
+        if (list.isEmpty()) {
+            return R.error("用户不存在");
+        } else{
+        	if (list.get(0).getStatus().equals(2)) {
+        		return R.ok("用户通过认证");
+			}else {
+				return R.ok("用户通过不认证");
+			}
+            
+        }
+    }
+	
 }
