@@ -403,8 +403,12 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         if(list.isEmpty()){
             return R.error("用户不存在");
         }else{
-            for(UsUserEntity us:list){
-                String mobile = us.getMobilePhone();//手机号;
+System.out.println("list======="+list.size());
+        	UsUserEntity us = list.get(0);
+           // for(UsUserEntity us:list){
+        	if(!redisUtil.hasKey("phone"+us.getMobilePhone())){
+        		redisUtil.setTimes("phone"+us.getMobilePhone(), us.getMobilePhone());
+        		String mobile = us.getMobilePhone();//手机号;
                 String name = us.getRealname();//姓名;
                 String idnum = us.getCitizenNo();//"14070019770130819X";
                 SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
@@ -449,18 +453,24 @@ System.out.println("us======="+us);
                             }
                         }
                     }
-                    System.out.println("msg======="+msg);   
+System.out.println("msg======="+msg);   
                     if(msg.equals("")){
                     	msg = "验证失败";
                     }
+                    redisUtil.delete("phone"+us.getMobilePhone());
                     return R.ok(msg);
                 }else{
+                	 redisUtil.delete("phone"+us.getMobilePhone());
                     return R.error("验证失败");
                 }
+        	}else{
+        		return R.error("重复提交");
+        	}
+        	
+                
             }
-        }
+        //}
 
-        return null;
     }
 
     @Override
