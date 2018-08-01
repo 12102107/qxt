@@ -463,8 +463,8 @@ public class UsUserController {
     @Scope("prototype")
     @PostMapping("eidAuth")
     @ApiOperation("session获取公积金")
-    public R getFund(@RequestBody UsSessionParam session) {
-        R r = usUserService.getFund(sessionUtil.getUserId(session.getSession()));
+    public R getFund(@RequestBody UsSessionParam session,@RequestBody UsSmsParam form) {
+        R r = usUserService.getFund(sessionUtil.getUserId(session.getSession()),form);
         return r;
     }
 

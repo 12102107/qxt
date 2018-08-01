@@ -111,6 +111,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             // 实名认证成功后返回电子卡号
             String cardnumber=usElectronicCardNumber.electronicCardNumber(entity.getId());
             user_.put("cardnumber",cardnumber);
+            user_.put("loginStatus", "0");//普通登陆状态
             return R.ok(user_);
         } else {
             return R.error();
@@ -401,7 +402,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         List<UsUserEntity> list = this.selectList(wrapper);
 
         String appid = form.getAppid();
-        Map map = getEid(list,appid);
+        Map map = getEid(list,appid,"1");
         if(!map.isEmpty()){
         	String msg = map.get("message").toString();
         	if(map.get("status").equals("0")){
@@ -420,7 +421,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
      * @param appid
      * @return
      */
-    private Map getEid(List<UsUserEntity> list,String appid){
+    private Map getEid(List<UsUserEntity> list,String appid,String status){
     	Map map = new HashMap();
     	String session = "";
         if(list.isEmpty()){
@@ -429,7 +430,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         }else{
 System.out.println("list======="+list.size());
         	UsUserEntity us = list.get(0);
-        	if(!appid.equals("")){
+        	if(!status.equals("")){
 				us.setUpdateDate(new Date());
                 session = UsSessionUtil.generateSession();
                 us.setSession(session);
@@ -440,6 +441,7 @@ System.out.println("list======="+list.size());
                 // 实名认证成功后返回电子卡号
                 String cardnumber=usElectronicCardNumber.electronicCardNumber(us.getId());
                 user_.put("cardnumber",cardnumber);
+                user_.put("loginStatus", "1");//eid登陆状态
                 map.put("user_", user_);
 			}
         	
@@ -544,26 +546,28 @@ System.out.println("msg======="+msg);
 	 * session获取公积金信息
 	 */
 	@Override
-	public R getFund(String id) {
+	public R getFund(String id,UsSmsParam form) {
 		// TODO Auto-generated method stub
 		 Map newMap = new HashMap();
 		EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
         wrapper.setEntity(new UsUserEntity());
         wrapper.where("id={0}", id);
         List<UsUserEntity> list = this.selectList(wrapper);
-        Map map = getEid(list,"");
+        Map map = getEid(list,form.getAppid(),"");
        
         if(!map.isEmpty()){
         	String msg = map.get("message").toString();
         	if(map.get("status").equals("0")&&!list.isEmpty()){
         		newMap.put("realname",list.get(0).getRealname());
         		newMap.put("citizen_no", list.get(0).getCitizenNo());
+        		R r = R.ok(newMap);
+System.out.println("成功输出======="+r.toString());         		
         		return R.ok(newMap);
         	}else{
         		return R.error(500,msg,"");
         	}
         }
-        return R.error(500,"信息错误","");
+        return R.error(500,"系统错误，请稍后重试","");
 	}
 
 }
