@@ -400,11 +400,49 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         wrapper.where("mobile_phone={0}", form.getMobile());
         List<UsUserEntity> list = this.selectList(wrapper);
 
+        String appid = form.getAppid();
+        Map map = getEid(list,appid);
+        if(!map.isEmpty()){
+        	String msg = map.get("message").toString();
+        	if(map.get("status").equals("0")){
+        		return R.ok(map.get("user_"));
+        	}else{
+        		return R.error(msg);
+        	}
+        }
+        return null;
+
+    }
+    
+    /**
+     * eid调取公共方法
+     * @param list
+     * @param appid
+     * @return
+     */
+    private Map getEid(List<UsUserEntity> list,String appid){
+    	Map map = new HashMap();
+    	String session = "";
         if(list.isEmpty()){
-            return R.error("用户不存在");
+        	 map.put("message", "用户不存在");
+             map.put("status", "1");//0成功 1失败
         }else{
 System.out.println("list======="+list.size());
         	UsUserEntity us = list.get(0);
+        	if(!appid.equals("")){
+				us.setUpdateDate(new Date());
+                session = UsSessionUtil.generateSession();
+                us.setSession(session);
+                us.setAppid(appid);
+                this.updateById(us);
+                
+                Map<String, Object> user_ = this.usHidden(us.getId());
+                // 实名认证成功后返回电子卡号
+                String cardnumber=usElectronicCardNumber.electronicCardNumber(us.getId());
+                user_.put("cardnumber",cardnumber);
+                map.put("user_", user_);
+			}
+        	
            // for(UsUserEntity us:list){
         	if(!redisUtil.hasKey("phone"+us.getMobilePhone())){
         		redisUtil.setTimes("phone"+us.getMobilePhone(), us.getMobilePhone());
@@ -425,17 +463,12 @@ System.out.println("list======="+list.size());
                 String msg = "";
                 CommonResult result = EidlinkService.doPost(reqParam);
                 if(result.getResult().equals("00")){//eid调取成功
-                    for(int i=0;i<6;i++){//循环获取redis中数据，根据业务id,如果没有数据10s一次，一共循环一分钟
+                    for(int i=0;i<12;i++){//循环获取redis中数据，根据业务id,如果没有数据10s一次，一共循环一分钟
                         if(redisUtil.hasKey(seqno)){
                             String value = redisUtil.get(seqno);
                             JSONObject json = JSONObject.fromObject(value);
-                            if(json.get("result").equals("00")){
+                            if(json.get("result").equals("00")&&json.get("result_detail").equals("0000000")){
 System.out.println("us======="+us);
-                                us.setUpdateDate(new Date());
-                                String session = UsSessionUtil.generateSession();
-                                us.setSession(session);
-                                us.setAppid(form.getAppid());
-                                this.updateById(us);
 
                                 msg = "验证成功";
                            
@@ -458,19 +491,29 @@ System.out.println("msg======="+msg);
                     	msg = "验证失败";
                     }
                     redisUtil.delete("phone"+us.getMobilePhone());
-                    return R.ok(msg);
+                    map.put("message", msg);//0成功 1失败
+                    map.put("status", "0");//0成功 1失败
+                    
                 }else{
                 	 redisUtil.delete("phone"+us.getMobilePhone());
-                    return R.error("验证失败");
+                	 map.put("message", "验证失败");
+                     map.put("status", "1");//0成功 1失败
                 }
         	}else{
-        		return R.error("重复提交");
+        		try {
+					Thread.sleep(40000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        		map.put("message", "重复提交");
+                map.put("status", "1");//0成功 1失败
+        		
         	}
         	
                 
-            }
-        //}
-
+           }
+        return map;
     }
 
     @Override
@@ -496,5 +539,31 @@ System.out.println("msg======="+msg);
     public void setRedisUtil(RedisUtils redisUtil) {
         this.redisUtil = redisUtil;
     }
+
+	/* 
+	 * session获取公积金信息
+	 */
+	@Override
+	public R getFund(String id) {
+		// TODO Auto-generated method stub
+		 Map newMap = new HashMap();
+		EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
+        wrapper.setEntity(new UsUserEntity());
+        wrapper.where("id={0}", id);
+        List<UsUserEntity> list = this.selectList(wrapper);
+        Map map = getEid(list,"");
+       
+        if(!map.isEmpty()){
+        	String msg = map.get("message").toString();
+        	if(map.get("status").equals("0")&&!list.isEmpty()){
+        		newMap.put("realname",list.get(0).getRealname());
+        		newMap.put("citizen_no", list.get(0).getCitizenNo());
+        		return R.ok(newMap);
+        	}else{
+        		return R.error(500,msg,"");
+        	}
+        }
+        return R.error(500,"信息错误","");
+	}
 
 }

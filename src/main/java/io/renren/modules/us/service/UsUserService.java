@@ -38,5 +38,7 @@ public interface UsUserService extends IService<UsUserEntity> {
     public R eidLogin(UsSmsParam form);
 
     R queryMobile(String id);
+
+	R getFund(String userId);
 }
 
