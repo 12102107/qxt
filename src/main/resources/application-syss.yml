@@ -11,7 +11,7 @@ spring:
   redis:
     #是否开启redis缓存  true开启   false关闭
     open: true
-    database: 0
+    database: 2
     host: localhost
     port: 6379
     password:
@@ -31,11 +31,11 @@ spring:
     driverClassName: com.mysql.jdbc.Driver
     druid:
       first:  #数据源1
-        url: jdbc:mysql://221.207.236.225:3306/jeecg?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+        url: jdbc:mysql://221.207.236.225:3306/jeecg_syss?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
         username: us
         password: 12345
       second:  #数据源2
-        url: jdbc:mysql://221.207.236.225:3306/jeecg?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+        url: jdbc:mysql://221.207.236.225:3306/jeecg_syss?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
         username: us
         password: 12345
       initial-size: 10
@@ -115,24 +115,24 @@ renren:
 
 #日志
 logging:
-  path: C:\Log
+  path: C:\Log_syss
 
 #配置
 us:
   cooperation:
     weChatOpenIdUrl: https://api.weixin.qq.com/sns/oauth2/access_token?grant_type=authorization_code
-    weChatAppid: wxccfd726d286bca91
-    weChatSecret: 5b09aab1013e54c261373d2fe0f1fe16
+    weChatAppid: wx848a9bec78d977be
+    weChatSecret: fd3447dd27dbdf32a6cb35575c13f465
     weChatInfoUrl: https://api.weixin.qq.com/sns/userinfo?lang=zh_CN
     qqTokenUrl: https://graph.qq.com/oauth2.0/token?grant_type=authorization_code
     qqClientId: 101474222
     qqClientSecret: 89b6fd82cd2aedee1c6567ca9d15e0de
     cardNumber: 622623
-    qqRedirectUri: http://www.dq-city.com/pages/login/login.html
+    qqRedirectUri: http://www.syss-city.com/pages/login/login.html
     qqOpenIdUrl: https://graph.qq.com/oauth2.0/me
   icon:
-    path: http://www.dq-city.com/jeecg/
+    path: http://www.syss-city.com/jeecg/
   eid:
     content: eidLogin
     displayed: 注册
-    returnUrl: http://www.dq-city.com/hm/api/meth/callback
+    returnUrl: http://www.syss-city.com/hm/api/meth/callback

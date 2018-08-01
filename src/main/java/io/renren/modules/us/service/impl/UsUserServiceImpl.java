@@ -486,7 +486,7 @@ System.out.println("msg======="+msg);
             if (list.get(0).getStatus().equals(2)) {
                 return R.ok("用户通过认证");
             }else {
-                return R.ok("用户通过不认证");
+                return R.ok("用户认证失败");
             }
 
         }
