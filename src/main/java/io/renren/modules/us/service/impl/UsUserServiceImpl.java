@@ -465,7 +465,7 @@ System.out.println("list======="+list.size());
                 String msg = "";
                 CommonResult result = EidlinkService.doPost(reqParam);
                 if(result.getResult().equals("00")){//eid调取成功
-                    for(int i=0;i<12;i++){//循环获取redis中数据，根据业务id,如果没有数据10s一次，一共循环一分钟
+                    for(int i=0;i<20;i++){//循环获取redis中数据，根据业务id,如果没有数据5s一次，一共循环100s
                         if(redisUtil.hasKey(seqno)){
                             String value = redisUtil.get(seqno);
                             JSONObject json = JSONObject.fromObject(value);
@@ -481,7 +481,7 @@ System.out.println("us======="+us);
                             }
                         }else{
                             try {
-                                Thread.sleep(10000);
+                                Thread.sleep(5000);
                             } catch (InterruptedException e) {
                                 // TODO Auto-generated catch block
                                 e.printStackTrace();
@@ -546,7 +546,7 @@ System.out.println("msg======="+msg);
 	 * session获取公积金信息
 	 */
 	@Override
-	public R getFund(String id,UsSmsParam form) {
+	public R getFund(String id,UsEidParam form) {
 		// TODO Auto-generated method stub
 		 Map newMap = new HashMap();
 		EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
