@@ -116,6 +116,12 @@ public class UsUserEntity implements Serializable {
 	 * EID认证等级
 	 */
 	private Integer eidLevel;
+	
+	/**
+	 * 登陆方式 0普通登陆 1 eid登陆
+	 */
+	@TableField(exist = false)
+	private String loginStatus;
 
 	/**
 	 * 设置：id
@@ -387,5 +393,11 @@ public class UsUserEntity implements Serializable {
 
 	public void setEidLevel(Integer eidLevel) {
 		this.eidLevel = eidLevel;
+	}
+	public String getLoginStatus() {
+		return loginStatus;
+	}
+	public void setLoginStatus(String loginStatus) {
+		this.loginStatus = loginStatus;
 	}
 }

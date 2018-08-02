@@ -18,6 +18,7 @@ import io.renren.modules.us.service.*;
 import io.renren.modules.us.util.Base64Util;
 import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsSessionUtil;
+import io.renren.modules.us.util.UsUserUtils;
 import net.sf.json.JSONObject;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -60,6 +61,9 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
     @Value("${us.eid.returnUrl}")
     private String url;
+    
+    @Autowired
+    private UsUserUtils util;
 
 
     @Override
@@ -107,12 +111,16 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             usUserPlantParamService.insert(userPlant);
 
             //返回user隐藏部分字段
-            Map<String, Object> user_ = this.usHidden(entity.getId());
+           /* Map<String, Object> user_ = this.usHidden(entity.getId());
             // 实名认证成功后返回电子卡号
             String cardnumber=usElectronicCardNumber.electronicCardNumber(entity.getId());
             user_.put("cardnumber",cardnumber);
-            user_.put("loginStatus", "0");//普通登陆状态
-            return R.ok(user_);
+            user_.put("loginStatus", "0");*/ //普通登陆状态
+            
+            UsUserEntity userEntity = util.getUser(entity.getId());
+            userEntity.setLoginStatus("0");
+            
+            return R.ok(userEntity);
         } else {
             return R.error();
         }
@@ -406,6 +414,8 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         if(!map.isEmpty()){
         	String msg = map.get("message").toString();
         	if(map.get("status").equals("0")){
+        		String userId = list.get(0).getId();
+        		this.updateEidLevel(userId, 3);
         		return R.ok(map.get("user_"));
         	}else{
         		return R.error(msg);
@@ -428,7 +438,6 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         	 map.put("message", "用户不存在");
              map.put("status", "1");//0成功 1失败
         }else{
-System.out.println("list======="+list.size());
         	UsUserEntity us = list.get(0);
         	if(!status.equals("")){
 				us.setUpdateDate(new Date());
@@ -437,14 +446,15 @@ System.out.println("list======="+list.size());
                 us.setAppid(appid);
                 this.updateById(us);
                 
-                Map<String, Object> user_ = this.usHidden(us.getId());
-                // 实名认证成功后返回电子卡号
-                String cardnumber=usElectronicCardNumber.electronicCardNumber(us.getId());
-                user_.put("cardnumber",cardnumber);
-                user_.put("loginStatus", "1");//eid登陆状态
-                map.put("user_", user_);
 			}
-        	
+        	/* Map<String, Object> user_ = this.usHidden(us.getId());
+            // 实名认证成功后返回电子卡号
+            String cardnumber=usElectronicCardNumber.electronicCardNumber(us.getId());
+            user_.put("cardnumber",cardnumber);
+            user_.put("loginStatus", "1");//eid登陆状态*/   
+        	UsUserEntity userEntity = util.getUser(us.getId());
+            userEntity.setLoginStatus("1");
+            map.put("user_", userEntity);
            // for(UsUserEntity us:list){
         	if(!redisUtil.hasKey("phone"+us.getMobilePhone())){
         		redisUtil.setTimes("phone"+us.getMobilePhone(), us.getMobilePhone());
@@ -558,11 +568,12 @@ System.out.println("msg======="+msg);
         if(!map.isEmpty()){
         	String msg = map.get("message").toString();
         	if(map.get("status").equals("0")&&!list.isEmpty()){
-        		newMap.put("realname",list.get(0).getRealname());
+        		/*newMap.put("realname",list.get(0).getRealname());
         		newMap.put("citizen_no", list.get(0).getCitizenNo());
         		R r = R.ok(newMap);
 System.out.println("成功输出======="+r.toString());         		
-        		return R.ok(newMap);
+        		return R.ok(newMap);*/
+        		return R.ok(map.get("user_"));
         	}else{
         		return R.error(500,msg,"");
         	}
