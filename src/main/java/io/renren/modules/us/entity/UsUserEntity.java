@@ -112,6 +112,10 @@ public class UsUserEntity implements Serializable {
 	 * 工作单位
 	 */
 	private String personDepartname;
+	/**
+	 * EID认证等级
+	 */
+	private Integer eidLevel;
 
 	/**
 	 * 设置：id
@@ -375,5 +379,13 @@ public class UsUserEntity implements Serializable {
 
 	public void setCardNumber(String cardNumber) {
 		this.cardNumber = cardNumber;
+	}
+
+	public Integer getEidLevel() {
+		return eidLevel;
+	}
+
+	public void setEidLevel(Integer eidLevel) {
+		this.eidLevel = eidLevel;
 	}
 }

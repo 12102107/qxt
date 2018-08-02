@@ -40,5 +40,7 @@ public interface UsUserService extends IService<UsUserEntity> {
     R queryMobile(String id);
 
 	R getFund(String userId,UsEidParam form);
+
+    boolean updateEidLevel(String id, Integer level);
 }
 

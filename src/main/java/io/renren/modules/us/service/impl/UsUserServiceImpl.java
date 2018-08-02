@@ -570,4 +570,12 @@ System.out.println("成功输出======="+r.toString());
         return R.error(500,"系统错误，请稍后重试","");
 	}
 
+    @Override
+    public boolean updateEidLevel(String id, Integer eidLevel) {
+        UsUserEntity user = new UsUserEntity();
+        user.setId(id);
+        user.setEidLevel(eidLevel);
+        return this.updateById(user);
+    }
+
 }

@@ -13,6 +13,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Random;
 
 @RunWith(SpringRunner.class)
@@ -170,6 +175,20 @@ public class UsWeChatTest {
     public void test6() throws IOException {
 //        UsUserCooperationInfoParam param = new UsUserCooperationInfoParam();
 //        webSignInUtil.getWeChatOpenId(param);
+    }
+
+    @Test
+    public void test7() throws IOException {
+        List<String> list = Files.readAllLines(Paths.get("C:\\Users\\Li\\Desktop\\read.txt"), StandardCharsets.UTF_8);
+        for (String str : list) {
+            System.out.println(str);
+        }
+    }
+
+    @Test
+    public void test8() throws IOException {
+        String text = "你好";
+        Files.write(Paths.get("C:\\Users\\Li\\Desktop\\write.txt"), text.getBytes("UTF-8"));
     }
 
 }

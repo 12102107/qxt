@@ -2,15 +2,13 @@ package io.renren;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import io.renren.common.utils.Constant;
 import io.renren.common.utils.Query;
 import io.renren.modules.us.entity.TSCategoryEntity;
 import io.renren.modules.us.entity.UsAppApiEntity;
 import io.renren.modules.us.entity.UsSmsEntity;
 import io.renren.modules.us.entity.UsUserCooperationEntity;
-import io.renren.modules.us.service.TSCategoryService;
-import io.renren.modules.us.service.UsAppApiService;
-import io.renren.modules.us.service.UsSmsService;
-import io.renren.modules.us.service.UsUserCooperationService;
+import io.renren.modules.us.service.*;
 import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsOkHttpUtil;
 import io.renren.modules.us.util.UsSessionUtil;
@@ -45,6 +43,8 @@ public class UsTest {
     private UsAppApiService appApiService;
     @Autowired
     private UsSessionUtil sessionUtil;
+    @Autowired
+    private UsUserService userService;
 
     @Test
     public void test1() {
@@ -251,6 +251,12 @@ public class UsTest {
         map.put("url", "/api/category/list");
         int i = appApiService.countId("123456", "/api/category/list");
         System.out.println("测试测试测试测试测试测试测试测试测试=====" + i);
+    }
+
+    @Test
+    public void test16() {
+        boolean b = userService.updateEidLevel("66b4e22ce0ec4bf59969b3d71494f026", Constant.EidLevel.EID_LEVLE_1.getValue());
+        System.out.println(b);
     }
 
 }

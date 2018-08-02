@@ -189,4 +189,26 @@ public class Constant {
         }
     }
 
+    /**
+     * EID等级
+     */
+    public enum EidLevel {
+        //等级1
+        EID_LEVLE_1(1),
+        //等级2
+        EID_LEVLE_2(2),
+        //等级3
+        EID_LEVLE_3(3);
+
+        private int value;
+
+        EidLevel(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
+
 }
