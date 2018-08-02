@@ -459,6 +459,14 @@ public class UsUserController {
         R r = usUserService.queryMobile(sessionUtil.getUserId(session.getSession()));
         return r;
     }
+    
+    @Scope("prototype")
+    @PostMapping("eidAuth")
+    @ApiOperation("session获取公积金")
+    public R getFund(@RequestBody UsEidParam form) {
+        R r = usUserService.getFund(sessionUtil.getUserId(form.getSession()),form);
+        return r;
+    }
 
 }
 
