@@ -31,7 +31,7 @@ public class UsNoticeEntity implements Serializable {
 	 */
 	private String noticeContent;
 	/**
-	 * 通知公告类型（1：消息，2:公告，3：公司简介，4：用户协议）
+	 * 通知公告类型（1：消息，2:公告，3：公司简介，4：用户协议，5：eid申请须知）
 	 */
 	private String noticeType;
 	/**
