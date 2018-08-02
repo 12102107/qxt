@@ -159,6 +159,21 @@ public class UsNoticeController {
         return R.ok(tl);
 
     }
+    @PostMapping("eid")
+    @ApiOperation("eid申请须知")
+    public R eId(@RequestBody UsCompanyProfile form){
+        //表单校验
+        ValidatorUtils.validateEntity(form);
+
+        UsNoticeEntity tl = new UsNoticeEntity();
+
+        if (form.getNoticeType()!=null){
+            tl = usNoticeService.findByNoticeType(form.getNoticeType());
+        }
+
+        return R.ok(tl);
+
+    }
 
 
 }
