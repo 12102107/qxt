@@ -414,6 +414,7 @@ public class UsUserController {
         //返回user隐藏部分字段
         Map<String, Object> user_ = usUserService.usHidden(user.getId());
         user_.put("cardNumber", cardNumber);
+        user_.put("loginStatus", "0");//普通登陆状态
         return R.ok(user_);
     }
 
