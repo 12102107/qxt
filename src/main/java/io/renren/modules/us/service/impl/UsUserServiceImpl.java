@@ -264,16 +264,17 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
         user.setuJobid(form.getuJobid());
         user.setuDepartid(form.getuDepartid());
-        user.setEidLevel(Constant.EidLevel.EID_LEVLE_2.getValue());//实名认证后EID等级改为2
         user = this.queryName(user);
 
         user.setStatus(REAL_USER_STATUS);//已实名认证
+        user.setEidLevel(Constant.EidLevel.EID_LEVLE_2.getValue());//实名认证后EID等级改为2
         user.setAppid(form.getAppid());
 
         this.updateById(user);
         // 实名认证成功后返回电子卡号
         String cardnumber=usElectronicCardNumber.electronicCardNumber(user.getId());
         user.setCardNumber(cardnumber);
+        user.setEidLevel(Constant.EidLevel.EID_LEVLE_2.getValue());//返回eid状态
 
         return user;
     }
