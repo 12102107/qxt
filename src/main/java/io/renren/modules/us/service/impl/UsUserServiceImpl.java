@@ -462,8 +462,14 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         	if(!redisUtil.hasKey("phone"+us.getMobilePhone())){
         		redisUtil.setTimes("phone"+us.getMobilePhone(), us.getMobilePhone());
         		String mobile = us.getMobilePhone();//手机号;
-                String name = us.getRealname();//姓名;
-                String idnum = us.getCitizenNo();//"14070019770130819X";
+        		String name ="";
+        		String idnum ="";
+        		if(null!=us.getRealname()){
+        			name = us.getRealname();//姓名;        			
+        		}
+        		if(null!=us.getCitizenNo()){
+        			idnum = us.getCitizenNo();//"14070019770130819X";        			
+        		}
                 SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
                 String datetime = df.format(new Date());// new Date()为获取当前系统时间
                 String seqno = UUID.randomUUID().toString().replaceAll("-", "");//业务id
@@ -486,10 +492,11 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 System.out.println("us======="+us);
 
                                 msg = "验证成功";
-                           
+                                map.put("status", "0");
                                 break;
                             }else{
                                 msg = "验证失败";
+                                map.put("status", "1");
                                 break;
                             }
                         }else{
@@ -504,10 +511,10 @@ System.out.println("us======="+us);
 System.out.println("msg======="+msg);   
                     if(msg.equals("")){
                     	msg = "验证失败";
+                    	map.put("status", "1");
                     }
                     redisUtil.delete("phone"+us.getMobilePhone());
                     map.put("message", msg);//0成功 1失败
-                    map.put("status", "0");//0成功 1失败
                     
                 }else{
                 	 redisUtil.delete("phone"+us.getMobilePhone());
