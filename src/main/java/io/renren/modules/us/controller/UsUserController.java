@@ -15,6 +15,7 @@ import io.renren.modules.us.service.UsUserService;
 import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsSessionUtil;
 import io.renren.modules.us.util.UsSmsUtil;
+import io.renren.modules.us.util.UsUserUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -222,11 +223,10 @@ public class UsUserController {
 
         if (code == Constant.Result.SMS_CODE_CORRECT.getValue()) {
             UsUserEntity us = usUserService.reg(form);
-            Map<String, Object> map = new HashMap<>();
-            map.put("mobilePhone", us.getMobilePhone());
-            map.put("session", us.getSession());
-            return R.ok(map);
-
+//            Map<String, Object> map = new HashMap<>();
+//            map.put("mobilePhone", us.getMobilePhone());
+//            map.put("session", us.getSession());
+            return R.ok(us);
         } else if (code == Constant.Result.SMS_CODE_ERROR.getValue()) {
             return R.error(Constant.Result.SMS_CODE_ERROR.getValue(), "验证码不正确");
         } else if (code == Constant.Result.SMS_CODE_EXPIRE.getValue()) {
