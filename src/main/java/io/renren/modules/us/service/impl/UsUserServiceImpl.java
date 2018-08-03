@@ -284,6 +284,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
     public UsUserEntity reg(UsRegisterParam form){
         //保存用户信息
         UsUserEntity user = new UsUserEntity();
+        user.setLoginStatus("0");
         user.setEidLevel(Constant.EidLevel.EID_LEVLE_1.getValue());
         user.setMobilePhone(form.getMobilePhone());
         user.setPassword(form.getPassword());
