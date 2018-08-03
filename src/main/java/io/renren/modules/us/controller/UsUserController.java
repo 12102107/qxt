@@ -15,7 +15,6 @@ import io.renren.modules.us.service.UsUserService;
 import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsSessionUtil;
 import io.renren.modules.us.util.UsSmsUtil;
-import io.renren.modules.us.util.UsUserUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
