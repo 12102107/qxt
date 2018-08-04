@@ -3,19 +3,15 @@ package io.renren.modules.us.controller;
 import io.renren.common.utils.RedisUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  *
@@ -33,8 +29,7 @@ public class UsCallbackController {
     
     @RequestMapping("callback")
     @ApiOperation("回调函数接口")
-    public void getUrl(HttpServletRequest request) {
-        try {
+    public String getUrl(HttpServletRequest request) throws IOException {
             InputStream sin = new BufferedInputStream(request.getInputStream());
             ByteArrayOutputStream sout = new ByteArrayOutputStream();
             int b=0;
@@ -48,11 +43,9 @@ public class UsCallbackController {
             String eid = request.getParameter("eid");
             //将业务id和回调结果存到redis中
             redisUtils.setTimes(eid, s_ok);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+            return s_ok;
     }
+
     @Autowired
     public void setRedisUtil(RedisUtils redisUtils) {
         this.redisUtils = redisUtils;

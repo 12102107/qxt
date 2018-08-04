@@ -24,6 +24,7 @@ public class UsUserUtils {
         UsUserEntity usUserEntity = usUserService.selectById(id);
         String cardnumber=usElectronicCardNumber.electronicCardNumber(id);
         usUserEntity.setCardNumber(cardnumber);
+        usUserEntity.setPassword("");
         return usUserEntity;
     }
 

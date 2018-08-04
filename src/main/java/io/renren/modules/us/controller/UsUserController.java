@@ -458,16 +458,16 @@ public class UsUserController {
     @PostMapping("eID")
     @ApiOperation("eID认证")
     public R eID(@RequestBody UsSessionParam session) {
-        R r = usUserService.queryMobile(sessionUtil.getUserId(session.getSession()));
-        return r;
+        ValidatorUtils.validateEntity(session);
+        return usUserService.queryMobile(sessionUtil.getUserId(session.getSession()));
     }
-    
+
     @Scope("prototype")
     @PostMapping("eidAuth")
     @ApiOperation("session获取公积金")
     public R getFund(@RequestBody UsEidParam form) {
-        R r = usUserService.getFund(sessionUtil.getUserId(form.getSession()),form);
-        return r;
+        ValidatorUtils.validateEntity(form);
+        return usUserService.getFund(sessionUtil.getUserId(form.getSession()), form);
     }
 
 }
