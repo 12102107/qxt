@@ -55,7 +55,7 @@ public class UsElectronicCardNumberServiceImpl extends ServiceImpl<UsElectronicC
         wrapper.where("uid={0}", userId);
         List<UsCardNumber> list = this.selectList(wrapper);
         if (list.isEmpty()) {
-            return null;
+            return "";
         } else {
             return list.get(0).getElectronicCardNumber();
         }

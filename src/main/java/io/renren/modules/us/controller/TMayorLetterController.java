@@ -1,5 +1,6 @@
 package io.renren.modules.us.controller;
 
+import io.renren.common.utils.Constant;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
@@ -118,7 +119,7 @@ public class TMayorLetterController {
 
         boolean isR = this.queryRel(user);
         if (isR == false){
-            return R.error("用户未实名认证，请先实名认证再操作");
+            return R.error("用户未EID实名认证，请先实名认证再操作");
         }
 
         tMayorLetterService.sendLetter(user,form);
@@ -143,7 +144,7 @@ public class TMayorLetterController {
 
         boolean isR = this.queryRel(user);
         if (isR == false){
-            return R.error("用户未实名认证，请先实名认证再操作");
+            return R.error("用户未EID实名认证，请先实名认证再操作");
         }
 
         Map<String, Object> params = new HashMap<>();
@@ -174,23 +175,8 @@ public class TMayorLetterController {
     }
 
 
-    /**
-     * 用户状态是否实名
-     * @param user status
-     * 0：初始值，跳过实名认证步骤
-     * 1：实名（未调接口）
-     * 2：认证通过，人证合一
-     * 3：认证未通过，人证不合一
-     * 4：认证查无此人，仅实名
-     * @return
-     */
-    public boolean queryRel(UsUserEntity user) {
-
-        if (user.getStatus() != 1 && user.getStatus() != 2 && user.getStatus() != 4){
-            return false;
-        }else{
-            return true;
-        }
+    private boolean queryRel(UsUserEntity user) {
+        return user.getEidLevel().equals(Constant.EidLevel.EID_LEVLE_3.getValue());
     }
 
     /**
@@ -250,7 +236,7 @@ public class TMayorLetterController {
 
         boolean isR = this.queryRel(user);
         if (isR == false){
-            return R.error("用户未实名认证，请先实名认证再操作");
+            return R.error("用户未EID实名认证，请先实名认证再操作");
         }
         Map<String, Object> params = new HashMap<>();
 
@@ -299,7 +285,7 @@ public class TMayorLetterController {
 
         boolean isR = this.queryRel(user);
         if (isR == false){
-            return R.error("用户未实名认证，请先实名认证再操作");
+            return R.error("用户未EID实名认证，请先实名认证再操作");
         }
 
         TMayorLetterEntity tl = new TMayorLetterEntity();
@@ -352,7 +338,7 @@ public class TMayorLetterController {
 
         boolean isR = this.queryRel(user);
         if (isR == false){
-            return R.error("用户未实名认证，请先实名认证再操作");
+            return R.error("用户未EID实名认证，请先实名认证再操作");
         }
 
         List<LinkedHashMap<Object, Object>>  list = usRegionsProService.queryList();

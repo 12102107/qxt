@@ -299,31 +299,32 @@ public class UsUserController {
         }
 
         //返回user隐藏部分字段
-        Map<String, Object> user_ = usUserService.usHidden(user.getId());
-        return R.ok(user_);
+        user.setCardNumber(usUserService.getCardNumber(userId));
+        user.setPassword("");
+        return R.ok(user);
     }
 
-    @PostMapping("queryStatusBySession")
-    @ApiOperation("查询用户状态信息")
-    public R queryStatusBySession(@RequestBody UsSessionParam form) {
-        //表单校验
-        ValidatorUtils.validateEntity(form);
-
-        String userId = sessionUtil.getUserId(form.getSession());
-        if (userId == null) {
-            return R.error("查询不到此用户");
-        }
-
-        UsUserEntity user = usUserService.selectById(userId);
-        if (user == null) {
-            return R.error("查询不到此用户");
-        }
-        Map<String, Object> map = new HashMap<>();
-        map.put("status", user.getStatus());//用户状态
-        TSTypeEntity ts = tSTypeService.queryByCode(user.getStatus().toString(), "usStatus");
-        map.put("statusName", ts.getTypename());//用户状态名称（查询数据字典）
-        return R.ok(map);
-    }
+//    @PostMapping("queryStatusBySession")
+//    @ApiOperation("查询用户状态信息")
+//    public R queryStatusBySession(@RequestBody UsSessionParam form) {
+//        //表单校验
+//        ValidatorUtils.validateEntity(form);
+//
+//        String userId = sessionUtil.getUserId(form.getSession());
+//        if (userId == null) {
+//            return R.error("查询不到此用户");
+//        }
+//
+//        UsUserEntity user = usUserService.selectById(userId);
+//        if (user == null) {
+//            return R.error("查询不到此用户");
+//        }
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("status", user.getStatus());//用户状态
+//        TSTypeEntity ts = tSTypeService.queryByCode(user.getStatus().toString(), "usStatus");
+//        map.put("statusName", ts.getTypename());//用户状态名称（查询数据字典）
+//        return R.ok(map);
+//    }
 
     @PostMapping("editPersonalInfo")
     @ApiOperation("修改个人信息")
@@ -343,8 +344,9 @@ public class UsUserController {
 
         user = usUserService.updatePersonalInfo(user, form);
         //返回user隐藏部分字段
-        Map<String, Object> user_ = usUserService.usHidden(user.getId());
-        return R.ok(user_);
+        user.setPassword("");
+        user.setCardNumber(usUserService.getCardNumber(userId));
+        return R.ok(user);
     }
 
     @PostMapping("departList")
@@ -408,15 +410,10 @@ public class UsUserController {
         }
 
         UsUserEntity usUserEntity = usUserService.realnameCert(user, form);
-        String cardNumber = usUserEntity.getCardNumber();
-        Integer eidLevel = usUserEntity.getEidLevel();
-
         //返回user隐藏部分字段
-        Map<String, Object> user_ = usUserService.usHidden(user.getId());
-        user_.put("cardNumber", cardNumber);
-        user_.put("loginStatus", "0");//普通登陆状态
-        user_.put("eidLevel", eidLevel);//返回eidLevel，状态为2
-        return R.ok(user_);
+        usUserEntity.setLoginStatus("0");
+        usUserEntity.setPassword("");
+        return R.ok(usUserEntity);
     }
 
 

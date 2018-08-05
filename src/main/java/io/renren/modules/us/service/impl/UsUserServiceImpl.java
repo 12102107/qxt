@@ -475,7 +475,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             this.updateById(user);
             //给前端返回登录状态,如果是EID登录值为1
             user.setLoginStatus("1");
-            user.setCardNumber(usElectronicCardNumber.getElectronicCardNumber(user.getId()));
+            user.setCardNumber(this.getCardNumber(user.getId()));
             user.setPassword("");
             return R.ok(user);
         } else {
@@ -502,30 +502,11 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             user.setUpdateDate(new Date());
             user.setEidLevel(Constant.EidLevel.EID_LEVLE_3.getValue());
             this.updateById(user);
-            user.setCardNumber(usElectronicCardNumber.getElectronicCardNumber(user.getId()));
+            user.setCardNumber(this.getCardNumber(user.getId()));
             user.setPassword("");
             return R.ok(user);
         } else {
             return R.error("未通过EID认证");
-        }
-    }
-
-    @Override
-    public R queryMobile(String id) {
-        EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
-        wrapper.setEntity(new UsUserEntity());
-        wrapper.where("id={0}", id);
-        List<UsUserEntity> list = this.selectList(wrapper);
-
-        if (list.isEmpty()) {
-            return R.error("用户不存在");
-        } else {
-            if (list.get(0).getStatus().equals(2)) {
-                return R.ok("用户通过认证");
-            } else {
-                return R.ok("用户认证失败");
-            }
-
         }
     }
 
@@ -537,10 +518,34 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         return this.updateById(user);
     }
 
+    @Override
+    public String getCardNumber(String userId) {
+        return usElectronicCardNumber.getElectronicCardNumber(userId);
+    }
+
     @Autowired
     public void setRedisUtil(RedisUtils redisUtil) {
         this.redisUtil = redisUtil;
     }
+
+    //    @Override
+//    public R queryMobile(String id) {
+//        EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
+//        wrapper.setEntity(new UsUserEntity());
+//        wrapper.where("id={0}", id);
+//        List<UsUserEntity> list = this.selectList(wrapper);
+//
+//        if (list.isEmpty()) {
+//            return R.error("用户不存在");
+//        } else {
+//            if (list.get(0).getStatus().equals(2)) {
+//                return R.ok("用户通过认证");
+//            } else {
+//                return R.ok("用户认证失败");
+//            }
+//
+//        }
+//    }
 
     //    /**
 //     * eid调取公共方法

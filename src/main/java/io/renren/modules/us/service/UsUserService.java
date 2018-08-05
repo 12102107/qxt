@@ -39,6 +39,9 @@ public interface UsUserService extends IService<UsUserEntity> {
 
     boolean updateEidLevel(String id, Integer level);
 
-    R queryMobile(String id);
+    String getCardNumber(String userId);
+
+//    R queryMobile(String id);
+
 }
 
