@@ -43,8 +43,11 @@ import java.util.*;
 public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> implements UsUserService {
     public static final int INITIALIZE_USER_STATUS = 0;//注册后初始状态
     public static final int REAL_USER_STATUS = 1;//实名状态
-    private static final String UPLOADImg = "\\apache-tomcat-8.5.24\\webapps\\hmPhotos\\upload";
-    private static final String DIRTEMP = "\\apache-tomcat-8.5.24\\webapps\\hmPhotos\\upload";
+
+    @Value("${us.img.uploadImg}")
+    private String UPLOADImg;
+    @Value("${us.img.dirTemp}")
+    private String DIRTEMP;
     private Logger logger = LoggerFactory.getLogger(getClass());
     private RedisUtils redisUtil;
     @Autowired
@@ -200,19 +203,34 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
     @Override
     public UsUserEntity updatePersonalInfo(UsUserEntity user, UsUserParam form) {
         user.setUpdateDate(new Date());
-        user.setNickname(form.getNickname());
-        user.setRealname(form.getRealname());
-        user.setCitizenNo(form.getCitizenNo());
-        user.setSex(form.getSex());
-        user.setEmail(form.getEmail());
-        user.setAddress(form.getAddress());
-        user.setRemark(form.getRemark());
-
-        user.setuDepartid(form.getuDepartid());
-        user.setuJobid(form.getuJobid());
-
+        if (form.getNickname() != null && !"".equals(form.getNickname())) {
+            user.setNickname(form.getNickname());
+        }
+        if (form.getRealname() != null && !"".equals(form.getRealname())) {
+            user.setRealname(form.getRealname());
+        }
+        if (form.getCitizenNo() != null && !"".equals(form.getCitizenNo())) {
+            user.setCitizenNo(form.getCitizenNo());
+        }
+        if (form.getSex() != null && !"".equals(form.getSex())) {
+            user.setSex(form.getSex());
+        }
+        if (form.getEmail() != null && !"".equals(form.getEmail())) {
+            user.setEmail(form.getEmail());
+        }
+        if (form.getAddress() != null && !"".equals(form.getAddress())) {
+            user.setAddress(form.getAddress());
+        }
+        if (form.getRemark() != null && !"".equals(form.getRemark())) {
+            user.setRemark(form.getRemark());
+        }
+        if (form.getuDepartid() != null && !"".equals(form.getuDepartid())) {
+            user.setuDepartid(form.getuDepartid());
+        }
+        if (form.getuJobid() != null && !"".equals(form.getuJobid())) {
+            user.setuJobid(form.getuJobid());
+        }
         user = this.queryName(user);
-
         user.setAppid(form.getAppid());
         this.updateById(user);
         return user;
@@ -384,11 +402,11 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
                 String path = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/hmPhotos" + "/";
                 String image_url = "upload/" + ret_fileName;
 
-                user.setPortrait(image_url);
+                //user.setPortrait(image_url);
                 user.setUpdateDate(new Date());
-                this.updateById(user);
-
                 String portrait = path + image_url;
+                user.setPortrait(portrait);
+                this.updateById(user);
 
                 Map<String, Object> map = new HashMap<>();
                 map.put("portrait", portrait);//头像路径

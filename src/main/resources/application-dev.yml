@@ -31,12 +31,12 @@ spring:
     driverClassName: com.mysql.jdbc.Driver
     druid:
       first:  #数据源1
-        url: jdbc:mysql://221.207.236.225:3306/jeecg?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
-        username: us
+        url: jdbc:mysql://localhost:3306/jeecg_dq?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+        username: root
         password: 12345
       second:  #数据源2
-        url: jdbc:mysql://221.207.236.225:3306/jeecg?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
-        username: us
+        url: jdbc:mysql://localhost:3306/jeecg_dq?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+        username: root
         password: 12345
       initial-size: 10
       max-active: 100
@@ -136,3 +136,6 @@ us:
     content: eidLogin
     displayed: 注册
     returnUrl: http://www.dq-city.com/hm/api/meth/callback
+  img:
+    uploadImg: \\apache-tomcat-8.5.24\\webapps\\hmPhotos\\upload
+    dirTemp: \\apache-tomcat-8.5.24\\webapps\\hmPhotos\\upload
