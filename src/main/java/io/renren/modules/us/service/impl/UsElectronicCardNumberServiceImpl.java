@@ -1,5 +1,6 @@
 package io.renren.modules.us.service.impl;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import io.renren.modules.us.dao.UsElectronicCardNumberDao;
 import io.renren.modules.us.entity.UsCardNumber;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -22,7 +24,7 @@ import java.util.UUID;
 public class UsElectronicCardNumberServiceImpl extends ServiceImpl<UsElectronicCardNumberDao, UsCardNumber> implements UsElectronicCardNumberService {
 
     @Autowired
-    private  UsElectronicCardNumberService usElectronicCardNumberService;
+    private UsElectronicCardNumberService usElectronicCardNumberService;
 
     @Value("${us.cooperation.cardNumber}")
     private String cardNumber;
@@ -30,7 +32,7 @@ public class UsElectronicCardNumberServiceImpl extends ServiceImpl<UsElectronicC
     @Override
     public String electronicCardNumber(String uid) {
 
-        StringBuffer sb=new StringBuffer(cardNumber);
+        StringBuffer sb = new StringBuffer(cardNumber);
         //生成12位整数
         String substring = getCardNumbers();
         sb.append(substring);
@@ -38,24 +40,32 @@ public class UsElectronicCardNumberServiceImpl extends ServiceImpl<UsElectronicC
         //uuid生成主见
         String s1 = UUID.randomUUID().toString();
         String id = s1.replaceAll("\\-", "");
-        UsCardNumber card=new UsCardNumber();
+        UsCardNumber card = new UsCardNumber();
         card.setId(id);
         card.setUid(uid);
         card.setElectronicCardNumber(electronicCardNumber);
         usElectronicCardNumberService.insert(card);
-
-
         return electronicCardNumber;
     }
-    
-    public synchronized  String getCardNumbers (){
+
+    @Override
+    public String getElectronicCardNumber(String userId) {
+        EntityWrapper<UsCardNumber> wrapper = new EntityWrapper<>();
+        wrapper.setEntity(new UsCardNumber());
+        wrapper.where("uid={0}", userId);
+        List<UsCardNumber> list = this.selectList(wrapper);
+        if (list.isEmpty()) {
+            return null;
+        } else {
+            return list.get(0).getElectronicCardNumber();
+        }
+    }
+
+    synchronized String getCardNumbers() {
         Calendar calendar = Calendar.getInstance();
         long cardNumbers = calendar.getTime().getTime();
-//        long card=cardNumber+1L;
         String s = String.valueOf(cardNumbers);
-        //截取掉前一位
-        String substring = s.substring(1);
-
-        return substring;
+        return s.substring(1);
     }
+    
 }

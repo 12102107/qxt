@@ -1,5 +1,6 @@
 package io.renren.modules.us.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
@@ -8,6 +9,7 @@ import com.eidlink.sdk.pojo.request.MOMTRealNameParam;
 import com.eidlink.sdk.pojo.request.base.MOMTRealNameParameters;
 import com.eidlink.sdk.pojo.request.base.RealName;
 import com.eidlink.sdk.pojo.result.CommonResult;
+import io.renren.common.exception.RRException;
 import io.renren.common.utils.*;
 import io.renren.modules.us.dao.UsUserDao;
 import io.renren.modules.us.entity.TSTypeEntity;
@@ -19,9 +21,10 @@ import io.renren.modules.us.util.Base64Util;
 import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsSessionUtil;
 import io.renren.modules.us.util.UsUserUtils;
-import net.sf.json.JSONObject;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -38,7 +41,12 @@ import java.util.*;
 
 @Service("usUserService")
 public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> implements UsUserService {
-	private RedisUtils redisUtil;
+    public static final int INITIALIZE_USER_STATUS = 0;//注册后初始状态
+    public static final int REAL_USER_STATUS = 1;//实名状态
+    private static final String UPLOADImg = "\\apache-tomcat-8.5.24\\webapps\\hmPhotos\\upload";
+    private static final String DIRTEMP = "\\apache-tomcat-8.5.24\\webapps\\hmPhotos\\upload";
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    private RedisUtils redisUtil;
     @Autowired
     private TSDepartService tSDepartService;
     @Autowired
@@ -47,12 +55,8 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
     private TSTypeService tSTypeService;
     @Autowired
     private UsUserPlantParamService usUserPlantParamService;
-    public static final int INITIALIZE_USER_STATUS = 0;//注册后初始状态
-    public static final int REAL_USER_STATUS = 1;//实名状态
-
-    private   static final String   UPLOADImg  = "\\apache-tomcat-8.5.24\\webapps\\hmPhotos\\upload";
-    private   static final String  DIRTEMP = "\\apache-tomcat-8.5.24\\webapps\\hmPhotos\\upload";
-
+    @Autowired
+    private UsSessionUtil sessionUtil;
     @Value("${us.eid.content}")
     private String content;
 
@@ -61,7 +65,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
     @Value("${us.eid.returnUrl}")
     private String url;
-    
+
     @Autowired
     private UsUserUtils util;
 
@@ -78,7 +82,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
     @Override
     @Transactional
-    public R signIn(UsLoginParam form){
+    public R signIn(UsLoginParam form) {
         EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
         wrapper.setEntity(new UsUserEntity());
         wrapper.where("mobile_phone={0}", form.getMobilePhone())
@@ -110,17 +114,12 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             userPlant.setAppid(form.getAppid());
             usUserPlantParamService.insert(userPlant);
 
-            //返回user隐藏部分字段
-           /* Map<String, Object> user_ = this.usHidden(entity.getId());
-            // 实名认证成功后返回电子卡号
-            String cardnumber=usElectronicCardNumber.electronicCardNumber(entity.getId());
-            user_.put("cardnumber",cardnumber);
-            user_.put("loginStatus", "0");*/ //普通登陆状态
-            
-            UsUserEntity userEntity = util.getUser(entity.getId());
-            userEntity.setLoginStatus("0");
-            
-            return R.ok(userEntity);
+            entity.setCardNumber(usElectronicCardNumber.getElectronicCardNumber(entity.getId()));
+            //给前端返回登录状态,如果是账号密码登录值为0
+            entity.setLoginStatus("0");
+            entity.setPassword("");
+
+            return R.ok(entity);
         } else {
             return R.error();
         }
@@ -128,14 +127,15 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
     /**
      * 返回user对象部分属性
+     *
      * @param id
      * @return
      */
-    public Map<String, Object> usHidden (String id) {
+    public Map<String, Object> usHidden(String id) {
 
         EntityWrapper<UsUserEntity> w1 = new EntityWrapper<>();
-        w1.setSqlSelect("session", "status","u_jobid as uJobid",
-                "u_departid as uDepartid","remark","realname","id","email","nickname","mobile_phone as mobilePhone","citizen_no as citizenNo","address","portrait","sex");
+        w1.setSqlSelect("session", "status", "u_jobid as uJobid",
+                "u_departid as uDepartid", "remark", "realname", "id", "email", "nickname", "mobile_phone as mobilePhone", "citizen_no as citizenNo", "address", "portrait", "sex");
         w1.where("id = {0}", id);
         List<Map<String, Object>> list = this.selectMaps(w1);
         if (list == null || list.isEmpty() || list.size() == 0) {
@@ -144,28 +144,28 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         Map<String, Object> map = list.get(0);
         //工作单位
         String personDepartname_ = null;
-        if (null != map.get("uDepartid")  &&  !"".equals(map.get("uDepartid"))){
-            TSTypeEntity ts_ = tSTypeService.queryByCode(map.get("uDepartid").toString(),"dep_list");
-            if(ts_!=null){
+        if (null != map.get("uDepartid") && !"".equals(map.get("uDepartid"))) {
+            TSTypeEntity ts_ = tSTypeService.queryByCode(map.get("uDepartid").toString(), "dep_list");
+            if (ts_ != null) {
                 personDepartname_ = ts_.getTypename();
             }
         }
-        map.put("personDepartname",personDepartname_);
+        map.put("personDepartname", personDepartname_);
 
         //职业
         String personJob_ = null;
-        if (null != map.get("uJobid")  &&  !"".equals(map.get("uJobid"))){
-            TSTypeEntity ts = tSTypeService.queryByCode(map.get("uJobid").toString(),"job_list");
-            if(ts!=null){
+        if (null != map.get("uJobid") && !"".equals(map.get("uJobid"))) {
+            TSTypeEntity ts = tSTypeService.queryByCode(map.get("uJobid").toString(), "job_list");
+            if (ts != null) {
                 personJob_ = ts.getTypename();
             }
         }
-        map.put("personJob",personJob_);
+        map.put("personJob", personJob_);
         //存取图片路径
-        if(null != map.get("portrait") && !"".equals(map.get("portrait"))){
+        if (null != map.get("portrait") && !"".equals(map.get("portrait"))) {
             HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
             String path = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/hmPhotos" + "/";
-            map.put("portrait",path + map.get("portrait").toString());
+            map.put("portrait", path + map.get("portrait").toString());
         }
 
         return map;
@@ -173,9 +173,9 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
     /**
      * 检查用户是否存在
-     * */
+     */
     @Override
-    public UsUserEntity checkUserExits(String userId, String oldPassword){
+    public UsUserEntity checkUserExits(String userId, String oldPassword) {
         EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
         wrapper.setEntity(new UsUserEntity());
         wrapper.where("id={0}", userId)
@@ -192,12 +192,13 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
     /**
      * 修改个人信息
+     *
      * @param
      * @param form
      * @return
      */
     @Override
-    public UsUserEntity updatePersonalInfo(UsUserEntity user, UsUserParam form){
+    public UsUserEntity updatePersonalInfo(UsUserEntity user, UsUserParam form) {
         user.setUpdateDate(new Date());
         user.setNickname(form.getNickname());
         user.setRealname(form.getRealname());
@@ -219,22 +220,23 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
     /**
      * 根据工作单位id获取名称等
+     *
      * @param
      * @return
      */
     public UsUserEntity queryName(UsUserEntity user) {
         //工作单位
-        if (null != user.getuDepartid()  &&  !"".equals(user.getuDepartid())){
-            TSTypeEntity ts_ = tSTypeService.queryByCode(user.getuDepartid(),"dep_list");
-            if(ts_!=null){
+        if (null != user.getuDepartid() && !"".equals(user.getuDepartid())) {
+            TSTypeEntity ts_ = tSTypeService.queryByCode(user.getuDepartid(), "dep_list");
+            if (ts_ != null) {
                 user.setPersonDepartname(ts_.getTypename());
             }
 
         }
         //职业
-        if (null != user.getuJobid()  &&  !"".equals(user.getuJobid())){
-            TSTypeEntity ts = tSTypeService.queryByCode(user.getuJobid(),"job_list");
-            if(ts!=null){
+        if (null != user.getuJobid() && !"".equals(user.getuJobid())) {
+            TSTypeEntity ts = tSTypeService.queryByCode(user.getuJobid(), "job_list");
+            if (ts != null) {
                 user.setPersonJob(ts.getTypename());
             }
         }
@@ -242,16 +244,16 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
     }
 
 
-
     /**
      * 实名认证
+     *
      * @param user
      * @param form
      * @return
      */
     @Override
     @Transactional
-    public UsUserEntity realnameCert(UsUserEntity user, UsUserRealCertParam form){
+    public UsUserEntity realnameCert(UsUserEntity user, UsUserRealCertParam form) {
 
         user.setUpdateDate(new Date());
 
@@ -272,7 +274,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
         this.updateById(user);
         // 实名认证成功后返回电子卡号
-        String cardnumber=usElectronicCardNumber.electronicCardNumber(user.getId());
+        String cardnumber = usElectronicCardNumber.electronicCardNumber(user.getId());
         user.setCardNumber(cardnumber);
         user.setEidLevel(Constant.EidLevel.EID_LEVLE_2.getValue());//返回eid状态
 
@@ -281,7 +283,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
     //注册
     @Transactional
-    public UsUserEntity reg(UsRegisterParam form){
+    public UsUserEntity reg(UsRegisterParam form) {
         //保存用户信息
         UsUserEntity user = new UsUserEntity();
         user.setLoginStatus("0");
@@ -314,24 +316,24 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         return user;
     }
 
-    public R uploadPortrait(UsUserEntity user, UsUserPortraiParam form){
+    public R uploadPortrait(UsUserEntity user, UsUserPortraiParam form) {
 
         //String customerId ="";//加多层文件夹,暂时用不到
         String ret_fileName = "";//返回给前端已修改的图片名称
         String base64Img = form.getPortraitData();
         String type = "";
-        if (base64Img.length()>22){
-            if(base64Img.substring(11,14).equals("png") || base64Img.substring(11,15).equals("jpeg") ){
-                if(base64Img.substring(11,14).equals("png")){
+        if (base64Img.length() > 22) {
+            if (base64Img.substring(11, 14).equals("png") || base64Img.substring(11, 15).equals("jpeg")) {
+                if (base64Img.substring(11, 14).equals("png")) {
                     type = "png";
-                }else{
+                } else {
                     type = "jpeg";
                 }
                 // 临时文件路径
                 //String realPath = ClassUtils.getDefaultClassLoader().getResource("").getPath();获取绝对路径 例/D:renren-fast/..
 
                 String realPath = "C:";
-                String tempPath =  "C:/"+ DIRTEMP;
+                String tempPath = "C:/" + DIRTEMP;
 
                 File file_normer = new File(realPath + UPLOADImg);
                 if (!file_normer.exists()) {
@@ -344,14 +346,14 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
                 ServletFileUpload upload = new ServletFileUpload(factory);
                 upload.setHeaderEncoding("UTF-8");
-                if (type.equals("png")){
+                if (type.equals("png")) {
                     base64Img = base64Img.replaceAll("data:image/png;base64,", "");
 
-                }else{
+                } else {
                     base64Img = base64Img.replaceAll("data:image/jpeg;base64,", "");
                 }
 
-                if (base64Img == null || "".equals(base64Img) || "data:image/jpeg;base64".equals(base64Img) || "data:image/png;base64".equals(base64Img)){
+                if (base64Img == null || "".equals(base64Img) || "data:image/jpeg;base64".equals(base64Img) || "data:image/png;base64".equals(base64Img)) {
                     return R.error("上传的图片数据为空");
                 }
                 BASE64Decoder decoder = new BASE64Decoder();
@@ -365,9 +367,9 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
                     }
                     // 生成jpeg图片
 
-                    ret_fileName = new String((new SimpleDateFormat("yyyyMMddhhmmssSSS").format(new Date())+"."+type).getBytes("gb2312"), "ISO8859-1" ) ;
+                    ret_fileName = new String((new SimpleDateFormat("yyyyMMddhhmmssSSS").format(new Date()) + "." + type).getBytes("gb2312"), "ISO8859-1");
 
-                    File file = new File(realPath + UPLOADImg+"/" + ret_fileName);
+                    File file = new File(realPath + UPLOADImg + "/" + ret_fileName);
                     OutputStream out = new FileOutputStream(file);
                     out.write(b);
                     out.flush();
@@ -380,7 +382,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
                 //处理查询数据
                 HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
                 String path = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/hmPhotos" + "/";
-                String image_url =  "upload/" + ret_fileName;
+                String image_url = "upload/" + ret_fileName;
 
                 user.setPortrait(image_url);
                 user.setUpdateDate(new Date());
@@ -390,156 +392,126 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
                 Map<String, Object> map = new HashMap<>();
                 map.put("portrait", portrait);//头像路径
-                return  R.ok(map);
+                return R.ok(map);
 
-            }else{
+            } else {
                 return R.error("上传的图片格式不支持，仅支持png或jpeg格式");
             }
-        }else {
+        } else {
             return R.error("上传的图片数据为空");
         }
     }
 
-    /*
-     * eid注册验证
-     */
+    private boolean verifyEid(UsUserEntity user) throws InterruptedException {
+        //验证参数
+        if (user == null || user.getMobilePhone() == null || user.getRealname() == null || user.getCitizenNo() == null || "".equals(user.getMobilePhone())
+                || "".equals(user.getRealname()) || "".equals(user.getCitizenNo())) {
+            logger.error("EID认证所需要的信息不完整");
+            throw new RRException("EID认证所需要的信息不完整");
+        }
+        //发送EID验证请求
+        String mobile = user.getMobilePhone();
+        String realName = user.getRealname();
+        String citizenNo = user.getCitizenNo();
+        String datetime = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        //业务id
+        String seqno = UUID.randomUUID().toString().replaceAll("-", "");
+        String dataToSign = Base64Util.encodeData(datetime + ":" + seqno + ":" + content);
+        //签名
+        String dataToBeDisplayed = Base64Util.encodeData(displayed);
+        //异步接收路径
+        String returnUrl = url + "?eid=" + seqno;
+        RealName realNameObj = new RealName(realName, citizenNo);
+        MOMTRealNameParameters pkiParam = new MOMTRealNameParameters(mobile, dataToSign, dataToBeDisplayed);
+        MOMTRealNameParam reqParam = new MOMTRealNameParam(pkiParam, realNameObj);
+        reqParam.setReturnUrl(returnUrl);
+        //获取EID请求返回值
+        CommonResult result = EidlinkService.doPost(reqParam);
+        if (result == null || result.getResult() == null) {
+            throw new RRException("EID请求返回值为空");
+        }
+        //EID请求成功
+        if (result.getResult().equals("00")) {
+            //循环获取Redis中回调结果
+            for (int i = 0; i < 20; i++) {
+                if (redisUtil.hasKey(seqno)) {
+                    String value = redisUtil.get(seqno);
+                    JSONObject json = JSONObject.parseObject(value);
+                    //返回验证结果
+                    return json.get("result").equals("00") && json.get("result_detail").equals("0000000");
+                } else {
+                    Thread.sleep(3000);
+                }
+            }
+            logger.error("获取EID回调数据超时");
+            throw new RRException("获取EID回调数据超时");
+        } else {
+            //EID请求失败
+            logger.error(result.getResultDetail());
+            throw new RRException("EID请求失败");
+        }
+    }
+
     @Override
-    public R eidLogin(UsSmsParam form) {
-        // TODO Auto-generated method stub
+    public R eidLogin(UsSmsParam param) throws InterruptedException {
         //查询用户信息
         EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
         wrapper.setEntity(new UsUserEntity());
-        wrapper.where("mobile_phone={0}", form.getMobile());
+        wrapper.where("mobile_phone={0}", param.getMobile());
         List<UsUserEntity> list = this.selectList(wrapper);
-
-        String appid = form.getAppid();
-        Map map = getEid(list,appid,"1");
-        if(!map.isEmpty()){
-        	String msg = map.get("message").toString();
-        	if(map.get("status").equals("0")){
-        		String userId = list.get(0).getId();
-        		this.updateEidLevel(userId, 3);
-        		return R.ok(map.get("user_"));
-        	}else{
-        		return R.error(msg);
-        	}
+        if (list.isEmpty()) {
+            return R.error("用户不存在");
         }
-        return null;
-
-    }
-    
-    /**
-     * eid调取公共方法
-     * @param list
-     * @param appid
-     * @return
-     */
-    private Map getEid(List<UsUserEntity> list,String appid,String status){
-    	Map map = new HashMap();
-    	String session = "";
-        if(list.isEmpty()){
-        	 map.put("message", "用户不存在");
-             map.put("status", "1");//0成功 1失败
-        }else{
-        	UsUserEntity us = list.get(0);
-        	if(!status.equals("")){
-				us.setUpdateDate(new Date());
-                session = UsSessionUtil.generateSession();
-                us.setSession(session);
-                us.setAppid(appid);
-                this.updateById(us);
-                
-			}
-        	/* Map<String, Object> user_ = this.usHidden(us.getId());
-            // 实名认证成功后返回电子卡号
-            String cardnumber=usElectronicCardNumber.electronicCardNumber(us.getId());
-            user_.put("cardnumber",cardnumber);
-            user_.put("loginStatus", "1");//eid登陆状态*/   
-        	UsUserEntity userEntity = util.getUser(us.getId());
-            userEntity.setLoginStatus("1");
-            map.put("user_", userEntity);
-           // for(UsUserEntity us:list){
-        	if(!redisUtil.hasKey("phone"+us.getMobilePhone())){
-        		redisUtil.setTimes("phone"+us.getMobilePhone(), us.getMobilePhone());
-        		String mobile = us.getMobilePhone();//手机号;
-        		String name ="";
-        		String idnum ="";
-        		if(null!=us.getRealname()){
-        			name = us.getRealname();//姓名;        			
-        		}
-        		if(null!=us.getCitizenNo()){
-        			idnum = us.getCitizenNo();//"14070019770130819X";        			
-        		}
-                SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
-                String datetime = df.format(new Date());// new Date()为获取当前系统时间
-                String seqno = UUID.randomUUID().toString().replaceAll("-", "");//业务id
-                String dataToSign = Base64Util.encodeData(datetime+":"+seqno+":"+content);//"MjAxNTA0MDExMTAzMzE6MTAwMDAwMDE6aGVsbG9UZXN0";//20150401110331:10000001:helloTest
-                String display = Base64Util.encodeData(displayed);//签名
-                String returnUrl = url+"?eid="+seqno;//异步接收路径
-
-                RealName realName = new RealName(name, idnum);
-                MOMTRealNameParameters pkiParam = new MOMTRealNameParameters(mobile, dataToSign, display);
-                MOMTRealNameParam reqParam = new MOMTRealNameParam(pkiParam, realName);
-                reqParam.setReturnUrl(returnUrl);
-                String msg = "";
-                CommonResult result = EidlinkService.doPost(reqParam);
-                if(result.getResult().equals("00")){//eid调取成功
-                    for(int i=0;i<20;i++){//循环获取redis中数据，根据业务id,如果没有数据5s一次，一共循环100s
-                        if(redisUtil.hasKey(seqno)){
-                            String value = redisUtil.get(seqno);
-                            JSONObject json = JSONObject.fromObject(value);
-                            if(json.get("result").equals("00")&&json.get("result_detail").equals("0000000")){
-System.out.println("us======="+us);
-
-                                msg = "验证成功";
-                                map.put("status", "0");
-                                break;
-                            }else{
-                                msg = "验证失败";
-                                map.put("status", "1");
-                                break;
-                            }
-                        }else{
-                            try {
-                                Thread.sleep(5000);
-                            } catch (InterruptedException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-System.out.println("msg======="+msg);   
-                    if(msg.equals("")){
-                    	msg = "验证失败";
-                    	map.put("status", "1");
-                    }
-                    redisUtil.delete("phone"+us.getMobilePhone());
-                    map.put("message", msg);//0成功 1失败
-                    
-                }else{
-                	 redisUtil.delete("phone"+us.getMobilePhone());
-                	 map.put("message", "验证失败");
-                     map.put("status", "1");//0成功 1失败
-                }
-        	}else{
-        		try {
-					Thread.sleep(40000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-        		map.put("message", "重复提交");
-                map.put("status", "1");//0成功 1失败
-        		
-        	}
-        	
-                
-           }
-        return map;
+        if (list.size() != 1) {
+            return R.error("手机号码重复");
+        }
+        UsUserEntity user = list.get(0);
+        boolean b = this.verifyEid(user);
+        if (b) {
+            //修改user相关属性状态
+            user.setUpdateDate(new Date());
+            user.setSession(UsSessionUtil.generateSession());
+            user.setEidLevel(Constant.EidLevel.EID_LEVLE_3.getValue());
+            this.updateById(user);
+            //给前端返回登录状态,如果是EID登录值为1
+            user.setLoginStatus("1");
+            user.setCardNumber(usElectronicCardNumber.getElectronicCardNumber(user.getId()));
+            user.setPassword("");
+            return R.ok(user);
+        } else {
+            return R.error("未通过EID认证");
+        }
     }
 
     @Override
-    public R queryMobile(String  id) {
+    public R eidAuth(UsSessionParam param) throws InterruptedException {
+        EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
+        wrapper.setEntity(new UsUserEntity());
+        wrapper.where("session={0}", param.getSession());
+        List<UsUserEntity> list = this.selectList(wrapper);
+        if (list.isEmpty()) {
+            return R.error("用户不存在");
+        }
+        if (list.size() != 1) {
+            return R.error("手机号码重复");
+        }
+        UsUserEntity user = list.get(0);
+        boolean b = this.verifyEid(user);
+        if (b) {
+            //修改user相关属性状态
+            user.setUpdateDate(new Date());
+            user.setEidLevel(Constant.EidLevel.EID_LEVLE_3.getValue());
+            this.updateById(user);
+            user.setCardNumber(usElectronicCardNumber.getElectronicCardNumber(user.getId()));
+            user.setPassword("");
+            return R.ok(user);
+        } else {
+            return R.error("未通过EID认证");
+        }
+    }
+
+    @Override
+    public R queryMobile(String id) {
         EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
         wrapper.setEntity(new UsUserEntity());
         wrapper.where("id={0}", id);
@@ -547,49 +519,15 @@ System.out.println("msg======="+msg);
 
         if (list.isEmpty()) {
             return R.error("用户不存在");
-        } else{
+        } else {
             if (list.get(0).getStatus().equals(2)) {
                 return R.ok("用户通过认证");
-            }else {
+            } else {
                 return R.ok("用户认证失败");
             }
 
         }
     }
-
-    @Autowired
-    public void setRedisUtil(RedisUtils redisUtil) {
-        this.redisUtil = redisUtil;
-    }
-
-	/* 
-	 * session获取公积金信息
-	 */
-	@Override
-	public R getFund(String id,UsEidParam form) {
-		// TODO Auto-generated method stub
-		 Map newMap = new HashMap();
-		EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
-        wrapper.setEntity(new UsUserEntity());
-        wrapper.where("id={0}", id);
-        List<UsUserEntity> list = this.selectList(wrapper);
-        Map map = getEid(list,form.getAppid(),"");
-       
-        if(!map.isEmpty()){
-        	String msg = map.get("message").toString();
-        	if(map.get("status").equals("0")&&!list.isEmpty()){
-        		/*newMap.put("realname",list.get(0).getRealname());
-        		newMap.put("citizen_no", list.get(0).getCitizenNo());
-        		R r = R.ok(newMap);
-System.out.println("成功输出======="+r.toString());         		
-        		return R.ok(newMap);*/
-        		return R.ok(map.get("user_"));
-        	}else{
-        		return R.error(500,msg,"");
-        	}
-        }
-        return R.error(500,"系统错误，请稍后重试","");
-	}
 
     @Override
     public boolean updateEidLevel(String id, Integer eidLevel) {
@@ -599,4 +537,119 @@ System.out.println("成功输出======="+r.toString());
         return this.updateById(user);
     }
 
+    @Autowired
+    public void setRedisUtil(RedisUtils redisUtil) {
+        this.redisUtil = redisUtil;
+    }
+
+    //    /**
+//     * eid调取公共方法
+//     *
+//     * @param list
+//     * @param appid
+//     * @return
+//     */
+//    private Map getEid(List<UsUserEntity> list, String appid, String status) {
+//        Map map = new HashMap();
+//        String session = "";
+//        if (list.isEmpty()) {
+//            map.put("message", "用户不存在");
+//            map.put("status", "1");//0成功 1失败
+//        } else {
+//            UsUserEntity us = list.get(0);
+//            if (!status.equals("")) {
+//                us.setUpdateDate(new Date());
+//                session = UsSessionUtil.generateSession();
+//                us.setSession(session);
+//                us.setAppid(appid);
+//                this.updateById(us);
+//
+//            }
+//        	/* Map<String, Object> user_ = this.usHidden(us.getId());
+//            // 实名认证成功后返回电子卡号
+//            String cardnumber=usElectronicCardNumber.electronicCardNumber(us.getId());
+//            user_.put("cardnumber",cardnumber);
+//            user_.put("loginStatus", "1");//eid登陆状态*/
+//            UsUserEntity userEntity = util.getUser(us.getId());
+//            userEntity.setLoginStatus("1");
+//            map.put("user_", userEntity);
+//            // for(UsUserEntity us:list){
+//            if (!redisUtil.hasKey("phone" + us.getMobilePhone())) {
+//                redisUtil.setTimes("phone" + us.getMobilePhone(), us.getMobilePhone());
+//                String mobile = us.getMobilePhone();//手机号;
+//                String name = "";
+//                String idnum = "";
+//                if (null != us.getRealname()) {
+//                    name = us.getRealname();//姓名;
+//                }
+//                if (null != us.getCitizenNo()) {
+//                    idnum = us.getCitizenNo();//"14070019770130819X";
+//                }
+//                SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
+//                String datetime = df.format(new Date());// new Date()为获取当前系统时间
+//                String seqno = UUID.randomUUID().toString().replaceAll("-", "");//业务id
+//                String dataToSign = Base64Util.encodeData(datetime + ":" + seqno + ":" + content);//"MjAxNTA0MDExMTAzMzE6MTAwMDAwMDE6aGVsbG9UZXN0";//20150401110331:10000001:helloTest
+//                String display = Base64Util.encodeData(displayed);//签名
+//                String returnUrl = url + "?eid=" + seqno;//异步接收路径
+//
+//                RealName realName = new RealName(name, idnum);
+//                MOMTRealNameParameters pkiParam = new MOMTRealNameParameters(mobile, dataToSign, display);
+//                MOMTRealNameParam reqParam = new MOMTRealNameParam(pkiParam, realName);
+//                reqParam.setReturnUrl(returnUrl);
+//                String msg = "";
+//                CommonResult result = EidlinkService.doPost(reqParam);
+//                if (result.getResult().equals("00")) {//eid调取成功
+//                    for (int i = 0; i < 20; i++) {//循环获取redis中数据，根据业务id,如果没有数据5s一次，一共循环100s
+//                        if (redisUtil.hasKey(seqno)) {
+//                            String value = redisUtil.get(seqno);
+//                            JSONObject json = JSONObject.fromObject(value);
+//                            if (json.get("result").equals("00") && json.get("result_detail").equals("0000000")) {
+//                                System.out.println("us=======" + us);
+//
+//                                msg = "验证成功";
+//                                map.put("status", "0");
+//                                break;
+//                            } else {
+//                                msg = "验证失败";
+//                                map.put("status", "1");
+//                                break;
+//                            }
+//                        } else {
+//                            try {
+//                                Thread.sleep(5000);
+//                            } catch (InterruptedException e) {
+//                                // TODO Auto-generated catch block
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    }
+//                    System.out.println("msg=======" + msg);
+//                    if (msg.equals("")) {
+//                        msg = "验证失败";
+//                        map.put("status", "1");
+//                    }
+//                    redisUtil.delete("phone" + us.getMobilePhone());
+//                    map.put("message", msg);//0成功 1失败
+//
+//                } else {
+//                    redisUtil.delete("phone" + us.getMobilePhone());
+//                    map.put("message", "验证失败");
+//                    map.put("status", "1");//0成功 1失败
+//                }
+//            } else {
+//                try {
+//                    Thread.sleep(40000);
+//                } catch (InterruptedException e) {
+//                    // TODO Auto-generated catch block
+//                    e.printStackTrace();
+//                }
+//                map.put("message", "重复提交");
+//                map.put("status", "1");//0成功 1失败
+//
+//            }
+//
+//
+//        }
+//        return map;
+//    }
 }

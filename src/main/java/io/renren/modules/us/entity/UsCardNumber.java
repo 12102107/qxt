@@ -3,6 +3,8 @@ package io.renren.modules.us.entity;
 
 import com.baomidou.mybatisplus.annotations.TableName;
 
+import java.io.Serializable;
+
 /**
  *
  *
@@ -11,7 +13,7 @@ import com.baomidou.mybatisplus.annotations.TableName;
  * @date 2018-07-16
  */
 @TableName("us_card_number")
-public class UsCardNumber {
+public class UsCardNumber implements Serializable {
 
     private String id;
     private String uid;

@@ -443,32 +443,28 @@ public class UsUserController {
 
     }
 
-    /**
-     * 登录
-     */
     @Scope("prototype")
     @PostMapping("eidLogin")
-    @ApiOperation("登录")
-    public R eidLogin(@RequestBody UsSmsParam form) {
-        //表单校验
-        ValidatorUtils.validateEntity(form);
-        return usUserService.eidLogin(form);
-    }
-
-    @PostMapping("eID")
-    @ApiOperation("eID认证")
-    public R eID(@RequestBody UsSessionParam session) {
-        ValidatorUtils.validateEntity(session);
-        return usUserService.queryMobile(sessionUtil.getUserId(session.getSession()));
+    @ApiOperation("EID登录")
+    public R eidLogin(@RequestBody UsSmsParam param) throws InterruptedException {
+        ValidatorUtils.validateEntity(param);
+        return usUserService.eidLogin(param);
     }
 
     @Scope("prototype")
     @PostMapping("eidAuth")
-    @ApiOperation("session获取公积金")
-    public R getFund(@RequestBody UsEidParam form) {
-        ValidatorUtils.validateEntity(form);
-        return usUserService.getFund(sessionUtil.getUserId(form.getSession()), form);
+    @ApiOperation("EID认证")
+    public R eidAuth(@RequestBody UsSessionParam param) throws InterruptedException {
+        ValidatorUtils.validateEntity(param);
+        return usUserService.eidAuth(param);
     }
+
+//    @PostMapping("eID")
+//    @ApiOperation("eID验证")
+//    public R eID(@RequestBody UsSessionParam session) {
+//        ValidatorUtils.validateEntity(session);
+//        return usUserService.queryMobile(sessionUtil.getUserId(session.getSession()));
+//    }
 
 }
 

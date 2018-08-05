@@ -9,10 +9,8 @@ import io.renren.modules.us.param.*;
 import java.util.Map;
 
 /**
- * 
- *
  * @author sys
- * @email 
+ * @email
  * @date 2018-04-12 16:26:30
  */
 public interface UsUserService extends IService<UsUserEntity> {
@@ -33,14 +31,14 @@ public interface UsUserService extends IService<UsUserEntity> {
 
     R uploadPortrait(UsUserEntity user, UsUserPortraiParam form);
 
-    public Map<String, Object>  usHidden (String id);
+    Map<String, Object> usHidden(String id);
 
-    public R eidLogin(UsSmsParam form);
+    R eidLogin(UsSmsParam form) throws InterruptedException;
 
-    R queryMobile(String id);
-
-	R getFund(String userId,UsEidParam form);
+    R eidAuth(UsSessionParam form) throws InterruptedException;
 
     boolean updateEidLevel(String id, Integer level);
+
+    R queryMobile(String id);
 }
 

@@ -3,6 +3,8 @@ package io.renren.modules.us.controller;
 import io.renren.common.utils.RedisUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +28,8 @@ import java.io.InputStream;
 public class UsCallbackController {
     
     private RedisUtils redisUtils;
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
     
     @RequestMapping("callback")
     @ApiOperation("回调函数接口")
@@ -39,6 +43,7 @@ public class UsCallbackController {
             }
             byte[] temp = sout.toByteArray();
             String s_ok = new String(temp,"UTF-8");
+            logger.error(s_ok);
             //获取业务eid
             String eid = request.getParameter("eid");
             //将业务id和回调结果存到redis中
