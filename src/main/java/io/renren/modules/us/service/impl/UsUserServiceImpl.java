@@ -101,6 +101,9 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             entity.setSession(session);
             entity.setAppid(form.getAppid());
             this.updateById(entity);
+            //清理失效的Session,保存新的Session
+            sessionUtil.deleteSession(entity.getId());
+            sessionUtil.saveSession(entity.getId(), session);
 
             //保存设备信息
             UsUserPlantParamEntity userPlant = new UsUserPlantParamEntity();
@@ -308,13 +311,16 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         user.setEidLevel(Constant.EidLevel.EID_LEVLE_1.getValue());
         user.setMobilePhone(form.getMobilePhone());
         user.setPassword(form.getPassword());
-        user.setId(UsIdUtil.generateId());
+        String userId = UsIdUtil.generateId();
+        user.setId(userId);
         user.setCreateDate(new Date());
         user.setStatus(INITIALIZE_USER_STATUS);//初始未认证
         String session = UsSessionUtil.generateSession();//生成session
         user.setSession(session);
         user.setAppid(form.getAppid());
         this.insert(user);
+        //保存Session到缓存
+        sessionUtil.saveSession(userId, session);
 
         //保存设备信息
         UsUserPlantParamEntity userPlant = new UsUserPlantParamEntity();
@@ -488,9 +494,13 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         if (b) {
             //修改user相关属性状态
             user.setUpdateDate(new Date());
-            user.setSession(UsSessionUtil.generateSession());
+            String session = UsSessionUtil.generateSession();
+            user.setSession(session);
             user.setEidLevel(Constant.EidLevel.EID_LEVLE_3.getValue());
             this.updateById(user);
+            //清理失效的Session,保存新的Session
+            sessionUtil.deleteSession(user.getId());
+            sessionUtil.saveSession(user.getId(), session);
             //给前端返回登录状态,如果是EID登录值为1
             user.setLoginStatus("1");
             user.setCardNumber(this.getCardNumber(user.getId()));

@@ -62,6 +62,17 @@ public class UsSessionUtil {
         }
     }
 
+    public void deleteSession(String userId) {
+        Set<String> keys = redisUtil.getKeys(SESSION_KEY_PREFIX + "*");
+        if (keys != null) {
+            for (String key : keys) {
+                if (redisUtil.get(key).equals(userId)) {
+                    redisUtil.delete(key);
+                }
+            }
+        }
+    }
+
     public void updateSession(String userId, String session) {
         if (userId == null || session == null || userId.isEmpty() || session.isEmpty()) {
             throw new SessionException("用户ID或Session为空");
