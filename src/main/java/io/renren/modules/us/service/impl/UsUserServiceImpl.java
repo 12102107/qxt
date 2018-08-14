@@ -16,17 +16,20 @@ import io.renren.modules.us.entity.TSTypeEntity;
 import io.renren.modules.us.entity.UsUserEntity;
 import io.renren.modules.us.entity.UsUserPlantParamEntity;
 import io.renren.modules.us.param.*;
-import io.renren.modules.us.service.*;
+import io.renren.modules.us.service.TSTypeService;
+import io.renren.modules.us.service.UsElectronicCardNumberService;
+import io.renren.modules.us.service.UsUserPlantParamService;
+import io.renren.modules.us.service.UsUserService;
 import io.renren.modules.us.util.Base64Util;
 import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsSessionUtil;
-import io.renren.modules.us.util.UsUserUtils;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sun.misc.BASE64Decoder;
@@ -41,25 +44,12 @@ import java.util.*;
 
 @Service("usUserService")
 public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> implements UsUserService {
+
     public static final int INITIALIZE_USER_STATUS = 0;//注册后初始状态
     public static final int REAL_USER_STATUS = 1;//实名状态
 
-    @Value("${us.img.uploadImg}")
-    private String UPLOADImg;
-    @Value("${us.img.dirTemp}")
-    private String DIRTEMP;
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private RedisUtils redisUtil;
-    @Autowired
-    private TSDepartService tSDepartService;
-    @Autowired
-    private UsElectronicCardNumberService usElectronicCardNumber;
-    @Autowired
-    private TSTypeService tSTypeService;
-    @Autowired
-    private UsUserPlantParamService usUserPlantParamService;
-    @Autowired
-    private UsSessionUtil sessionUtil;
+
     @Value("${us.eid.content}")
     private String content;
 
@@ -69,9 +59,21 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
     @Value("${us.eid.returnUrl}")
     private String url;
 
-    @Autowired
-    private UsUserUtils util;
+    @Value("${us.img.uploadImg}")
+    private String UPLOADImg;
 
+    @Value("${us.img.dirTemp}")
+    private String DIRTEMP;
+
+    private RedisUtils redisUtil;
+
+    private UsElectronicCardNumberService usElectronicCardNumber;
+
+    private TSTypeService tSTypeService;
+
+    private UsUserPlantParamService usUserPlantParamService;
+
+    private UsSessionUtil sessionUtil;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -79,7 +81,6 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
                 new Query<UsUserEntity>(params).getPage(),
                 new EntityWrapper<UsUserEntity>()
         );
-
         return new PageUtils(page);
     }
 
@@ -138,7 +139,6 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
      * @return
      */
     public Map<String, Object> usHidden(String id) {
-
         EntityWrapper<UsUserEntity> w1 = new EntityWrapper<>();
         w1.setSqlSelect("session", "status", "u_jobid as uJobid",
                 "u_departid as uDepartid", "remark", "realname", "id", "email", "nickname", "mobile_phone as mobilePhone", "citizen_no as citizenNo", "address", "portrait", "sex");
@@ -551,138 +551,44 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         return usElectronicCardNumber.getElectronicCardNumber(userId);
     }
 
+    @Scope("prototype")
+    @Override
+    public R auth(UsUserAuthParam param) throws InterruptedException {
+        UsUserEntity user = new UsUserEntity();
+        user.setCitizenNo(param.getCitizenNo());
+        user.setRealname(param.getName());
+        user.setMobilePhone(param.getMobile());
+        boolean b = this.verifyEid(user);
+        if (b) {
+            return R.ok();
+        } else {
+            return R.error("实名认证失败");
+        }
+    }
+
     @Autowired
     public void setRedisUtil(RedisUtils redisUtil) {
         this.redisUtil = redisUtil;
     }
 
-    //    @Override
-//    public R queryMobile(String id) {
-//        EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
-//        wrapper.setEntity(new UsUserEntity());
-//        wrapper.where("id={0}", id);
-//        List<UsUserEntity> list = this.selectList(wrapper);
-//
-//        if (list.isEmpty()) {
-//            return R.error("用户不存在");
-//        } else {
-//            if (list.get(0).getStatus().equals(2)) {
-//                return R.ok("用户通过认证");
-//            } else {
-//                return R.ok("用户认证失败");
-//            }
-//
-//        }
-//    }
+    @Autowired
+    public void setUsElectronicCardNumber(UsElectronicCardNumberService usElectronicCardNumber) {
+        this.usElectronicCardNumber = usElectronicCardNumber;
+    }
 
-    //    /**
-//     * eid调取公共方法
-//     *
-//     * @param list
-//     * @param appid
-//     * @return
-//     */
-//    private Map getEid(List<UsUserEntity> list, String appid, String status) {
-//        Map map = new HashMap();
-//        String session = "";
-//        if (list.isEmpty()) {
-//            map.put("message", "用户不存在");
-//            map.put("status", "1");//0成功 1失败
-//        } else {
-//            UsUserEntity us = list.get(0);
-//            if (!status.equals("")) {
-//                us.setUpdateDate(new Date());
-//                session = UsSessionUtil.generateSession();
-//                us.setSession(session);
-//                us.setAppid(appid);
-//                this.updateById(us);
-//
-//            }
-//        	/* Map<String, Object> user_ = this.usHidden(us.getId());
-//            // 实名认证成功后返回电子卡号
-//            String cardnumber=usElectronicCardNumber.electronicCardNumber(us.getId());
-//            user_.put("cardnumber",cardnumber);
-//            user_.put("loginStatus", "1");//eid登陆状态*/
-//            UsUserEntity userEntity = util.getUser(us.getId());
-//            userEntity.setLoginStatus("1");
-//            map.put("user_", userEntity);
-//            // for(UsUserEntity us:list){
-//            if (!redisUtil.hasKey("phone" + us.getMobilePhone())) {
-//                redisUtil.setTimes("phone" + us.getMobilePhone(), us.getMobilePhone());
-//                String mobile = us.getMobilePhone();//手机号;
-//                String name = "";
-//                String idnum = "";
-//                if (null != us.getRealname()) {
-//                    name = us.getRealname();//姓名;
-//                }
-//                if (null != us.getCitizenNo()) {
-//                    idnum = us.getCitizenNo();//"14070019770130819X";
-//                }
-//                SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
-//                String datetime = df.format(new Date());// new Date()为获取当前系统时间
-//                String seqno = UUID.randomUUID().toString().replaceAll("-", "");//业务id
-//                String dataToSign = Base64Util.encodeData(datetime + ":" + seqno + ":" + content);//"MjAxNTA0MDExMTAzMzE6MTAwMDAwMDE6aGVsbG9UZXN0";//20150401110331:10000001:helloTest
-//                String display = Base64Util.encodeData(displayed);//签名
-//                String returnUrl = url + "?eid=" + seqno;//异步接收路径
-//
-//                RealName realName = new RealName(name, idnum);
-//                MOMTRealNameParameters pkiParam = new MOMTRealNameParameters(mobile, dataToSign, display);
-//                MOMTRealNameParam reqParam = new MOMTRealNameParam(pkiParam, realName);
-//                reqParam.setReturnUrl(returnUrl);
-//                String msg = "";
-//                CommonResult result = EidlinkService.doPost(reqParam);
-//                if (result.getResult().equals("00")) {//eid调取成功
-//                    for (int i = 0; i < 20; i++) {//循环获取redis中数据，根据业务id,如果没有数据5s一次，一共循环100s
-//                        if (redisUtil.hasKey(seqno)) {
-//                            String value = redisUtil.get(seqno);
-//                            JSONObject json = JSONObject.fromObject(value);
-//                            if (json.get("result").equals("00") && json.get("result_detail").equals("0000000")) {
-//                                System.out.println("us=======" + us);
-//
-//                                msg = "验证成功";
-//                                map.put("status", "0");
-//                                break;
-//                            } else {
-//                                msg = "验证失败";
-//                                map.put("status", "1");
-//                                break;
-//                            }
-//                        } else {
-//                            try {
-//                                Thread.sleep(5000);
-//                            } catch (InterruptedException e) {
-//                                // TODO Auto-generated catch block
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    }
-//                    System.out.println("msg=======" + msg);
-//                    if (msg.equals("")) {
-//                        msg = "验证失败";
-//                        map.put("status", "1");
-//                    }
-//                    redisUtil.delete("phone" + us.getMobilePhone());
-//                    map.put("message", msg);//0成功 1失败
-//
-//                } else {
-//                    redisUtil.delete("phone" + us.getMobilePhone());
-//                    map.put("message", "验证失败");
-//                    map.put("status", "1");//0成功 1失败
-//                }
-//            } else {
-//                try {
-//                    Thread.sleep(40000);
-//                } catch (InterruptedException e) {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                }
-//                map.put("message", "重复提交");
-//                map.put("status", "1");//0成功 1失败
-//
-//            }
-//
-//
-//        }
-//        return map;
-//    }
+    @Autowired
+    public void settSTypeService(TSTypeService tSTypeService) {
+        this.tSTypeService = tSTypeService;
+    }
+
+    @Autowired
+    public void setUsUserPlantParamService(UsUserPlantParamService usUserPlantParamService) {
+        this.usUserPlantParamService = usUserPlantParamService;
+    }
+
+    @Autowired
+    public void setSessionUtil(UsSessionUtil sessionUtil) {
+        this.sessionUtil = sessionUtil;
+    }
+
 }

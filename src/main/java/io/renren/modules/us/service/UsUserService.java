@@ -41,7 +41,7 @@ public interface UsUserService extends IService<UsUserEntity> {
 
     String getCardNumber(String userId);
 
-//    R queryMobile(String id);
+    R auth(UsUserAuthParam param) throws InterruptedException;
 
 }
 

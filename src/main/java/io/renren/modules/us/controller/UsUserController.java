@@ -456,12 +456,13 @@ public class UsUserController {
         return usUserService.eidAuth(param);
     }
 
-//    @PostMapping("eID")
-//    @ApiOperation("eID验证")
-//    public R eID(@RequestBody UsSessionParam session) {
-//        ValidatorUtils.validateEntity(session);
-//        return usUserService.queryMobile(sessionUtil.getUserId(session.getSession()));
-//    }
+    @Scope("prototype")
+    @PostMapping("auth")
+    @ApiOperation("第三方EID认证")
+    public R auth(@RequestBody UsUserAuthParam param) throws InterruptedException {
+        ValidatorUtils.validateEntity(param);
+        return usUserService.auth(param);
+    }
 
 }
 
