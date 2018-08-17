@@ -318,6 +318,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         String session = UsSessionUtil.generateSession();//生成session
         user.setSession(session);
         user.setAppid(form.getAppid());
+        user.setClient_id(form.getClient_id());
         this.insert(user);
         //保存Session到缓存
         sessionUtil.saveSession(userId, session);

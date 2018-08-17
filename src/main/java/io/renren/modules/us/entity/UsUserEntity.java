@@ -118,6 +118,11 @@ public class UsUserEntity implements Serializable {
 	private Integer eidLevel;
 	
 	/**
+	 * 个推用户id
+	 */
+	private String client_id;
+	
+	/**
 	 * 登陆方式 0普通登陆 1 eid登陆
 	 */
 	@TableField(exist = false)
@@ -399,5 +404,11 @@ public class UsUserEntity implements Serializable {
 	}
 	public void setLoginStatus(String loginStatus) {
 		this.loginStatus = loginStatus;
+	}
+	public String getClient_id() {
+		return client_id;
+	}
+	public void setClient_id(String client_id) {
+		this.client_id = client_id;
 	}
 }

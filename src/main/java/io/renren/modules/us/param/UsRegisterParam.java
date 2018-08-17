@@ -23,6 +23,11 @@ public class UsRegisterParam extends UsBaseParam{
     @NotBlank(message="短信验证码不能为空")
     @Length(min = 1, max = 45)
     private String smsCode;
+    
+    @ApiModelProperty(value = "个推clientID")
+    @NotBlank(message="个推clientID不能为空")
+    @Length(min = 1, max = 50)
+    private String client_id;
 
     @ApiModelProperty(value = "设备型号")
     @Length(max = 30)
@@ -133,5 +138,13 @@ public class UsRegisterParam extends UsBaseParam{
     public void setNetworkType(String networkType) {
         this.networkType = networkType;
     }
+
+	public String getClient_id() {
+		return client_id;
+	}
+
+	public void setClient_id(String client_id) {
+		this.client_id = client_id;
+	}
 
 }
