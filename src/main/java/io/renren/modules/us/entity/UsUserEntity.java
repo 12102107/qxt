@@ -120,7 +120,7 @@ public class UsUserEntity implements Serializable {
 	/**
 	 * 个推用户id
 	 */
-	private String client_id;
+	private String clientId;
 	
 	/**
 	 * 登陆方式 0普通登陆 1 eid登陆
@@ -405,10 +405,11 @@ public class UsUserEntity implements Serializable {
 	public void setLoginStatus(String loginStatus) {
 		this.loginStatus = loginStatus;
 	}
-	public String getClient_id() {
-		return client_id;
+	public String getClientId() {
+		return clientId;
 	}
-	public void setClient_id(String client_id) {
-		this.client_id = client_id;
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
 	}
+	
 }
