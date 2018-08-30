@@ -174,6 +174,20 @@ public class UsNoticeController {
         return R.ok(tl);
 
     }
+    @PostMapping("eIDIntroductions")
+    @ApiOperation("电子卡说明")
+    public R eIDIntroductions(@RequestBody UsCompanyProfile form){
+        //表单校验
+        ValidatorUtils.validateEntity(form);
 
+        UsNoticeEntity tl = new UsNoticeEntity();
+
+        if (form.getNoticeType()!=null){
+            tl = usNoticeService.findByNoticeType(form.getNoticeType());
+        }
+
+        return R.ok(tl);
+
+    }
 
 }
