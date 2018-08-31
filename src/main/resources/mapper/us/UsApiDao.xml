@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.us.dao.UsApiDao">
+
+    <select id="getWithAppId" resultType="io.renren.modules.us.entity.UsApiEntity">
+        select api.* from us_app_api appapi
+        join us_app app on appapi.appid = app.id
+        join us_api api on appapi.apiid = api.id
+        where app.appkey = #{appId} and api.url = #{url} and api.apitype = '1' and api.apistate = '1'
+    </select>
+
+    <select id="getWithoutAppId" resultType="io.renren.modules.us.entity.UsApiEntity">
+        select * from us_api api
+        where api.url = #{url} and api.apitype = '2' and api.apistate = '1'
+    </select>
+
+</mapper>

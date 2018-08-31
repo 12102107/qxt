@@ -42,6 +42,8 @@ public class UsTest {
     private UsSessionUtil sessionUtil;
     @Autowired
     private UsUserService userService;
+    @Autowired
+    private UsApiService apiService;
 
     @Test
     public void test1() {
@@ -254,6 +256,12 @@ public class UsTest {
     public void test16() {
         boolean b = userService.updateEidLevel("66b4e22ce0ec4bf59969b3d71494f026", Constant.EidLevel.EID_LEVLE_1.getValue());
         System.out.println(b);
+    }
+
+    @Test
+    public void test17() {
+        UsApiEntity api = apiService.getWithoutAppId("/api/meth/callback");
+        System.out.println("测试测试测试测试测试测试测试测试测试=====" + api.toString());
     }
 
 }

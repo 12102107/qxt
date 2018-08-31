@@ -9,7 +9,9 @@ import io.renren.modules.us.entity.UsCardEntity;
 import io.renren.modules.us.entity.UsCardMenuEntity;
 import io.renren.modules.us.entity.UsCardNumberEntity;
 import io.renren.modules.us.entity.UsUserEntity;
+import io.renren.modules.us.param.UsBaseParam;
 import io.renren.modules.us.param.UsCardDetailParam;
+import io.renren.modules.us.param.UsCardUpdateParam;
 import io.renren.modules.us.param.UsSessionParam;
 import io.renren.modules.us.service.UsCardMenuService;
 import io.renren.modules.us.service.UsCardNumberService;
@@ -153,6 +155,23 @@ public class UsCardServiceImpl extends ServiceImpl<UsCardDao, UsCardEntity> impl
         }
         cardEntity.put("menuList", menuList);
         return R.ok(cardEntity);
+    }
+
+    @Override
+    public R update(UsCardUpdateParam param) {
+        ValidatorUtils.validateEntity(param);
+        return R.error();
+    }
+
+    @Override
+    public R partnerList(UsBaseParam param) {
+        ValidatorUtils.validateEntity(param);
+        EntityWrapper<UsCardEntity> cardWrapper = new EntityWrapper<>();
+        cardWrapper.setSqlSelect("id as partner", "card_name as cardName", "card_alias as cardAlias")
+                .where("appid = {0}", param.getAppid())
+                .and("status = {0}", "1");
+        List<Map<String, Object>> list = this.selectMaps(cardWrapper);
+        return R.ok(list);
     }
 
     @Autowired

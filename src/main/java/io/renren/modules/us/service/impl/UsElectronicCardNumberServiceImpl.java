@@ -29,6 +29,9 @@ public class UsElectronicCardNumberServiceImpl extends ServiceImpl<UsElectronicC
     @Value("${us.cooperation.cardNumber}")
     private String cardNumber;
 
+    @Value("${us.card.idCard}")
+    private String cardId;
+
     @Override
     public String electronicCardNumber(String uid) {
 
@@ -44,6 +47,7 @@ public class UsElectronicCardNumberServiceImpl extends ServiceImpl<UsElectronicC
         card.setId(id);
         card.setUid(uid);
         card.setElectronicCardNumber(electronicCardNumber);
+        card.setUsCardId(cardId);
         usElectronicCardNumberService.insert(card);
         return electronicCardNumber;
     }

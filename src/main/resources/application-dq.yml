@@ -140,3 +140,5 @@ us:
     uploadImg: \\apache-tomcat-8.5.24-dq\\webapps\\hmPhotos\\upload
     dirTemp: \\apache-tomcat-8.5.24-dq\\webapps\\hmPhotos\\upload
     cardImg: http://www.dq-city.com/hmPhotos/
+  card:
+    idCard: 2c908105657e0d7a01657e30fef8001f
