@@ -141,12 +141,12 @@ public class UsCardServiceImpl extends ServiceImpl<UsCardDao, UsCardEntity> impl
         List<Map<String, Object>> menuList = new ArrayList<>();
         for (UsCardMenuEntity parent : parentList) {
             Map<String, Object> object = new HashMap<>();
-            parent.setMenuIcon(cardImg + parent.getMenuIcon());
+            parent.setMenuIcon(parent.getMenuIcon() == null ? "" : cardImg + parent.getMenuIcon());
             object.put("parentMenu", parent);
             List<UsCardMenuEntity> childMenu = new ArrayList<>();
             for (UsCardMenuEntity child : childList) {
                 if (child.getParentId().equals(parent.getId())) {
-                    child.setMenuIcon(cardImg + child.getMenuIcon());
+                    child.setMenuIcon(child.getMenuIcon() == null ? "" : cardImg + child.getMenuIcon());
                     childMenu.add(child);
                 }
             }
