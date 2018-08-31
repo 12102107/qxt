@@ -1,7 +1,7 @@
 package io.renren.modules.us.service;
 
 import com.baomidou.mybatisplus.service.IService;
-import io.renren.modules.us.entity.UsCardNumber;
+import io.renren.modules.us.entity.UsCardNumberEntity;
 
 /**
  *
@@ -10,7 +10,7 @@ import io.renren.modules.us.entity.UsCardNumber;
  * @email
  * @date 2018-07-13 
  */
-public interface UsElectronicCardNumberService extends IService<UsCardNumber> {
+public interface UsElectronicCardNumberService extends IService<UsCardNumberEntity> {
 
     String electronicCardNumber(String id);
 

@@ -3,7 +3,7 @@ package io.renren.modules.us.service.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import io.renren.modules.us.dao.UsElectronicCardNumberDao;
-import io.renren.modules.us.entity.UsCardNumber;
+import io.renren.modules.us.entity.UsCardNumberEntity;
 import io.renren.modules.us.service.UsElectronicCardNumberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +21,7 @@ import java.util.UUID;
  */
 
 @Service("UsElectronicCardNumberService")
-public class UsElectronicCardNumberServiceImpl extends ServiceImpl<UsElectronicCardNumberDao, UsCardNumber> implements UsElectronicCardNumberService {
+public class UsElectronicCardNumberServiceImpl extends ServiceImpl<UsElectronicCardNumberDao, UsCardNumberEntity> implements UsElectronicCardNumberService {
 
     @Autowired
     private UsElectronicCardNumberService usElectronicCardNumberService;
@@ -40,7 +40,7 @@ public class UsElectronicCardNumberServiceImpl extends ServiceImpl<UsElectronicC
         //uuid生成主见
         String s1 = UUID.randomUUID().toString();
         String id = s1.replaceAll("\\-", "");
-        UsCardNumber card = new UsCardNumber();
+        UsCardNumberEntity card = new UsCardNumberEntity();
         card.setId(id);
         card.setUid(uid);
         card.setElectronicCardNumber(electronicCardNumber);
@@ -50,10 +50,10 @@ public class UsElectronicCardNumberServiceImpl extends ServiceImpl<UsElectronicC
 
     @Override
     public String getElectronicCardNumber(String userId) {
-        EntityWrapper<UsCardNumber> wrapper = new EntityWrapper<>();
-        wrapper.setEntity(new UsCardNumber());
+        EntityWrapper<UsCardNumberEntity> wrapper = new EntityWrapper<>();
+        wrapper.setEntity(new UsCardNumberEntity());
         wrapper.where("uid={0}", userId);
-        List<UsCardNumber> list = this.selectList(wrapper);
+        List<UsCardNumberEntity> list = this.selectList(wrapper);
         if (list.isEmpty()) {
             return "";
         } else {

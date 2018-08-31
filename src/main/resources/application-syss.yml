@@ -139,3 +139,4 @@ us:
   img:
     uploadImg: \\apache-tomcat-8.5.24-syss\\webapps\\hmPhotos\\upload
     dirTemp: \\apache-tomcat-8.5.24-syss\\webapps\\hmPhotos\\upload
+    cardImg: http://www.syss-city.com/hmPhotos/
