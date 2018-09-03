@@ -1,0 +1,8 @@
+.idea
+/renren-fast.iml
+target
+/classes
+/.classpath
+/.factorypath
+/.project
+.settings
