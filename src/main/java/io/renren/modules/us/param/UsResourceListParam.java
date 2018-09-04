@@ -2,20 +2,18 @@ package io.renren.modules.us.param;
 
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * @author Li
  */
 public class UsResourceListParam extends UsBaseParam {
-	
-	
-	@NotNull(message = "名称不能为空")
-	private String name;
-	
- 
 
-	@NotNull(message = "pageNo不能为空")
+
+    @NotNull(message = "名称不能为空")
+    private String name;
+
+
+    @NotNull(message = "pageNo不能为空")
     private Integer pageNo;
 
     @NotNull(message = "pageSize不能为空")
@@ -36,11 +34,12 @@ public class UsResourceListParam extends UsBaseParam {
     public void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
     }
-    public String getName() {
- 		return name;
- 	}
 
- 	public void setName(String name) {
- 		this.name = name;
- 	}
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

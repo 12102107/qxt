@@ -1,6 +1,7 @@
 package io.renren.modules.us.param;
 
-import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.NotBlank;
 
 public class UsSessionParam extends UsBaseParam {
 
