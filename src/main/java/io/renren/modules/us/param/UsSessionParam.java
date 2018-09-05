@@ -1,5 +1,6 @@
 package io.renren.modules.us.param;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotBlank;
 
 public class UsSessionParam extends UsBaseParam {
@@ -14,4 +15,5 @@ public class UsSessionParam extends UsBaseParam {
     public void setSession(String session) {
         this.session = session;
     }
+
 }
