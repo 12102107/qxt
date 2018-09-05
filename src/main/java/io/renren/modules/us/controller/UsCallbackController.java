@@ -47,7 +47,7 @@ public class UsCallbackController {
             //获取业务eid
             String eid = request.getParameter("eid");
             //将业务id和回调结果存到redis中
-            redisUtils.setTimes(eid, s_ok);
+            redisUtils.setTimes(eid, s_ok,3600L);
             return s_ok;
     }
 

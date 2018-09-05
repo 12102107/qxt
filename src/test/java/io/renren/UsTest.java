@@ -254,7 +254,7 @@ public class UsTest {
 
     @Test
     public void test16() {
-        boolean b = userService.updateEidLevel("66b4e22ce0ec4bf59969b3d71494f026", Constant.EidLevel.EID_LEVLE_1.getValue());
+        boolean b = userService.updateEidLevel("66b4e22ce0ec4bf59969b3d71494f026", Constant.EidLevel.EID_LEVEL_1.getValue());
         System.out.println(b);
     }
 

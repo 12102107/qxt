@@ -12,6 +12,7 @@ import javax.servlet.DispatcherType;
  * Filter配置
  *
  * @author chenshun
+ * @email sunlightcs@gmail.com
  * @date 2017-04-21 21:56
  */
 @Configuration
@@ -29,6 +30,9 @@ public class FilterConfig {
         return registration;
     }
 
+    /**
+     *module:us:不使用框架的xssfilter
+     */
 //    @Bean
 //    public FilterRegistrationBean xssFilterRegistration() {
 //        FilterRegistrationBean registration = new FilterRegistrationBean();
@@ -40,6 +44,9 @@ public class FilterConfig {
 //        return registration;
 //    }
 
+    /**
+     *module:us:permissionFilter
+     */
     @Bean
     public FilterRegistrationBean permissionFilterRegistration() {
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
