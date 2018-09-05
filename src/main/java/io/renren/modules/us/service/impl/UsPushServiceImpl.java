@@ -1,5 +1,8 @@
 package io.renren.modules.us.service.impl;
 
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
@@ -13,6 +16,7 @@ import io.renren.modules.us.entity.*;
 import io.renren.modules.us.param.*;
 import io.renren.modules.us.service.*;
 import io.renren.modules.us.util.UsSessionUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -66,9 +70,10 @@ public class UsPushServiceImpl extends ServiceImpl<UsPushDao, UsPushEntity> impl
         if(pushList.size()==0||pushList.isEmpty()){
             return R.error("消息详情为空");
         }
-        Map<String, Object> map = new HashMap<>();
-        map.put("pushDetailList",pushList);
-        return R.ok(map);
+        //Map<String, Object> map = new HashMap<>();
+       // map.put("pushDetailList",pushList);
+//        JSONArray json = JSONArray.parseArray(JSON.toJSONString(pushList));
+        return R.ok(pushList.get(0));
     }
 
 
