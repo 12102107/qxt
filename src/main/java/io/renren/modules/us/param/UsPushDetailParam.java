@@ -1,7 +1,8 @@
 package io.renren.modules.us.param;
 
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.NotBlank;
 
 public class UsPushDetailParam extends UsSessionParam {
 
