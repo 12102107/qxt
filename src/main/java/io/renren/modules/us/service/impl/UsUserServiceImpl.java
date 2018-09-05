@@ -290,14 +290,14 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         user = this.queryName(user);
 
         user.setStatus(REAL_USER_STATUS);//已实名认证
-        user.setEidLevel(Constant.EidLevel.EID_LEVLE_2.getValue());//实名认证后EID等级改为2
+        user.setEidLevel(Constant.EidLevel.EID_LEVEL_2.getValue());//实名认证后EID等级改为2
         user.setAppid(form.getAppid());
 
         this.updateById(user);
         // 实名认证成功后返回电子卡号
         String cardnumber = usElectronicCardNumber.electronicCardNumber(user.getId());
         user.setCardNumber(cardnumber);
-        user.setEidLevel(Constant.EidLevel.EID_LEVLE_2.getValue());//返回eid状态
+        user.setEidLevel(Constant.EidLevel.EID_LEVEL_2.getValue());//返回eid状态
 
         return user;
     }
@@ -308,7 +308,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         //保存用户信息
         UsUserEntity user = new UsUserEntity();
         user.setLoginStatus("0");
-        user.setEidLevel(Constant.EidLevel.EID_LEVLE_1.getValue());
+        user.setEidLevel(Constant.EidLevel.EID_LEVEL_1.getValue());
         user.setMobilePhone(form.getMobilePhone());
         user.setPassword(form.getPassword());
         String userId = UsIdUtil.generateId();
@@ -497,7 +497,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             user.setUpdateDate(new Date());
             String session = UsSessionUtil.generateSession();
             user.setSession(session);
-            user.setEidLevel(Constant.EidLevel.EID_LEVLE_3.getValue());
+            user.setEidLevel(Constant.EidLevel.EID_LEVEL_3.getValue());
             this.updateById(user);
             //清理失效的Session,保存新的Session
             sessionUtil.deleteSession(user.getId());
@@ -529,7 +529,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         if (b) {
             //修改user相关属性状态
             user.setUpdateDate(new Date());
-            user.setEidLevel(Constant.EidLevel.EID_LEVLE_3.getValue());
+            user.setEidLevel(Constant.EidLevel.EID_LEVEL_3.getValue());
             this.updateById(user);
             user.setCardNumber(this.getCardNumber(user.getId()));
             user.setPassword("");

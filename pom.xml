@@ -220,7 +220,7 @@
 			<artifactId>hutool-all</artifactId>
 			<version>${hutool.version}</version>
 		</dependency>
-		<!--us begin-->
+		<!--module:us:添加jar包开始-->
 		<dependency>
 			<groupId>eid.sdk</groupId>
 			<artifactId>eID.SDK.Service-froad</artifactId>
@@ -237,7 +237,7 @@
 			<artifactId>json-lib</artifactId>
 			<version>2.4</version>
 		</dependency>
-		<!--us end-->
+		<!--module:us:添加jar包结束-->
 	</dependencies>
 
 	<build>

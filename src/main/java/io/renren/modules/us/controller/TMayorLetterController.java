@@ -176,7 +176,7 @@ public class TMayorLetterController {
 
 
     private boolean queryRel(UsUserEntity user) {
-        return user.getEidLevel().equals(Constant.EidLevel.EID_LEVLE_3.getValue());
+        return user.getEidLevel().equals(Constant.EidLevel.EID_LEVEL_3.getValue());
     }
 
     /**

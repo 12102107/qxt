@@ -1,7 +1,9 @@
 package io.renren.common.exception;
 
+import io.renren.common.utils.Constant;
 import io.renren.common.utils.R;
 import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.session.SessionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
@@ -26,9 +28,9 @@ public class RRExceptionHandler {
 	@ExceptionHandler(RRException.class)
 	public R handleRRException(RRException e){
 		R r = new R();
-		r.put("code", e.getCode());
-		r.put("msg", e.getMessage());
-
+		//module:us:修改返回字段名称
+		r.put("result", e.getCode());
+		r.put("message", e.getMessage());
 		return r;
 	}
 
@@ -55,4 +57,14 @@ public class RRExceptionHandler {
 		logger.error(e.getMessage(), e);
 		return R.error();
 	}
+
+	/**
+	 *module:us:SessionException处理
+	 */
+	@ExceptionHandler(SessionException.class)
+	public R handleSessionException(SessionException e) {
+		logger.error(e.getMessage(), e);
+		return R.error(Constant.Result.SESSION_ERROR.getValue(), Constant.Message.SESSION_ERROR.getValue());
+	}
+
 }
