@@ -68,7 +68,8 @@ public class ScheduleConfig {
         //可选，QuartzScheduler 启动时更新己存在的Job，这样就不用每次修改targetObject后删除qrtz_job_details表对应记录了
         factory.setOverwriteExistingJobs(true);
         //设置自动启动，默认为true
-        factory.setAutoStartup(true);
+        //module:us:取消定时任务自动启动
+        factory.setAutoStartup(false);
 
         return factory;
     }
