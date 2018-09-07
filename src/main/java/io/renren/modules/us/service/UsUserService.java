@@ -33,7 +33,7 @@ public interface UsUserService extends IService<UsUserEntity> {
 
     Map<String, Object> usHidden(String id);
 
-    R eidLogin(UsSmsParam form) throws InterruptedException;
+    R eidLogin(UsEidLoginParam form) throws InterruptedException;
 
     R eidAuth(UsSessionParam form) throws InterruptedException;
 

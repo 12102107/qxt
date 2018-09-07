@@ -1,7 +1,6 @@
 package io.renren.modules.us.controller;
 
 import io.renren.common.utils.Constant;
-import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.us.entity.TSTypeEntity;
@@ -17,7 +16,6 @@ import io.renren.modules.us.util.UsSessionUtil;
 import io.renren.modules.us.util.UsSmsUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.*;
@@ -47,63 +45,6 @@ public class UsUserController {
     private UsSmsService usSmsService;
     @Autowired
     private UsSessionUtil sessionUtil;
-
-    /**
-     * 列表
-     */
-    @RequestMapping("/list")
-    @RequiresPermissions("us:ususer:list")
-    public R list(@RequestParam Map<String, Object> params) {
-        PageUtils page = usUserService.queryPage(params);
-
-        return R.ok().put("page", page);
-    }
-
-
-    /**
-     * 信息
-     */
-    @RequestMapping("/info/{id}")
-    @RequiresPermissions("us:ususer:info")
-    public R info(@PathVariable("id") String id) {
-        UsUserEntity usUser = usUserService.selectById(id);
-
-        return R.ok().put("usUser", usUser);
-    }
-
-    /**
-     * 保存
-     */
-    @RequestMapping("/save")
-    @RequiresPermissions("us:ususer:save")
-    public R save(@RequestBody UsUserEntity usUser) {
-        usUserService.insert(usUser);
-
-        return R.ok();
-    }
-
-    /**
-     * 修改
-     */
-    @RequestMapping("/update")
-    @RequiresPermissions("us:ususer:update")
-    public R update(@RequestBody UsUserEntity usUser) {
-        usUserService.updateById(usUser);
-
-        return R.ok();
-    }
-
-    /**
-     * 删除
-     */
-    @RequestMapping("/delete")
-    @RequiresPermissions("us:ususer:delete")
-    public R delete(@RequestBody String[] ids) {
-        usUserService.deleteBatchIds(Arrays.asList(ids));
-
-        return R.ok();
-    }
-
 
     /**
      * 验证手机号码是否注册
@@ -234,7 +175,6 @@ public class UsUserController {
             return R.error(Constant.Result.SMS_CODE_NULL.getValue(), "验证码查询结果为空");
         }
     }
-
 
     /**
      * 登录
@@ -443,7 +383,7 @@ public class UsUserController {
     @Scope("prototype")
     @PostMapping("eidLogin")
     @ApiOperation("EID登录")
-    public R eidLogin(@RequestBody UsSmsParam param) throws InterruptedException {
+    public R eidLogin(@RequestBody UsEidLoginParam param) throws InterruptedException {
         ValidatorUtils.validateEntity(param);
         return usUserService.eidLogin(param);
     }

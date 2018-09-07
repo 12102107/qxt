@@ -101,6 +101,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             String session = UsSessionUtil.generateSession();
             entity.setSession(session);
             entity.setAppid(form.getAppid());
+            entity.setClientId(form.getClient_id());
             this.updateById(entity);
             //清理失效的Session,保存新的Session
             sessionUtil.deleteSession(entity.getId());
@@ -122,8 +123,6 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             usUserPlantParamService.insert(userPlant);
 
             entity.setCardNumber(usElectronicCardNumber.getElectronicCardNumber(entity.getId()));
-            //给前端返回登录状态,如果是账号密码登录值为0
-            entity.setLoginStatus("0");
             entity.setPassword("");
 
             return R.ok(entity);
@@ -478,7 +477,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
     }
 
     @Override
-    public R eidLogin(UsSmsParam param) throws InterruptedException {
+    public R eidLogin(UsEidLoginParam param) throws InterruptedException {
         //查询用户信息
         EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
         wrapper.setEntity(new UsUserEntity());
@@ -498,6 +497,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             String session = UsSessionUtil.generateSession();
             user.setSession(session);
             user.setEidLevel(Constant.EidLevel.EID_LEVEL_3.getValue());
+            user.setClientId(param.getClient_id());
             this.updateById(user);
             //清理失效的Session,保存新的Session
             sessionUtil.deleteSession(user.getId());

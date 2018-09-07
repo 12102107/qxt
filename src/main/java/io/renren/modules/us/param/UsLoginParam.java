@@ -49,7 +49,10 @@ public class UsLoginParam extends UsBaseParam{
     @Length(max = 30)
     private String networkType;
 
-
+    @ApiModelProperty(value = "个推clientID")
+    @NotBlank(message="个推clientID不能为空")
+    @Length(min = 1, max = 50)
+    private String client_id;
 
     public String getMobilePhone() {
         return mobilePhone;
@@ -123,5 +126,11 @@ public class UsLoginParam extends UsBaseParam{
         this.networkType = networkType;
     }
 
+    public String getClient_id() {
+        return client_id;
+    }
 
+    public void setClient_id(String client_id) {
+        this.client_id = client_id;
+    }
 }
