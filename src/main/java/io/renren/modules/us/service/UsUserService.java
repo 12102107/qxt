@@ -15,8 +15,6 @@ import java.util.Map;
  */
 public interface UsUserService extends IService<UsUserEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
-
     R signIn(UsLoginParam form);
 
     UsUserEntity reg(UsRegisterParam form);

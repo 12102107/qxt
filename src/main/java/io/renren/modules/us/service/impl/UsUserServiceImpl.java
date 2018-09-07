@@ -2,7 +2,6 @@ package io.renren.modules.us.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.eidlink.sdk.EidlinkService;
 import com.eidlink.sdk.pojo.request.MOMTRealNameParam;
@@ -10,7 +9,10 @@ import com.eidlink.sdk.pojo.request.base.MOMTRealNameParameters;
 import com.eidlink.sdk.pojo.request.base.RealName;
 import com.eidlink.sdk.pojo.result.CommonResult;
 import io.renren.common.exception.RRException;
-import io.renren.common.utils.*;
+import io.renren.common.utils.Constant;
+import io.renren.common.utils.HttpContextUtils;
+import io.renren.common.utils.R;
+import io.renren.common.utils.RedisUtils;
 import io.renren.modules.us.dao.UsUserDao;
 import io.renren.modules.us.entity.TSTypeEntity;
 import io.renren.modules.us.entity.UsUserEntity;
@@ -23,6 +25,7 @@ import io.renren.modules.us.service.UsUserService;
 import io.renren.modules.us.util.Base64Util;
 import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsSessionUtil;
+import io.renren.modules.us.util.UsUserUtil;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
@@ -45,8 +48,9 @@ import java.util.*;
 @Service("usUserService")
 public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> implements UsUserService {
 
-    public static final int INITIALIZE_USER_STATUS = 0;//注册后初始状态
-    public static final int REAL_USER_STATUS = 1;//实名状态
+    private static final int INITIALIZE_USER_STATUS = 0;//注册后初始状态
+
+    private static final int REAL_USER_STATUS = 1;//实名状态
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -74,15 +78,6 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
     private UsUserPlantParamService usUserPlantParamService;
 
     private UsSessionUtil sessionUtil;
-
-    @Override
-    public PageUtils queryPage(Map<String, Object> params) {
-        Page<UsUserEntity> page = this.selectPage(
-                new Query<UsUserEntity>(params).getPage(),
-                new EntityWrapper<UsUserEntity>()
-        );
-        return new PageUtils(page);
-    }
 
     @Override
     @Transactional
@@ -123,9 +118,8 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             usUserPlantParamService.insert(userPlant);
 
             entity.setCardNumber(usElectronicCardNumber.getElectronicCardNumber(entity.getId()));
-            entity.setPassword("");
 
-            return R.ok(entity);
+            return R.ok(UsUserUtil.trim(entity));
         } else {
             return R.error();
         }
@@ -191,7 +185,6 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         } else if (list.size() == 1) {
             return list.get(0);
         }
-
         return null;
     }
 
@@ -274,30 +267,23 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
     @Override
     @Transactional
     public UsUserEntity realnameCert(UsUserEntity user, UsUserRealCertParam form) {
-
         user.setUpdateDate(new Date());
-
         user.setRealname(form.getRealname());
         user.setNickname(form.getNickname());
         user.setCitizenNo(form.getCitizenNo());
         user.setSex(form.getSex());
         user.setEmail(form.getEmail());
         user.setAddress(form.getAddress());
-
         user.setuJobid(form.getuJobid());
         user.setuDepartid(form.getuDepartid());
         user = this.queryName(user);
-
         user.setStatus(REAL_USER_STATUS);//已实名认证
         user.setEidLevel(Constant.EidLevel.EID_LEVEL_2.getValue());//实名认证后EID等级改为2
         user.setAppid(form.getAppid());
-
         this.updateById(user);
         // 实名认证成功后返回电子卡号
         String cardnumber = usElectronicCardNumber.electronicCardNumber(user.getId());
         user.setCardNumber(cardnumber);
-        user.setEidLevel(Constant.EidLevel.EID_LEVEL_2.getValue());//返回eid状态
-
         return user;
     }
 
@@ -306,7 +292,6 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
     public UsUserEntity reg(UsRegisterParam form) {
         //保存用户信息
         UsUserEntity user = new UsUserEntity();
-        user.setLoginStatus("0");
         user.setEidLevel(Constant.EidLevel.EID_LEVEL_1.getValue());
         user.setMobilePhone(form.getMobilePhone());
         user.setPassword(form.getPassword());
@@ -502,8 +487,6 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
             //清理失效的Session,保存新的Session
             sessionUtil.deleteSession(user.getId());
             sessionUtil.saveSession(user.getId(), session);
-            //给前端返回登录状态,如果是EID登录值为1
-            user.setLoginStatus("1");
             user.setCardNumber(this.getCardNumber(user.getId()));
             user.setPassword("");
             return R.ok(user);
