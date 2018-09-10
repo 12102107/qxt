@@ -26,5 +26,31 @@
         <result property="workUnit" column="work_unit"/>
     </resultMap>
 
+    <select id="unifyUserDataReturned" resultType="map">
+        SELECT
+            cu.electronic_card_number AS cardNumber,
+            u.mobile_phone AS mobilePhone,
+            u.realname,
+            u.citizen_no AS citizenNo,
+            u.sex,
+            u.portrait,
+            u.session,
+            u.eid_level AS eidLevel,
+            u.client_id AS clientId,
+            u.email,
+            u.address,
+            u.u_jobid AS uJobid,
+            u.person_job AS personJob,
+            u.u_departid AS uDepartid,
+            u.person_departname AS personDepartname
+        FROM
+            us_user u
+                JOIN
+            us_card_number cu ON u.id = cu.uid
+        WHERE
+            u.id = #{userId}
+                AND
+            cu.us_card_id =  #{cardId}
+    </select>
 
 </mapper>

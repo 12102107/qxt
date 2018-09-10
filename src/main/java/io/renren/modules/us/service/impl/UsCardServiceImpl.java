@@ -17,6 +17,7 @@ import io.renren.modules.us.service.UsCardMenuService;
 import io.renren.modules.us.service.UsCardNumberService;
 import io.renren.modules.us.service.UsCardService;
 import io.renren.modules.us.service.UsUserService;
+import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsSessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -179,6 +180,19 @@ public class UsCardServiceImpl extends ServiceImpl<UsCardDao, UsCardEntity> impl
                 .and("status = {0}", "1");
         List<Map<String, Object>> list = this.selectMaps(cardWrapper);
         return R.ok(list);
+    }
+
+    @Override
+    public boolean insertCardNumber(String userId, String cardId, String cardNumber, String isPayable) {
+        UsCardNumberEntity cardNumberEntity = new UsCardNumberEntity();
+        cardNumberEntity.setId(UsIdUtil.generateId());
+        cardNumberEntity.setUid(userId);
+        cardNumberEntity.setUsCardId(cardId);
+        cardNumberEntity.setElectronicCardNumber(cardNumber);
+        if ("1".equals(isPayable)) {
+            cardNumberEntity.setBalance(0D);
+        }
+        return cardNumberService.insert(cardNumberEntity);
     }
 
     @Autowired

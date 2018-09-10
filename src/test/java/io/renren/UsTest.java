@@ -44,6 +44,8 @@ public class UsTest {
     private UsUserService userService;
     @Autowired
     private UsApiService apiService;
+    @Autowired
+    private UsUserEidService eidService;
 
     @Test
     public void test1() {
@@ -254,7 +256,7 @@ public class UsTest {
 
     @Test
     public void test16() {
-        boolean b = userService.updateEidLevel("66b4e22ce0ec4bf59969b3d71494f026", Constant.EidLevel.EID_LEVEL_1.getValue());
+        boolean b = eidService.updateEidLevel("66b4e22ce0ec4bf59969b3d71494f026", Constant.EidLevel.EID_LEVEL_1.getValue());
         System.out.println(b);
     }
 

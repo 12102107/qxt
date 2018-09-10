@@ -10,10 +10,7 @@ import io.renren.modules.us.param.*;
 import io.renren.modules.us.service.TSTypeService;
 import io.renren.modules.us.service.UsSmsService;
 import io.renren.modules.us.service.UsUserService;
-import io.renren.modules.us.util.UsIdUtil;
-import io.renren.modules.us.util.UsSessionUtil;
-import io.renren.modules.us.util.UsSmsUtil;
-import io.renren.modules.us.util.UsUserUtil;
+import io.renren.modules.us.util.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +31,6 @@ import java.util.Map;
  * @date 2018-04-12 16:26:30
  */
 @RestController
-@RequestMapping("/api/user")
 @Api("基础接口")
 public class UsUserController {
     @Autowired
@@ -45,11 +41,13 @@ public class UsUserController {
     private UsSmsService usSmsService;
     @Autowired
     private UsSessionUtil sessionUtil;
+    @Autowired
+    private UsCardNumberUtil cardNumberUtil;
 
     /**
      * 验证手机号码是否注册
      */
-    @PostMapping("checkIsRegister")
+    @PostMapping("/api/user/checkIsRegister")
     @ApiOperation("验证手机号码是否注册")
     public R checkIsRegister(@RequestBody UsIsRegParam form) {
         //表单校验
@@ -68,7 +66,7 @@ public class UsUserController {
     /**
      * 找回密码
      */
-    @PostMapping("findPassword")
+    @PostMapping("/api/user/findPassword")
     @ApiOperation("找回密码")
     public R findPassword(@RequestBody UsIsRegParam form) {
         //表单校验
@@ -109,7 +107,7 @@ public class UsUserController {
     /**
      * 重置密码
      */
-    @PostMapping("resetPassword")
+    @PostMapping("/api/user/resetPassword")
     @ApiOperation("重置密码")
     public R resetPassword(@RequestBody UsResetpwdParam form) {
         //表单校验
@@ -144,7 +142,7 @@ public class UsUserController {
     /**
      * 注册
      */
-    @PostMapping("register")
+    @PostMapping("/api/user/register")
     @ApiOperation("注册")
     public R register(@RequestBody UsRegisterParam form) {
         //表单校验
@@ -153,7 +151,7 @@ public class UsUserController {
         int code = usSmsService.checkCode(form.getAppid(), form.getMobilePhone(), form.getSmsCode());
         if (code == Constant.Result.SMS_CODE_CORRECT.getValue()) {
             UsUserEntity us = usUserService.reg(form);
-            return R.ok(UsUserUtil.trim(us));
+            return R.ok(usUserService.unifyUserDataReturned(us.getId(), cardNumberUtil.getIdCard()));
         } else if (code == Constant.Result.SMS_CODE_ERROR.getValue()) {
             return R.error(Constant.Result.SMS_CODE_ERROR.getValue(), "验证码不正确");
         } else if (code == Constant.Result.SMS_CODE_EXPIRE.getValue()) {
@@ -166,7 +164,7 @@ public class UsUserController {
     /**
      * 登录
      */
-    @PostMapping("login")
+    @PostMapping("/api/user/login")
     @ApiOperation("登录")
     public R login(@RequestBody UsLoginParam form) {
         //表单校验
@@ -174,7 +172,7 @@ public class UsUserController {
         return usUserService.signIn(form);
     }
 
-    @PostMapping("modifypwd")
+    @PostMapping("/api/user/modifypwd")
     @ApiOperation("修改密码")
     public R modifypwd(@RequestBody UsModifypwdParam form) {
         //表单校验
@@ -203,7 +201,7 @@ public class UsUserController {
         return R.ok("修改成功");
     }
 
-    @PostMapping("personalInfo")
+    @PostMapping("/api/user/personalInfo")
     @ApiOperation("查询个人信息")
     public R personalInfo(@RequestBody UsSessionParam form) {
         //表单校验
@@ -216,11 +214,10 @@ public class UsUserController {
         if (user == null) {
             return R.error("查询不到此用户");
         }
-        user.setCardNumber(usUserService.getCardNumber(userId));
-        return R.ok(UsUserUtil.trim(user));
+        return R.ok(usUserService.unifyUserDataReturned(user.getId(), cardNumberUtil.getIdCard()));
     }
 
-    @PostMapping("editPersonalInfo")
+    @PostMapping("/api/user/editPersonalInfo")
     @ApiOperation("修改个人信息")
     public R editPersonalInfo(@RequestBody UsUserParam form) {
         //表单校验
@@ -234,11 +231,10 @@ public class UsUserController {
             return R.error("查询不到此用户");
         }
         user = usUserService.updatePersonalInfo(user, form);
-        user.setCardNumber(usUserService.getCardNumber(userId));
-        return R.ok(UsUserUtil.trim(user));
+        return R.ok(usUserService.unifyUserDataReturned(user.getId(), cardNumberUtil.getIdCard()));
     }
 
-    @PostMapping("departList")
+    @PostMapping("/api/user/departList")
     @ApiOperation("查询部门信息列表")
     public R departList(@RequestBody UsSessionParam form) {
         ValidatorUtils.validateEntity(form);
@@ -255,7 +251,7 @@ public class UsUserController {
         return R.ok(list);
     }
 
-    @PostMapping("jobList")
+    @PostMapping("/api/user/jobList")
     @ApiOperation("查询职业信息列表")
     public R jobList(@RequestBody UsSessionParam form) {
         ValidatorUtils.validateEntity(form);
@@ -272,7 +268,7 @@ public class UsUserController {
         return R.ok(list);
     }
 
-    @PostMapping("realnameCertification")
+    @PostMapping("/api/user/realnameCertification")
     @ApiOperation("实名认证")
     public R realnameCertification(@RequestBody UsUserRealCertParam form) {
         //表单校验
@@ -286,10 +282,10 @@ public class UsUserController {
             return R.error("查询不到此用户");
         }
         UsUserEntity usUserEntity = usUserService.realnameCert(user, form);
-        return R.ok(UsUserUtil.trim(usUserEntity));
+        return R.ok(usUserService.unifyUserDataReturned(usUserEntity.getId(), cardNumberUtil.getIdCard()));
     }
 
-    @PostMapping("editPortrait")
+    @PostMapping("/api/user/editPortrait")
     @ApiOperation("修改头像")
     public R editPortrait(@RequestBody UsUserPortraiParam form) {
         //表单校验
@@ -304,30 +300,6 @@ public class UsUserController {
         }
         // 将已修改的图片url对应的id返回前端
         return usUserService.uploadPortrait(user, form);
-    }
-
-    @Scope("prototype")
-    @PostMapping("eidLogin")
-    @ApiOperation("EID登录")
-    public R eidLogin(@RequestBody UsEidLoginParam param) throws InterruptedException {
-        ValidatorUtils.validateEntity(param);
-        return usUserService.eidLogin(param);
-    }
-
-    @Scope("prototype")
-    @PostMapping("eidAuth")
-    @ApiOperation("EID认证")
-    public R eidAuth(@RequestBody UsSessionParam param) throws InterruptedException {
-        ValidatorUtils.validateEntity(param);
-        return usUserService.eidAuth(param);
-    }
-
-    @Scope("prototype")
-    @PostMapping("auth")
-    @ApiOperation("第三方EID认证")
-    public R auth(@RequestBody UsUserAuthParam param) throws InterruptedException {
-        ValidatorUtils.validateEntity(param);
-        return usUserService.auth(param);
     }
 
 }
