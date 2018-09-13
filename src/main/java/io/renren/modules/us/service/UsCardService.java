@@ -19,4 +19,6 @@ public interface UsCardService extends IService<UsCardEntity> {
     R update(UsCardUpdateParam param);
 
     R partnerList(UsBaseParam param);
+
+    boolean insertCardNumber(String userId, String cardId, String cardNumber, String isPayable);
 }

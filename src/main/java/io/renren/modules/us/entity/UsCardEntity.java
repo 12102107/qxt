@@ -72,7 +72,10 @@ public class UsCardEntity implements Serializable {
      * 卡号查询URL
      */
     private String cardNumberUrl;
-
+    /**
+     * 可用于支付 0:false 1:true
+     */
+    private String isPayable;
     /**
      * 获取：主键
      */
@@ -261,6 +264,14 @@ public class UsCardEntity implements Serializable {
 
     public void setCardNumberUrl(String cardNumberUrl) {
         this.cardNumberUrl = cardNumberUrl;
+    }
+
+    public String getIsPayable() {
+        return isPayable;
+    }
+
+    public void setIsPayable(String isPayable) {
+        this.isPayable = isPayable;
     }
 
     @Override

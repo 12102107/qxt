@@ -3,7 +3,6 @@
 
 <mapper namespace="io.renren.modules.us.dao.UsUserDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="io.renren.modules.us.entity.UsUserEntity" id="usUserMap">
         <result property="id" column="id"/>
         <result property="mobilePhone" column="mobile_phone"/>
@@ -26,5 +25,27 @@
         <result property="workUnit" column="work_unit"/>
     </resultMap>
 
+    <select id="unifyUserDataReturned" resultType="map">
+        SELECT u.mobile_phone                    AS mobilePhone,
+               u.realname,
+               u.citizen_no                      AS citizenNo,
+               u.sex,
+               u.portrait,
+               u.session,
+               u.eid_level                       AS eidLevel,
+               u.client_id                       AS clientId,
+               u.email,
+               u.address,
+               u.u_jobid                         AS uJobid,
+               u.person_job                      AS personJob,
+               u.u_departid                      AS uDepartid,
+               u.person_departname               AS personDepartname,
+               (SELECT cu.electronic_card_number
+                FROM us_card_number cu
+                WHERE cu.uid = #{userId}
+                  AND cu.us_card_id = #{cardId}) AS cardNumber
+        FROM us_user u
+        WHERE u.id = #{userId}
+    </select>
 
 </mapper>
