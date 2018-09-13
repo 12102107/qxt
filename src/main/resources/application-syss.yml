@@ -138,7 +138,6 @@ us:
     qqTokenUrl: https://graph.qq.com/oauth2.0/token?grant_type=authorization_code
     qqClientId: 101474222
     qqClientSecret: 89b6fd82cd2aedee1c6567ca9d15e0de
-    cardNumber: 622623
     qqRedirectUri: http://www.syss-city.com/pages/login/login.html
     qqOpenIdUrl: https://graph.qq.com/oauth2.0/me
   icon:
@@ -152,4 +151,7 @@ us:
     dirTemp: \\apache-tomcat-8.5.24-syss\\webapps\\hmPhotos\\upload
     cardImg: http://www.syss-city.com/hmPhotos/
   card:
-    idCard: 000
+    idCard: 00002
+    idCardPrefix: 00002
+    trafficCard: 00002
+    trafficCardPrefix: 00002

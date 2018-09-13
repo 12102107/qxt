@@ -138,7 +138,6 @@ us:
     qqTokenUrl: https://graph.qq.com/oauth2.0/token?grant_type=authorization_code
     qqClientId: 101474222
     qqClientSecret: 89b6fd82cd2aedee1c6567ca9d15e0de
-    cardNumber: 622623
     qqRedirectUri: http://www.dq-city.com/pages/login/login.html
     qqOpenIdUrl: https://graph.qq.com/oauth2.0/me
   icon:
@@ -153,3 +152,6 @@ us:
     cardImg: http://www.dq-city.com/hmPhotos/
   card:
     idCard: 2c908105657e0d7a01657e30fef8001f
+    idCardPrefix: 622623
+    trafficCard: 8ab3935865adf3fc0165b2910f0d000e
+    trafficCardPrefix: 100100

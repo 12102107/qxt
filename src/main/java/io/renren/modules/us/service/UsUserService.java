@@ -1,7 +1,6 @@
 package io.renren.modules.us.service;
 
 import com.baomidou.mybatisplus.service.IService;
-import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.modules.us.entity.UsUserEntity;
 import io.renren.modules.us.param.*;
@@ -14,8 +13,6 @@ import java.util.Map;
  * @date 2018-04-12 16:26:30
  */
 public interface UsUserService extends IService<UsUserEntity> {
-
-    PageUtils queryPage(Map<String, Object> params);
 
     R signIn(UsLoginParam form);
 
@@ -31,17 +28,5 @@ public interface UsUserService extends IService<UsUserEntity> {
 
     R uploadPortrait(UsUserEntity user, UsUserPortraiParam form);
 
-    Map<String, Object> usHidden(String id);
-
-    R eidLogin(UsEidLoginParam form) throws InterruptedException;
-
-    R eidAuth(UsSessionParam form) throws InterruptedException;
-
-    boolean updateEidLevel(String id, Integer level);
-
-    String getCardNumber(String userId);
-
-    R auth(UsUserAuthParam param) throws InterruptedException;
-
+    Map<String,Object> unifyUserDataReturned(String userId,String cardId);
 }
-

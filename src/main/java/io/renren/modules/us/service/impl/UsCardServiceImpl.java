@@ -17,6 +17,7 @@ import io.renren.modules.us.service.UsCardMenuService;
 import io.renren.modules.us.service.UsCardNumberService;
 import io.renren.modules.us.service.UsCardService;
 import io.renren.modules.us.service.UsUserService;
+import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsSessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,13 +53,18 @@ public class UsCardServiceImpl extends ServiceImpl<UsCardDao, UsCardEntity> impl
         }
         //卡ID和卡号
         Map<String, String> cardNumberMap = new HashMap<>();
+        //卡ID和卡余额
+        Map<String, Double> cardBalanceMap = new HashMap<>();
         for (UsCardNumberEntity cardNumber : cardNumberList) {
             cardNumberMap.put(cardNumber.getUsCardId(), cardNumber.getElectronicCardNumber());
+            if (cardNumber.getBalance() != null) {
+                cardBalanceMap.put(cardNumber.getUsCardId(), cardNumber.getBalance());
+            }
         }
         //根据用户拥有的卡ID获取卡信息
         EntityWrapper<UsCardEntity> cardWrapper = new EntityWrapper<>();
         cardWrapper.setSqlSelect("id", "card_type as cardType", "card_name as cardName", "card_alias as cardAlias", "qr_url as qrUrl"
-                , "card_back_simg as cardBackSimg", "card_back_bimg as cardBackBimg")
+                , "card_back_simg as cardBackSimg", "card_back_bimg as cardBackBimg", "is_payable as isPayable")
                 .where("status = {0}", "1")
                 .in("id", cardNumberMap.keySet().toArray())
                 .orderBy("card_order", true);
@@ -68,8 +74,8 @@ public class UsCardServiceImpl extends ServiceImpl<UsCardDao, UsCardEntity> impl
         }
         //生成返回结果
         Map<String, Object> result = new HashMap<>();
-        result.put("balance", 0);
         for (Map<String, Object> m : cardList) {
+            //如果是身份证卡增加真实姓名返回值,并增加到idCard返回对象中
             if (m.get("cardType").toString().equals("0")) {
                 m.put("realname", user.getRealname());
                 m.put("electronicCardNumber", cardNumberMap.get(m.get("id").toString()));
@@ -77,11 +83,13 @@ public class UsCardServiceImpl extends ServiceImpl<UsCardDao, UsCardEntity> impl
                 m.put("cardBackBimg", cardImg + m.get("cardBackBimg"));
                 result.put("idCard", m);
             }
-            if (m.get("cardType").toString().equals("1")) {
-                m.put("electronicCardNumber", cardNumberMap.get(m.get("id").toString()));
-                m.put("cardBackSimg", cardImg + m.get("cardBackSimg"));
-                m.put("cardBackBimg", cardImg + m.get("cardBackBimg"));
+            //如果是可支付的卡则增加卡余额返回值,不是则不增加
+            if (m.get("isPayable").toString().equals("1")) {
+                m.put("balance", cardBalanceMap.get(m.get("id").toString()));
             }
+            m.put("electronicCardNumber", cardNumberMap.get(m.get("id").toString()));
+            m.put("cardBackSimg", cardImg + m.get("cardBackSimg"));
+            m.put("cardBackBimg", cardImg + m.get("cardBackBimg"));
         }
         cardList.remove(result.get("idCard"));
         result.put("otherCardList", cardList);
@@ -172,6 +180,19 @@ public class UsCardServiceImpl extends ServiceImpl<UsCardDao, UsCardEntity> impl
                 .and("status = {0}", "1");
         List<Map<String, Object>> list = this.selectMaps(cardWrapper);
         return R.ok(list);
+    }
+
+    @Override
+    public boolean insertCardNumber(String userId, String cardId, String cardNumber, String isPayable) {
+        UsCardNumberEntity cardNumberEntity = new UsCardNumberEntity();
+        cardNumberEntity.setId(UsIdUtil.generateId());
+        cardNumberEntity.setUid(userId);
+        cardNumberEntity.setUsCardId(cardId);
+        cardNumberEntity.setElectronicCardNumber(cardNumber);
+        if ("1".equals(isPayable)) {
+            cardNumberEntity.setBalance(0D);
+        }
+        return cardNumberService.insert(cardNumberEntity);
     }
 
     @Autowired

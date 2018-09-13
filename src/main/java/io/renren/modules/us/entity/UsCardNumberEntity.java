@@ -30,6 +30,10 @@ public class UsCardNumberEntity implements Serializable {
      * 卡ID
      */
     private String usCardId;
+    /**
+     * 卡余额
+     */
+    private Double balance;
 
     /**
      * 获取：主键ID
@@ -85,6 +89,14 @@ public class UsCardNumberEntity implements Serializable {
      */
     public void setUsCardId(String usCardId) {
         this.usCardId = usCardId;
+    }
+
+    public Double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Double balance) {
+        this.balance = balance;
     }
 
     @Override
