@@ -6,6 +6,7 @@ import io.renren.common.utils.R;
 import io.renren.modules.us.entity.UsUserEntity;
 import io.renren.modules.us.param.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,6 +43,5 @@ public interface UsUserService extends IService<UsUserEntity> {
     String getCardNumber(String userId);
 
     R auth(UsUserAuthParam param) throws InterruptedException;
-
 }
 
