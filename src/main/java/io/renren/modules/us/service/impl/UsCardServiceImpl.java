@@ -112,7 +112,7 @@ public class UsCardServiceImpl extends ServiceImpl<UsCardDao, UsCardEntity> impl
         //查询卡信息
         EntityWrapper<UsCardEntity> cardWrapper = new EntityWrapper<>();
         cardWrapper.setSqlSelect("id", "card_type as cardType", "card_name as cardName", "card_alias as cardAlias", "qr_url as qrUrl"
-                , "card_back_simg as cardBackSimg", "card_back_bimg as cardBackBimg")
+                , "card_back_simg as cardBackSimg", "card_back_bimg as cardBackBimg", "is_payable as isPayable")
                 .where("status = {0}", "1")
                 .and("id = {0}", cardId);
         Map<String, Object> cardEntity = this.selectMap(cardWrapper);
@@ -180,6 +180,23 @@ public class UsCardServiceImpl extends ServiceImpl<UsCardDao, UsCardEntity> impl
                 .and("status = {0}", "1");
         List<Map<String, Object>> list = this.selectMaps(cardWrapper);
         return R.ok(list);
+    }
+
+    @Override
+    public R balance(UsCardDetailParam param) {
+        ValidatorUtils.validateEntity(param);
+        String userId = sessionUtil.getUserId(param.getSession());
+        EntityWrapper<UsCardNumberEntity> cardNumberWrapper = new EntityWrapper<>();
+        cardNumberWrapper.where("uid = {0}", userId)
+                .and("us_card_id = {0}", param.getCardId());
+        UsCardNumberEntity cardNumberEntity = cardNumberService.selectOne(cardNumberWrapper);
+        if (cardNumberEntity == null || cardNumberEntity.getBalance() == null) {
+            return R.error("信息不存在或卡不可支付");
+        } else {
+            Map<String, Double> map = new HashMap<>();
+            map.put("balance", cardNumberEntity.getBalance());
+            return R.ok(map);
+        }
     }
 
     @Override

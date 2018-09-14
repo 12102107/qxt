@@ -49,6 +49,12 @@ public class UsCardController {
         return cardService.partnerList(param);
     }
 
+    @PostMapping("balance")
+    @ApiOperation("卡包余额接口")
+    public R balance(@RequestBody UsCardDetailParam param) {
+        return cardService.balance(param);
+    }
+
     @Autowired
     public void setUsCardService(UsCardService usCardService) {
         this.cardService = usCardService;
