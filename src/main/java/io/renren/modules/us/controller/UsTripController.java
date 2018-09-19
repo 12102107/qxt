@@ -34,8 +34,8 @@ public class UsTripController {
 	@Autowired
 	private UsSessionUtil sessionUtil;
 
-	/*@PostMapping("historyAdd")
-	@ApiOperation("收藏/出发地目的地历史记录保存接口")
+	@PostMapping("historyAdd")
+	@ApiOperation("收藏/出发地目的地保存接口")
 	public R historyAdd(@RequestBody UsTripParam usTriprParam) throws ParseException {
 		// 表单校验
 		ValidatorUtils.validateEntity(usTriprParam);
@@ -58,10 +58,10 @@ public class UsTripController {
 			usTripService.insert(trip);
 		}
 		return R.ok();
-	}*/
+	}
 
 	@PostMapping("historyList")
-	@ApiOperation("出发地目的地历史记录展示接口")
+	@ApiOperation("出发地目的地展示接口")
 	public R historyList(@RequestBody UsTripParam usTriprParam) {
 		// 表单校验
 		ValidatorUtils.validateEntity(usTriprParam);
@@ -83,6 +83,18 @@ public class UsTripController {
 		return R.ok(page);
 	}
 
+	@PostMapping("historyEmpty")
+	@ApiOperation("出发地目的地清空接口")
+	public R historyEmpty(@RequestBody UsTripParam usTriprParam) throws ParseException {
+		// 表单校验
+		ValidatorUtils.validateEntity(usTriprParam);
+		String userId = sessionUtil.getUserId(usTriprParam.getSession());
+		String type=usTriprParam.getType();
+		usTripService.deleteHistory(type,userId);
+		
+		return R.ok();
+	}
+		
 	@PostMapping("collectList")
 	@ApiOperation("收藏展示接口")
 	public R collectList(@RequestBody UsTripParam usTriprParam) {
@@ -106,7 +118,6 @@ public class UsTripController {
 		return R.ok(page);
 	}
 
-
 	@PostMapping("collectDel")
 	@ApiOperation("收藏取消接口")
 	public R collectDel(@RequestBody UsTripParam usTriprParam) throws ParseException {
@@ -121,19 +132,7 @@ public class UsTripController {
 
 		return R.ok();
 	}
-
-	@PostMapping("historyEmpty")
-	@ApiOperation("出发地目的地历史记录清空")
-	public R historyEmpty(@RequestBody UsTripParam usTriprParam) throws ParseException {
-		// 表单校验
-		ValidatorUtils.validateEntity(usTriprParam);
-		String userId = sessionUtil.getUserId(usTriprParam.getSession());
-		String type=usTriprParam.getType();
-		usTripService.deleteHistory(type,userId);
-		
-		return R.ok();
-	}
-
+	
 	@PostMapping("homeList")
 	@ApiOperation("家/公司展示接口")
 	public R homeList(@RequestBody UsTripParam usTriprParam) {
@@ -157,7 +156,6 @@ public class UsTripController {
 		return R.ok(page);
 	}
 
-
 	@PostMapping("homeAdd")
 	@ApiOperation("家/公司保存接口")
 	public R homeAdd(@RequestBody UsTripParam usTriprParam) throws ParseException {
@@ -179,7 +177,7 @@ public class UsTripController {
 		usTripService.insert(tripLocation);
 		return R.ok();
 	}
-
+	
 	@PostMapping("homeUpdate")
 	@ApiOperation("家/公司修改接口")
 	public R homeUpdate(@RequestBody UsTripParam usTriprParam) throws ParseException {
@@ -191,7 +189,8 @@ public class UsTripController {
 		tripLocation.setName(usTriprParam.getName());
 		tripLocation.setAmapLatitude(usTriprParam.getAmap_latitude());
 		tripLocation.setAmapLongitude(usTriprParam.getAmap_longitude());
-		usTripService.updateById(tripLocation);	 
+		
+		usTripService.updateById(tripLocation);
 		return R.ok();
 	}
 

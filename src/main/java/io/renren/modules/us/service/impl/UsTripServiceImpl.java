@@ -1,9 +1,6 @@
 package io.renren.modules.us.service.impl;
 import java.util.List;
 import java.util.Map;
-
-import org.aspectj.weaver.ast.And;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
@@ -11,7 +8,6 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.modules.us.dao.UsTripDao;
-import io.renren.modules.us.entity.TSTypeEntity;
 import io.renren.modules.us.entity.UsTripLocationEntity;
 import io.renren.modules.us.param.UsTripParam;
 import io.renren.modules.us.service.UsTripService;
@@ -76,8 +72,9 @@ public class UsTripServiceImpl extends ServiceImpl<UsTripDao, UsTripLocationEnti
 
 	@Override
 	public void deleteHistory(String type,String userId) {
-		this.baseMapper.deleteHistory(type, userId);
-		return;
 		
+		this.baseMapper.deleteHistory(type, userId);
+		
+		return;
 	}
 	}

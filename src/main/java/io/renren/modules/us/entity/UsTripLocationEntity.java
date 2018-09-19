@@ -34,7 +34,7 @@ public class UsTripLocationEntity implements Serializable {
 	 */
 	private String name;
 	/**
-	 * 类型 0:默认 1:收藏出发地 2:收藏目的地 3:家 4:公司
+	 * 类型 0:默认 1:收藏出发地 2:收藏目的地 3:家 4:公司 5:收藏
 	 */
 	private String type;
 	/**
@@ -119,13 +119,13 @@ public class UsTripLocationEntity implements Serializable {
 		return name;
 	}
 	/**
-	 * 设置：类型 0:默认 1:收藏出发地 2:收藏目的地 3:家 4:公司
+	 * 设置：类型 0:默认 1:收藏出发地 2:收藏目的地 3:家 4:公司 5:收藏
 	 */
 	public void setType(String type) {
 		this.type = type;
 	}
 	/**
-	 * 获取：类型 0:默认 1:收藏出发地 2:收藏目的地 3:家 4:公司
+	 * 获取：类型 0:默认 1:收藏出发地 2:收藏目的地 3:家 4:公司 5:收藏
 	 */
 	public String getType() {
 		return type;

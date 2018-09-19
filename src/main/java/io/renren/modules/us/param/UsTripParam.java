@@ -40,7 +40,7 @@ public class UsTripParam extends UsSessionParam {
     @Length(max = 50)
     private  String amap_latitude;
 
-    @ApiModelProperty(value = "纬度")
+    @ApiModelProperty(value = "备注")
     @Length(max = 50)
     private  String remark;
      
