@@ -93,17 +93,17 @@ public class UsPayOrderServiceImpl extends ServiceImpl<UsPayOrderDao, UsPayOrder
                 this.insert(order);
                 //返回结果
                 Object payParams = object.get("payParams");
-                Map<String, Object> map = new HashMap<>();
-                map.put("channel", param.getChannel());
+                Map<String, Object> data = new HashMap<>();
+                data.put("channel", param.getChannel());
                 switch (param.getChannel()) {
                     case "0":
-                        map.put("payParams", payParams);
-                        return R.ok(map);
+                        data.put("payParams", payParams);
+                        return R.ok(data);
                     case "1":
-                        Map<String, Object> m = new HashMap<>();
-                        m.put("str", payParams);
-                        map.put("payParams", m);
-                        return R.ok(map);
+                        Map<String, Object> obj = new HashMap<>();
+                        obj.put("str", payParams);
+                        data.put("payParams", obj);
+                        return R.ok(data);
                 }
             } else {
                 return R.error("签名未通过验证");
