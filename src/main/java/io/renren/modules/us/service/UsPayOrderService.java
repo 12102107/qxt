@@ -3,6 +3,8 @@ package io.renren.modules.us.service;
 import com.baomidou.mybatisplus.service.IService;
 import io.renren.common.utils.R;
 import io.renren.modules.us.entity.UsPayOrderEntity;
+import io.renren.modules.us.param.UsPayDetailParam;
+import io.renren.modules.us.param.UsPayListParam;
 import io.renren.modules.us.param.UsPayOrderNotifyParam;
 import io.renren.modules.us.param.UsPayOrderParam;
 
@@ -19,4 +21,8 @@ public interface UsPayOrderService extends IService<UsPayOrderEntity> {
     R order(UsPayOrderParam param, HttpServletRequest request) throws IOException;
 
     String orderNotify(UsPayOrderNotifyParam param);
+
+    R list(UsPayListParam param);
+
+    R detail(UsPayDetailParam param);
 }

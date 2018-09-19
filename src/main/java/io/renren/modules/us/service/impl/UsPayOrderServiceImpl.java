@@ -9,6 +9,8 @@ import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.us.dao.UsPayOrderDao;
 import io.renren.modules.us.entity.UsCardNumberEntity;
 import io.renren.modules.us.entity.UsPayOrderEntity;
+import io.renren.modules.us.param.UsPayDetailParam;
+import io.renren.modules.us.param.UsPayListParam;
 import io.renren.modules.us.param.UsPayOrderNotifyParam;
 import io.renren.modules.us.param.UsPayOrderParam;
 import io.renren.modules.us.service.UsCardNumberService;
@@ -27,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -143,6 +146,33 @@ public class UsPayOrderServiceImpl extends ServiceImpl<UsPayOrderDao, UsPayOrder
             return "success";
         }
         return "fail";
+    }
+
+    @Override
+    public R list(UsPayListParam param) {
+        ValidatorUtils.validateEntity(param);
+        EntityWrapper<UsPayOrderEntity> wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("id", "subject", "update_date", "type", "amount")
+                .where("appid = {0}", param.getAppid())
+                .and("user_id = {0}", sessionUtil.getUserId(param.getSession()))
+                .and("card_id = {0}", param.getCardId())
+                .and("status = {0}", "2")
+                .orderBy("update_date", false);
+        List<UsPayOrderEntity> list = this.selectList(wrapper);
+        return R.ok(list);
+    }
+
+    @Override
+    public R detail(UsPayDetailParam param) {
+        ValidatorUtils.validateEntity(param);
+        EntityWrapper<UsPayOrderEntity> wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("id", "order_no", "channel", "type", "status", "subject"
+                , "body", "update_date", "amount", "balance", "remark")
+                .where("appid = {0}", param.getAppid())
+                .and("user_id = {0}", sessionUtil.getUserId(param.getSession()))
+                .and("id = {0}", param.getOrderId());
+        UsPayOrderEntity order = this.selectOne(wrapper);
+        return R.ok(order);
     }
 
     @Transactional

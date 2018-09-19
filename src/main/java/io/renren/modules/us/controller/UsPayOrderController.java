@@ -2,6 +2,8 @@ package io.renren.modules.us.controller;
 
 import io.renren.common.utils.HttpContextUtils;
 import io.renren.common.utils.R;
+import io.renren.modules.us.param.UsPayDetailParam;
+import io.renren.modules.us.param.UsPayListParam;
 import io.renren.modules.us.param.UsPayOrderNotifyParam;
 import io.renren.modules.us.param.UsPayOrderParam;
 import io.renren.modules.us.service.UsPayOrderService;
@@ -38,6 +40,18 @@ public class UsPayOrderController {
     @ApiOperation("支付回调接口")
     public String orderNotify(UsPayOrderNotifyParam param) {
         return payOrderService.orderNotify(param);
+    }
+
+    @PostMapping("list")
+    @ApiOperation("交易记录列表接口")
+    public R list(@RequestBody UsPayListParam param) {
+        return payOrderService.list(param);
+    }
+
+    @PostMapping("detail")
+    @ApiOperation("交易记录详请接口")
+    public R detail(@RequestBody UsPayDetailParam param) {
+        return payOrderService.detail(param);
     }
 
     @Autowired
