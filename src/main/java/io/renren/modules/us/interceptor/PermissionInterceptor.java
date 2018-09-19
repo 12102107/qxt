@@ -38,7 +38,7 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter {
         String url = request.getServletPath();
         JSONObject object = JSONObject.parseObject(requestBody);
         UsApiService apiService = (UsApiService) SpringContextUtils.getBean("usApiService");
-        if (!object.containsKey("appid")) {
+        if (object == null || !object.containsKey("appid")) {
             UsApiEntity api = apiService.getWithoutAppId(url);
             if (api == null) {
                 throw new AuthorizationException();
