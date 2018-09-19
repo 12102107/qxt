@@ -199,19 +199,6 @@ public class UsCardServiceImpl extends ServiceImpl<UsCardDao, UsCardEntity> impl
         }
     }
 
-    @Override
-    public boolean insertCardNumber(String userId, String cardId, String cardNumber, String isPayable) {
-        UsCardNumberEntity cardNumberEntity = new UsCardNumberEntity();
-        cardNumberEntity.setId(UsIdUtil.generateId());
-        cardNumberEntity.setUid(userId);
-        cardNumberEntity.setUsCardId(cardId);
-        cardNumberEntity.setElectronicCardNumber(cardNumber);
-        if ("1".equals(isPayable)) {
-            cardNumberEntity.setBalance(0D);
-        }
-        return cardNumberService.insert(cardNumberEntity);
-    }
-
     @Autowired
     public void setUserService(UsUserService userService) {
         this.userService = userService;

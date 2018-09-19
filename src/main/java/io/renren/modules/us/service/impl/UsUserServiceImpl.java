@@ -11,7 +11,7 @@ import io.renren.modules.us.entity.UsUserEntity;
 import io.renren.modules.us.entity.UsUserPlantParamEntity;
 import io.renren.modules.us.param.*;
 import io.renren.modules.us.service.TSTypeService;
-import io.renren.modules.us.service.UsCardService;
+import io.renren.modules.us.service.UsCardNumberService;
 import io.renren.modules.us.service.UsUserPlantParamService;
 import io.renren.modules.us.service.UsUserService;
 import io.renren.modules.us.util.UsCardNumberUtil;
@@ -56,7 +56,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
     private UsCardNumberUtil cardNumberUtil;
 
-    private UsCardService cardService;
+    private UsCardNumberService cardNumberService;
 
     @Override
     @Transactional
@@ -212,9 +212,9 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
         // 实名认证成功后生成身份证卡号和公交卡号
         String idCardNumber = cardNumberUtil.generateIdCardNumber();
-        cardService.insertCardNumber(user.getId(), cardNumberUtil.getIdCard(), idCardNumber, "0");
+        cardNumberService.insertCardNumber(user.getId(), cardNumberUtil.getIdCard(), idCardNumber, "0");
         String trafficCardNumber = cardNumberUtil.generateTrafficCardNumber();
-        cardService.insertCardNumber(user.getId(), cardNumberUtil.getTrafficCard(), trafficCardNumber, "1");
+        cardNumberService.insertCardNumber(user.getId(), cardNumberUtil.getTrafficCard(), trafficCardNumber, "1");
 
         user.setCardNumber(idCardNumber);
         return user;
@@ -371,8 +371,8 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
     }
 
     @Autowired
-    public void setCardService(UsCardService cardService) {
-        this.cardService = cardService;
+    public void setCardNumberService(UsCardNumberService cardNumberService) {
+        this.cardNumberService = cardNumberService;
     }
 
 }
