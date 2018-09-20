@@ -7,6 +7,8 @@ package io.renren.modules.us.controller;
  */
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+import io.renren.common.exception.RRException;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.us.param.UsBusRouteDetilsParam;
 import io.renren.modules.us.param.UsBusRouteParam;
@@ -141,6 +143,9 @@ public class BusRoutePlanController {
         String queryResult = getResponse(queryUrl);  //高德接口返回的是JSON格式的字符串
         //System.out.println("gao:"+queryResult);
         JSONObject job = JSONObject.parseObject(queryResult);
+        if(job.getString("geocodes").length()<=2){
+            throw new RRException("查询不到此地点");
+        }
         JSONObject jobJSON = JSONObject.parseObject(job.get("geocodes").toString().substring(1, job.get("geocodes").toString().length()-1));
         String DZ = jobJSON.get("location").toString();
         return DZ;
