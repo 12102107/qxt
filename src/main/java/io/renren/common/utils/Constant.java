@@ -8,9 +8,7 @@ package io.renren.common.utils;
  * @date 2016年11月15日 下午1:23:52
  */
 public class Constant {
-    /**
-     * 超级管理员ID
-     */
+    /** 超级管理员ID */
     public static final int SUPER_ADMIN = 1;
 
     /**
@@ -102,7 +100,7 @@ public class Constant {
     }
 
     /**
-     * 响应结果
+     * module:us:响应结果
      */
     public enum Result {
         //请求成功
@@ -148,7 +146,7 @@ public class Constant {
     }
 
     /**
-     * 响应消息
+     * module:us:响应消息
      */
     public enum Message {
         //请求成功
@@ -190,15 +188,15 @@ public class Constant {
     }
 
     /**
-     * EID等级
+     * module:us:EID等级
      */
     public enum EidLevel {
         //等级1
-        EID_LEVLE_1(1),
+        EID_LEVEL_1(1),
         //等级2
-        EID_LEVLE_2(2),
+        EID_LEVEL_2(2),
         //等级3
-        EID_LEVLE_3(3);
+        EID_LEVEL_3(3);
 
         private int value;
 

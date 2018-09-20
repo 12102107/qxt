@@ -15,9 +15,7 @@ import io.renren.modules.us.param.UsUserCooperationSignUpParam;
 import io.renren.modules.us.service.UsSmsService;
 import io.renren.modules.us.service.UsUserCooperationService;
 import io.renren.modules.us.service.UsUserService;
-import io.renren.modules.us.util.UsIdUtil;
-import io.renren.modules.us.util.UsSessionUtil;
-import io.renren.modules.us.util.UsWebSignInUtil;
+import io.renren.modules.us.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +35,8 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
     private UsSmsService smsService;
 
     private UsWebSignInUtil webSignInUtil;
+
+    private UsCardNumberUtil cardNumberUtil;
 
     private List<UsUserCooperationEntity> getUserCooperation(String appid, String type, String openid) {
         EntityWrapper<UsUserCooperationEntity> wrapper = new EntityWrapper<>();
@@ -74,7 +74,7 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
         cooperationEntity.setAppid(signUpParam.getAppid());
         cooperationEntity.setCreateDate(new Date());
         this.insert(cooperationEntity);
-        return R.ok(userService.usHidden(userEntity.getId()));
+        return R.ok(userService.unifyUserDataReturned(userEntity.getId(),cardNumberUtil.getIdCard()));
     }
 
     private R signUpWithPassword(UsUserCooperationSignUpParam signUpParam) {
@@ -105,7 +105,7 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
         cooperationEntity.setAppid(signUpParam.getAppid());
         cooperationEntity.setCreateDate(new Date());
         this.insert(cooperationEntity);
-        return R.ok(userService.usHidden(userEntity.getId()));
+        return R.ok(userService.unifyUserDataReturned(userEntity.getId(),cardNumberUtil.getIdCard()));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -127,7 +127,7 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
             userEntity.setSession(session);
             userService.updateById(userEntity);
             //更新session缓存
-            return R.ok(userService.usHidden(userEntity.getId()));
+            return R.ok(userService.unifyUserDataReturned(userEntity.getId(),cardNumberUtil.getIdCard()));
         } else {
             return R.error();
         }
@@ -207,5 +207,10 @@ public class UsUserCooperationServiceImpl extends ServiceImpl<UsUserCooperationD
     @Autowired
     public void setWebSignInUtil(UsWebSignInUtil webSignInUtil) {
         this.webSignInUtil = webSignInUtil;
+    }
+
+    @Autowired
+    public void setCardNumberUtil(UsCardNumberUtil cardNumberUtil) {
+        this.cardNumberUtil = cardNumberUtil;
     }
 }

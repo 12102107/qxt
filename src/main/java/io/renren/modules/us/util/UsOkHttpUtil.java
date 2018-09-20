@@ -212,4 +212,8 @@ public class UsOkHttpUtil {
             return new X509Certificate[0];
         }
     }
+
+    public OkHttpClient getOkHttpClient() {
+        return okHttpClient;
+    }
 }

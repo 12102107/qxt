@@ -4,15 +4,9 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import io.renren.common.utils.Constant;
 import io.renren.common.utils.Query;
-import io.renren.modules.us.entity.TSCategoryEntity;
-import io.renren.modules.us.entity.UsAppApiEntity;
-import io.renren.modules.us.entity.UsSmsEntity;
-import io.renren.modules.us.entity.UsUserCooperationEntity;
+import io.renren.modules.us.entity.*;
 import io.renren.modules.us.service.*;
-import io.renren.modules.us.util.UsIdUtil;
-import io.renren.modules.us.util.UsOkHttpUtil;
-import io.renren.modules.us.util.UsSessionUtil;
-import io.renren.modules.us.util.UsSmsUtil;
+import io.renren.modules.us.util.*;
 import okhttp3.Call;
 import okhttp3.Response;
 import org.junit.Test;
@@ -45,6 +39,12 @@ public class UsTest {
     private UsSessionUtil sessionUtil;
     @Autowired
     private UsUserService userService;
+    @Autowired
+    private UsApiService apiService;
+    @Autowired
+    private UsUserEidService eidService;
+    @Autowired
+    private UsCardNumberUtil cardNumberUtil;
 
     @Test
     public void test1() {
@@ -255,8 +255,23 @@ public class UsTest {
 
     @Test
     public void test16() {
-        boolean b = userService.updateEidLevel("66b4e22ce0ec4bf59969b3d71494f026", Constant.EidLevel.EID_LEVLE_1.getValue());
+        boolean b = eidService.updateEidLevel("66b4e22ce0ec4bf59969b3d71494f026", Constant.EidLevel.EID_LEVEL_1.getValue());
         System.out.println(b);
     }
 
+    @Test
+    public void test17() {
+        UsApiEntity api = apiService.getWithoutAppId("/api/meth/callback");
+        System.out.println("测试测试测试测试测试测试测试测试测试=====" + api.toString());
+    }
+
+    @Test
+    public void test18() throws InterruptedException {
+        String str = "";
+        for (int i = 0; i < 18; i++) {
+            Thread.sleep(5);
+            str = str + cardNumberUtil.generateTrafficCardNumber() + ",";
+        }
+        System.out.println(str);
+    }
 }

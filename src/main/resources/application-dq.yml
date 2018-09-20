@@ -1,9 +1,20 @@
+# Tomcat
+server:
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 1000
+    min-spare-threads: 30
+  port: 8080
+  connection-timeout: 5000ms
+  servlet:
+    context-path: /renren-fast
+
 spring:
   # jackson时间格式化
   jackson:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
-  http:
+  servlet:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
@@ -16,27 +27,28 @@ spring:
     port: 6379
     password:
     #连接超时时长（毫秒）
-    timeout: 6000
-    pool:
-      #连接池最大连接数（使用负值表示没有限制）
-      max-active: 1000
-      #连接池最大阻塞等待时间（使用负值表示没有限制）
-      max-wait: -1
-      #连接池中的最大空闲连接
-      max-idle: 10
-      #连接池中的最小空闲连接
-      min-idle: 5
+    timeout: 6000ms
+    jedis:
+      pool:
+        #连接池最大连接数（使用负值表示没有限制）
+        max-active: 1000
+        #连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: -1ms
+        #连接池中的最大空闲连接
+        max-idle: 10
+        #连接池中的最小空闲连接
+        min-idle: 5
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
       first:  #数据源1
-        url: jdbc:mysql://221.207.236.225:3306/jeecg_dq?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
-        username: us
+        url: jdbc:mysql://localhost:3306/jeecg_dq?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+        username: root
         password: 12345
       second:  #数据源2
-        url: jdbc:mysql://221.207.236.225:3306/jeecg_dq?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
-        username: us
+        url: jdbc:mysql://localhost:3306/jeecg_dq?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+        username: root
         password: 12345
       initial-size: 10
       max-active: 100
@@ -46,7 +58,7 @@ spring:
       max-pool-prepared-statement-per-connection-size: 20
       time-between-eviction-runs-millis: 60000
       min-evictable-idle-time-millis: 300000
-      validation-query: SELECT 1 FROM DUAL
+      #validation-query: SELECT 1 FROM DUAL
       test-while-idle: true
       test-on-borrow: false
       test-on-return: false
@@ -63,16 +75,11 @@ spring:
         wall:
           config:
             multi-statement-allow: true
-
-# Tomcat
-server:
-  tomcat:
-    uri-encoding: UTF-8
-    max-threads: 1000
-    min-spare-threads: 30
-  port: 8080
-  connection-timeout: 5000
-  context-path: /renren-fast
+  mvc:
+    throw-exception-if-no-handler-found: true
+    static-path-pattern: /static/**
+  resources:
+    add-mappings: false
 
 #mybatis
 mybatis-plus:
@@ -105,6 +112,10 @@ mybatis-plus:
     call-setters-on-nulls: true
 
 renren:
+  redis:
+    open: false
+  shiro:
+    redis: false
   # APP模块，是通过jwt认证的，如果要使用APP模块，则需要修改【加密秘钥】
   jwt:
     # 加密秘钥
@@ -127,7 +138,6 @@ us:
     qqTokenUrl: https://graph.qq.com/oauth2.0/token?grant_type=authorization_code
     qqClientId: 101474222
     qqClientSecret: 89b6fd82cd2aedee1c6567ca9d15e0de
-    cardNumber: 622623
     qqRedirectUri: http://www.dq-city.com/pages/login/login.html
     qqOpenIdUrl: https://graph.qq.com/oauth2.0/me
   icon:
@@ -139,3 +149,15 @@ us:
   img:
     uploadImg: \\apache-tomcat-8.5.24-dq\\webapps\\hmPhotos\\upload
     dirTemp: \\apache-tomcat-8.5.24-dq\\webapps\\hmPhotos\\upload
+    cardImg: http://www.dq-city.com/hmPhotos/
+  card:
+    idCard: 2c908105657e0d7a01657e30fef8001f
+    idCardPrefix: 622623
+    trafficCard: 8ab3935865adf3fc0165b2910f0d000e
+    trafficCardPrefix: 100100
+  pay:
+    mchId: 10000000
+    reqKey: M86l522AV6q613Ii4W6u8K48uW8vM1N6bFgyv769220MdYe9u37N4y7rI5mQ
+    repKey: Hpcl522AV6q613KIi46u6g6XuW8vM1N8bFgyv769770MdYe9u37M4y7rIpl8
+    createOrderUrl: http://221.207.166.30:3020/api/pay/create_order?
+    notifyUrl: http://www.dq-city.com/hm/api/pay/orderNotify

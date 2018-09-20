@@ -4,13 +4,13 @@ import io.renren.modules.us.interceptor.PermissionInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @author Li
  */
 @Configuration
-public class InterceptorConfig extends WebMvcConfigurerAdapter {
+public class InterceptorConfig implements WebMvcConfigurer {
 
     private PermissionInterceptor permissionInterceptor;
 
@@ -23,5 +23,5 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
     public void setPermissionInterceptor(PermissionInterceptor permissionInterceptor) {
         this.permissionInterceptor = permissionInterceptor;
     }
-    
+
 }
