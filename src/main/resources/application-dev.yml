@@ -154,3 +154,10 @@ us:
     idCardPrefix: 00001
     trafficCard: 00001
     trafficCardPrefix: 00001
+  bus:
+      busUrl: https://restapi.amap.com/v3/direction/transit/integrated?
+      geocodeUrl: http://restapi.amap.com/v3/geocode/geo?
+      distanceUrl: http://restapi.amap.com/v3/distance?
+      key: 50a751269e0cdc535921a65e8705a292
+      output: josn
+      city: 大庆市
