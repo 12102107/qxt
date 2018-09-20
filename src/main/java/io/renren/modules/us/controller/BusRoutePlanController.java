@@ -11,8 +11,10 @@ import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.us.param.UsBusRouteDetilsParam;
 import io.renren.modules.us.param.UsBusRouteParam;
 import io.renren.modules.us.util.BusRouteUtils;
+import io.renren.modules.us.util.UsOkHttpUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,13 +22,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+
 
 /**
  * 1.这个需要客户申请个高德API上面的key
@@ -67,7 +64,7 @@ public class BusRoutePlanController {
      **/
     @PostMapping("/busRouteList")
     @ApiOperation("公交路线查询")
-    public String busrRouteList(@RequestBody UsBusRouteParam form){
+    public String busrRouteList(@RequestBody UsBusRouteParam form) throws IOException {
         //表单校验
         ValidatorUtils.validateEntity(form);
 
@@ -138,7 +135,7 @@ public class BusRoutePlanController {
     * @Param [address]
     * @return java.lang.String
     **/
-    private  String getLonLat(String address){
+    private  String getLonLat(String address) throws IOException {
         //返回输入地址address的经纬度信息, 格式是 经度,纬度
         String queryUrl = geocodeUrl+"key="+key+"&city="+city+"&address="+address;
         String queryResult = getResponse(queryUrl);  //高德接口返回的是JSON格式的字符串
@@ -155,7 +152,7 @@ public class BusRoutePlanController {
      * @Param [startLonLat, endLonLat]
      * @return long
      **/
-    private  long getDistance(String startLonLat, String endLonLat){
+    private  long getDistance(String startLonLat, String endLonLat) throws IOException {
         //返回起始地startAddr与目的地endAddr之间的距离，单位：米
         Long result = new Long(0);
         String queryUrl = distanceUrl+"key="+key+"&city="+city+"&origins="+startLonLat+"&destination="+endLonLat;
@@ -176,24 +173,10 @@ public class BusRoutePlanController {
      * @Param [serverUrl]
      * @return java.lang.String
      **/
-    private  String getResponse(String serverUrl){
-        //用JAVA发起http请求，并返回json格式的结果
-        StringBuffer result = new StringBuffer();
-        try {
-            URL url = new URL(serverUrl);
-            URLConnection conn = url.openConnection();
-            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String line;
-            while((line = in.readLine()) != null){
-                result.append(line);
-            }
-            in.close();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result.toString();
+    private  String getResponse(String serverUrl) throws IOException {
+        UsOkHttpUtil okHttpUtil = UsOkHttpUtil.getInstance();
+        Response response = okHttpUtil.getDataSync(serverUrl);
+        return response.body().string();
     }
 
 }
