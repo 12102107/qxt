@@ -148,16 +148,30 @@ us:
   img:
     uploadImg: \\apache-tomcat-8.5.24\\webapps\\hmPhotos\\upload
     dirTemp: \\apache-tomcat-8.5.24\\webapps\\hmPhotos\\upload
-    cardImg: http://www.dq-city.com/hmPhotos/
+    url: http://www.dq-city.com/hmPhotos/
   card:
     idCard: 00001
     idCardPrefix: 00001
     trafficCard: 00001
     trafficCardPrefix: 00001
+  pay:
+    mchId: 10000000
+    reqKey: M86l522AV6q613Ii4W6u8K48uW8vM1N6bFgyv769220MdYe9u37N4y7rI5mQ
+    repKey: Hpcl522AV6q613KIi46u6g6XuW8vM1N8bFgyv769770MdYe9u37M4y7rIpl8
+    createOrderUrl: http://221.207.166.30:3020/api/pay/create_order?
+    notifyUrl: http://www.dq-city.com/hm/api/pay/orderNotify
   bus:
-      busUrl: https://restapi.amap.com/v3/direction/transit/integrated?
-      geocodeUrl: http://restapi.amap.com/v3/geocode/geo?
-      distanceUrl: http://restapi.amap.com/v3/distance?
-      key: 50a751269e0cdc535921a65e8705a292
-      output: josn
-      city: 大庆市
+    busUrl: https://restapi.amap.com/v3/direction/transit/integrated?
+    geocodeUrl: http://restapi.amap.com/v3/geocode/geo?
+    distanceUrl: http://restapi.amap.com/v3/distance?
+    key: 50a751269e0cdc535921a65e8705a292
+    output: josn
+    city: 大庆市
+  qrcode:
+    size: 300
+    expireTime: 300000
+    path: C:\apache-tomcat-8.5.24-dq\webapps\hmPhotos\qrcode
+    url: http://www.dq-city.com/hmPhotos/qrcode
+    logoWidth: 60
+    logoHeight: 60
+    logoPath: C:\logo_dq\logo.png

@@ -243,6 +243,11 @@
 			<artifactId>bcprov-jdk16</artifactId>
 			<version>1.46</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>core</artifactId>
+			<version>3.3.3</version>
+		</dependency>
 		<!--module:us:添加jar包结束-->
 	</dependencies>
 
