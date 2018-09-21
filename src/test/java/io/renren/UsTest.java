@@ -1,5 +1,6 @@
 package io.renren;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import io.renren.common.utils.Constant;
@@ -45,6 +46,8 @@ public class UsTest {
     private UsUserEidService eidService;
     @Autowired
     private UsCardNumberUtil cardNumberUtil;
+    @Autowired
+    private UsQrCodeUtil qrCodeUtil;
 
     @Test
     public void test1() {
@@ -274,4 +277,15 @@ public class UsTest {
         }
         System.out.println(str);
     }
+
+    @Test
+    public void test19() throws Exception {
+        JSONObject object = new JSONObject();
+        object.put("time", "1233455");
+        object.put("session", "sdasdsadasdasdasdasdasd");
+        String imgPath = "C:\\Users\\X\\Desktop\\1.png";
+        String destPath = "C:\\Users\\X\\Desktop";
+        qrCodeUtil.encode(object.toJSONString(), imgPath, destPath, true, "111");
+    }
+
 }

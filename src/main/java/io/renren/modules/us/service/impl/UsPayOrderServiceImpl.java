@@ -152,13 +152,13 @@ public class UsPayOrderServiceImpl extends ServiceImpl<UsPayOrderDao, UsPayOrder
     public R list(UsPayListParam param) {
         ValidatorUtils.validateEntity(param);
         EntityWrapper<UsPayOrderEntity> wrapper = new EntityWrapper<>();
-        wrapper.setSqlSelect("id", "subject", "update_date", "type", "amount")
+        wrapper.setSqlSelect("id", "subject", "update_date as updateDate", "type", "amount")
                 .where("appid = {0}", param.getAppid())
                 .and("user_id = {0}", sessionUtil.getUserId(param.getSession()))
                 .and("card_id = {0}", param.getCardId())
                 .and("status = {0}", "2")
                 .orderBy("update_date", false);
-        List<UsPayOrderEntity> list = this.selectList(wrapper);
+        List<Map<String, Object>> list = this.selectMaps(wrapper);
         return R.ok(list);
     }
 
@@ -166,12 +166,12 @@ public class UsPayOrderServiceImpl extends ServiceImpl<UsPayOrderDao, UsPayOrder
     public R detail(UsPayDetailParam param) {
         ValidatorUtils.validateEntity(param);
         EntityWrapper<UsPayOrderEntity> wrapper = new EntityWrapper<>();
-        wrapper.setSqlSelect("id", "order_no", "channel", "type", "status", "subject"
-                , "body", "update_date", "amount", "balance", "remark")
+        wrapper.setSqlSelect("id", "order_no as orderNo", "channel", "type", "status", "subject"
+                , "body", "update_date as updateDate", "amount", "balance", "remark")
                 .where("appid = {0}", param.getAppid())
                 .and("user_id = {0}", sessionUtil.getUserId(param.getSession()))
                 .and("id = {0}", param.getOrderId());
-        UsPayOrderEntity order = this.selectOne(wrapper);
+        Map<String, Object> order = this.selectMap(wrapper);
         return R.ok(order);
     }
 

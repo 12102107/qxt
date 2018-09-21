@@ -149,7 +149,7 @@ us:
   img:
     uploadImg: \\apache-tomcat-8.5.24-syss\\webapps\\hmPhotos\\upload
     dirTemp: \\apache-tomcat-8.5.24-syss\\webapps\\hmPhotos\\upload
-    cardImg: http://www.syss-city.com/hmPhotos/
+    url: http://www.syss-city.com/hmPhotos/
   card:
     idCard: 00002
     idCardPrefix: 00002
@@ -168,3 +168,11 @@ us:
     key: 50a751269e0cdc535921a65e8705a292
     output: josn
     city: 大庆市
+  qrcode:
+    size: 300
+    expireTime: 300000
+    path: C:\apache-tomcat-8.5.24-dq\webapps\hmPhotos\qrcode
+    url: http://www.dq-city.com/hmPhotos/qrcode/
+    logoWidth: 60
+    logoHeight: 60
+    logoPath: C:\logo_dq\logo.png

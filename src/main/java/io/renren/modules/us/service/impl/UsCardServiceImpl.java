@@ -17,7 +17,6 @@ import io.renren.modules.us.service.UsCardMenuService;
 import io.renren.modules.us.service.UsCardNumberService;
 import io.renren.modules.us.service.UsCardService;
 import io.renren.modules.us.service.UsUserService;
-import io.renren.modules.us.util.UsIdUtil;
 import io.renren.modules.us.util.UsSessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,7 +35,7 @@ public class UsCardServiceImpl extends ServiceImpl<UsCardDao, UsCardEntity> impl
     private UsCardNumberService cardNumberService;
     private UsCardMenuService cardMenuService;
     private UsSessionUtil sessionUtil;
-    @Value("${us.img.cardImg}")
+    @Value("${us.img.url}")
     private String cardImg;
 
     @Override
