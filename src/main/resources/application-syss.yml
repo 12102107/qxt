@@ -172,7 +172,7 @@ us:
     size: 300
     expireTime: 300000
     path: C:\apache-tomcat-8.5.24-dq\webapps\hmPhotos\qrcode
-    url: http://www.dq-city.com/hmPhotos/qrcode
+    url: http://www.dq-city.com/hmPhotos/qrcode/
     logoWidth: 60
     logoHeight: 60
     logoPath: C:\logo_dq\logo.png
