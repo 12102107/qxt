@@ -7,7 +7,6 @@ package io.renren.modules.us.controller;
  */
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
 import io.renren.common.exception.RRException;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.us.param.UsBusRouteDetilsParam;
