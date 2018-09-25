@@ -231,6 +231,7 @@ public class BusRouteUtils {
                 String result1 = jsonObject3.getString("end_time");
                 end_time = getString(result1);
                 //此段途经公交站点列表
+                list = new ArrayList<Map<String, Object>>();
                 JSONArray via_stops1 = jsonObject3.getJSONArray("via_stops");
                 for (int j = 0; j < via_stops1.size(); j++) {
                     Map<String, Object> map = new HashMap<>();
