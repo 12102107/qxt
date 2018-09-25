@@ -193,6 +193,56 @@ public class UsPayOrderServiceImpl extends ServiceImpl<UsPayOrderDao, UsPayOrder
             order.setUpdateDate(new Date());
             this.updateById(order);
         }
+        //余额支出
+        if ("1".equals(order.getType()) && "2".equals(order.getChannel())) {
+            UsCardNumberEntity cardNumber = cardNumberService.getUserCard(order.getUserId(), order.getCardId());
+            if (cardNumber == null) {
+                throw new RRException("用户卡不存在");
+            }
+            if (cardNumber.getBalance() < order.getAmount()) {
+                throw new RRException("余额不足");
+            }
+            double balance = cardNumber.getBalance();
+            double amount = order.getAmount();
+            double newBalance = balance - amount;
+            cardNumber.setBalance(newBalance);
+            cardNumberService.updateById(cardNumber);
+            order.setBalance(newBalance);
+            order.setStatus("2");
+            Date date = new Date();
+            order.setCreateDate(date);
+            order.setUpdateDate(date);
+            this.insert(order);
+        }
+    }
+
+    @Override
+    public R charge(UsPayOrderParam param) {
+        ValidatorUtils.validateEntity(param);
+        //验证是否是余额扣款
+        if (!"2".equals(param.getChannel())) {
+            return R.error("不是余额扣款");
+        }
+        //验证卡是否可充值和用户是否有卡
+        boolean userCardIsPayable = cardNumberService.verifyUserCardIsPayable(sessionUtil.getUserId(param.getSession()), param.getCardId());
+        if (!userCardIsPayable) {
+            return R.error("用户没有卡或卡不可以充值");
+        }
+        UsPayOrderEntity order = new UsPayOrderEntity();
+        String orderNo = String.valueOf(System.currentTimeMillis());
+        order.setId(UsIdUtil.generateId());
+        order.setUserId(sessionUtil.getUserId(param.getSession()));
+        order.setCardId(param.getCardId());
+        order.setAppid(param.getAppid());
+        order.setOrderNo(orderNo);
+        order.setSubject(param.getSubject());
+        order.setBody(param.getBody());
+        order.setChannel(param.getChannel());
+        order.setType("1");
+        order.setAmount(param.getAmount());
+        order.setCurrency("cny");
+        this.settlement(order);
+        return R.ok();
     }
 
     @Autowired

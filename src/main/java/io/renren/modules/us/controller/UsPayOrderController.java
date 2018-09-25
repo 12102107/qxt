@@ -54,6 +54,12 @@ public class UsPayOrderController {
         return payOrderService.detail(param);
     }
 
+    @PostMapping("charge")
+    @ApiOperation("扣款接口")
+    public R charge(@RequestBody UsPayOrderParam param) {
+        return payOrderService.charge(param);
+    }
+
     @Autowired
     public void setUsPayOrderService(UsPayOrderService usPayOrderService) {
         this.payOrderService = usPayOrderService;
