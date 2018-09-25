@@ -322,4 +322,17 @@ public class UsTest {
         System.out.println(bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
     }
 
+    @Test
+    public void test22() {
+        Double d1 = 0.03;
+        Double d2 = 0.01;
+        System.out.println("测试余额:" + (d1 - d2));
+        BigDecimal bd1 = new BigDecimal("0.03");
+        BigDecimal bd2 = new BigDecimal("0.01");
+        System.out.println("测试余额:" + bd1.subtract(bd2).doubleValue());
+        double d3 = 1.03;
+        double d4 = 0.01;
+        System.out.println("测试余额:" + (d3 * 100 - d4 * 100) / 100);
+    }
+
 }

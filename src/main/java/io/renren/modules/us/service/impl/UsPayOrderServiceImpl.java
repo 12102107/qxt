@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -202,9 +203,9 @@ public class UsPayOrderServiceImpl extends ServiceImpl<UsPayOrderDao, UsPayOrder
             if (cardNumber.getBalance() < order.getAmount()) {
                 throw new RRException("余额不足");
             }
-            double balance = cardNumber.getBalance();
-            double amount = order.getAmount();
-            double newBalance = balance - amount;
+            BigDecimal balance = new BigDecimal(String.valueOf(cardNumber.getBalance()));
+            BigDecimal amount = new BigDecimal(String.valueOf(order.getAmount()));
+            double newBalance = balance.subtract(amount).doubleValue();
             cardNumber.setBalance(newBalance);
             cardNumberService.updateById(cardNumber);
             order.setBalance(newBalance);
@@ -217,6 +218,7 @@ public class UsPayOrderServiceImpl extends ServiceImpl<UsPayOrderDao, UsPayOrder
     }
 
     @Override
+    @Scope(value = "singleton")
     public R charge(UsPayOrderParam param) {
         ValidatorUtils.validateEntity(param);
         //验证是否是余额扣款
