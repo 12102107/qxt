@@ -25,4 +25,6 @@ public interface UsPayOrderService extends IService<UsPayOrderEntity> {
     R list(UsPayListParam param);
 
     R detail(UsPayDetailParam param);
+
+    void settlement(UsPayOrderEntity order);
 }

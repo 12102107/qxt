@@ -1,6 +1,7 @@
 package io.renren.modules.us.param;
 
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 
 public class UsPayOrderParam extends UsSessionParam {
@@ -17,7 +18,8 @@ public class UsPayOrderParam extends UsSessionParam {
     @NotBlank(message = "channel不能为空")
     private String channel;
 
-    @DecimalMin(value = "0.01")
+    @DecimalMin(value = "0.01", message = "金额不能小于0.01")
+    @Digits(integer = 10, fraction = 2, message = "超过最大有效位数")
     private Double amount;
 
     public String getSubject() {

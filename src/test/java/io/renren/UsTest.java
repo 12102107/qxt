@@ -17,6 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -286,6 +288,38 @@ public class UsTest {
         String imgPath = "C:\\Users\\X\\Desktop\\1.png";
         String destPath = "C:\\Users\\X\\Desktop";
         qrCodeUtil.encode(object.toJSONString(), imgPath, destPath, true, "111");
+    }
+
+    @Test
+    public void test20() {
+        double d1 = 6;
+        double d2 = 6.00;
+        double d3 = 6.0000;
+        double d4 = 6.10;
+        double d5 = 6.01;
+        DecimalFormat df = new DecimalFormat("#.00");
+        System.out.println("测试======");
+        System.out.println(Double.valueOf(df.format(d1)));
+        System.out.println(Double.valueOf(df.format(d2)));
+        System.out.println(Double.valueOf(df.format(d3)));
+        System.out.println(Double.valueOf(df.format(d4)));
+        System.out.println(Double.valueOf(df.format(d5)));
+    }
+
+    @Test
+    public void test21() {
+        BigDecimal bg = new BigDecimal(6);
+        System.out.println(bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        bg = new BigDecimal(6.00);
+        System.out.println(bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        bg = new BigDecimal(6.0000);
+        System.out.println(bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        bg = new BigDecimal(6.10);
+        System.out.println(bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        bg = new BigDecimal(6.01);
+        System.out.println(bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        bg = new BigDecimal(6.99);
+        System.out.println(bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
     }
 
 }

@@ -152,7 +152,7 @@ public class UsPayOrderServiceImpl extends ServiceImpl<UsPayOrderDao, UsPayOrder
     public R list(UsPayListParam param) {
         ValidatorUtils.validateEntity(param);
         EntityWrapper<UsPayOrderEntity> wrapper = new EntityWrapper<>();
-        wrapper.setSqlSelect("id", "subject", "update_date as updateDate", "type", "amount")
+        wrapper.setSqlSelect("id", "subject", "update_date as updateDate", "type", "format(amount,2) as amount")
                 .where("appid = {0}", param.getAppid())
                 .and("user_id = {0}", sessionUtil.getUserId(param.getSession()))
                 .and("card_id = {0}", param.getCardId())
@@ -167,7 +167,7 @@ public class UsPayOrderServiceImpl extends ServiceImpl<UsPayOrderDao, UsPayOrder
         ValidatorUtils.validateEntity(param);
         EntityWrapper<UsPayOrderEntity> wrapper = new EntityWrapper<>();
         wrapper.setSqlSelect("id", "order_no as orderNo", "channel", "type", "status", "subject"
-                , "body", "update_date as updateDate", "amount", "balance", "remark")
+                , "body", "update_date as updateDate", "format(amount,2) as amount", "balance", "remark")
                 .where("appid = {0}", param.getAppid())
                 .and("user_id = {0}", sessionUtil.getUserId(param.getSession()))
                 .and("id = {0}", param.getOrderId());
@@ -176,7 +176,7 @@ public class UsPayOrderServiceImpl extends ServiceImpl<UsPayOrderDao, UsPayOrder
     }
 
     @Transactional
-    synchronized void settlement(UsPayOrderEntity order) {
+    public synchronized void settlement(UsPayOrderEntity order) {
         //收入
         if ("0".equals(order.getType())) {
             UsCardNumberEntity cardNumber = cardNumberService.getUserCard(order.getUserId(), order.getCardId());
