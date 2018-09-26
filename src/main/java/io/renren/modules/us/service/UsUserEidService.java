@@ -7,12 +7,14 @@ import io.renren.modules.us.param.UsEidLoginParam;
 import io.renren.modules.us.param.UsSessionParam;
 import io.renren.modules.us.param.UsUserAuthParam;
 
-public interface UsUserEidService extends IService<UsUserEntity> {
-    R eidLogin(UsEidLoginParam form) throws InterruptedException;
+import java.io.UnsupportedEncodingException;
 
-    R eidAuth(UsSessionParam form) throws InterruptedException;
+public interface UsUserEidService extends IService<UsUserEntity> {
+    R eidLogin(UsEidLoginParam form) throws InterruptedException, UnsupportedEncodingException;
+
+    R eidAuth(UsSessionParam form) throws InterruptedException, UnsupportedEncodingException;
 
     boolean updateEidLevel(String id, Integer level);
 
-    R auth(UsUserAuthParam param) throws InterruptedException;
+    R auth(UsUserAuthParam param) throws InterruptedException, UnsupportedEncodingException;
 }

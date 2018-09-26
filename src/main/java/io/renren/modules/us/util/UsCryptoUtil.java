@@ -11,7 +11,9 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 /**
  * @author Li
@@ -108,5 +110,34 @@ public class UsCryptoUtil {
         byte[] result = cipher.doFinal(contentBytes);
         return new String(result, CHARSET);
     }
-    
+
+    /**
+     * MD5加密
+     */
+    public static String md5(String data) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] array = md.digest(data.getBytes("UTF-8"));
+        StringBuilder sb = new StringBuilder();
+        for (byte item : array) {
+            sb.append(Integer.toHexString((item & 0xFF) | 0x100).substring(1, 3));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * BASE64解密
+     */
+    static byte[] base64Decode(String str) throws UnsupportedEncodingException {
+        Base64.Decoder decoder = Base64.getDecoder();
+        return decoder.decode(str.getBytes("UTF-8"));
+    }
+
+    /**
+     * BASE64加密
+     */
+    public static String base64Encode(String str) throws UnsupportedEncodingException {
+        Base64.Encoder encoder = Base64.getEncoder();
+        return encoder.encodeToString(str.getBytes("UTF-8"));
+    }
+
 }

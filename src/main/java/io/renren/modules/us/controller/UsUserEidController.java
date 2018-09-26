@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.UnsupportedEncodingException;
+
 @RestController
 @Api("EID接口")
 public class UsUserEidController {
@@ -23,7 +25,7 @@ public class UsUserEidController {
     @Scope("prototype")
     @PostMapping("/api/user/eidLogin")
     @ApiOperation("EID登录")
-    public R eidLogin(@RequestBody UsEidLoginParam param) throws InterruptedException {
+    public R eidLogin(@RequestBody UsEidLoginParam param) throws InterruptedException, UnsupportedEncodingException {
         ValidatorUtils.validateEntity(param);
         return eidService.eidLogin(param);
     }
@@ -31,7 +33,7 @@ public class UsUserEidController {
     @Scope("prototype")
     @PostMapping("/api/user/eidAuth")
     @ApiOperation("EID认证")
-    public R eidAuth(@RequestBody UsSessionParam param) throws InterruptedException {
+    public R eidAuth(@RequestBody UsSessionParam param) throws InterruptedException, UnsupportedEncodingException {
         ValidatorUtils.validateEntity(param);
         return eidService.eidAuth(param);
     }
@@ -39,7 +41,7 @@ public class UsUserEidController {
     @Scope("prototype")
     @PostMapping("/api/user/auth")
     @ApiOperation("第三方EID认证")
-    public R auth(@RequestBody UsUserAuthParam param) throws InterruptedException {
+    public R auth(@RequestBody UsUserAuthParam param) throws InterruptedException, UnsupportedEncodingException {
         ValidatorUtils.validateEntity(param);
         return eidService.auth(param);
     }

@@ -19,8 +19,8 @@ import io.renren.modules.us.param.UsSessionParam;
 import io.renren.modules.us.param.UsUserAuthParam;
 import io.renren.modules.us.service.UsUserEidService;
 import io.renren.modules.us.service.UsUserService;
-import io.renren.modules.us.util.Base64Util;
 import io.renren.modules.us.util.UsCardNumberUtil;
+import io.renren.modules.us.util.UsCryptoUtil;
 import io.renren.modules.us.util.UsSessionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -56,7 +57,7 @@ public class UsUserEidServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> i
 
     private UsCardNumberUtil cardNumberUtil;
 
-    private boolean verifyEid(UsUserEntity user) throws InterruptedException {
+    private boolean verifyEid(UsUserEntity user) throws InterruptedException, UnsupportedEncodingException {
         //验证参数
         if (user == null || user.getMobilePhone() == null || user.getRealname() == null || user.getCitizenNo() == null || "".equals(user.getMobilePhone())
                 || "".equals(user.getRealname()) || "".equals(user.getCitizenNo())) {
@@ -70,9 +71,9 @@ public class UsUserEidServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> i
         String datetime = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         //业务id
         String seqno = UUID.randomUUID().toString().replaceAll("-", "");
-        String dataToSign = Base64Util.encodeData(datetime + ":" + seqno + ":" + content);
+        String dataToSign = UsCryptoUtil.base64Encode(datetime + ":" + seqno + ":" + content);
         //签名
-        String dataToBeDisplayed = Base64Util.encodeData(displayed);
+        String dataToBeDisplayed = UsCryptoUtil.base64Encode(displayed);
         //异步接收路径
         String returnUrl = url + "?eid=" + seqno;
         RealName realNameObj = new RealName(realName, citizenNo);
@@ -107,7 +108,7 @@ public class UsUserEidServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> i
     }
 
     @Override
-    public R eidLogin(UsEidLoginParam param) throws InterruptedException {
+    public R eidLogin(UsEidLoginParam param) throws InterruptedException, UnsupportedEncodingException {
         //查询用户信息
         EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
         wrapper.setEntity(new UsUserEntity());
@@ -139,7 +140,7 @@ public class UsUserEidServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> i
     }
 
     @Override
-    public R eidAuth(UsSessionParam param) throws InterruptedException {
+    public R eidAuth(UsSessionParam param) throws InterruptedException, UnsupportedEncodingException {
         EntityWrapper<UsUserEntity> wrapper = new EntityWrapper<>();
         wrapper.setEntity(new UsUserEntity());
         wrapper.where("session={0}", param.getSession());
@@ -173,7 +174,7 @@ public class UsUserEidServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> i
 
     @Scope("prototype")
     @Override
-    public R auth(UsUserAuthParam param) throws InterruptedException {
+    public R auth(UsUserAuthParam param) throws InterruptedException, UnsupportedEncodingException {
         UsUserEntity user = new UsUserEntity();
         user.setCitizenNo(param.getCitizenNo());
         user.setRealname(param.getName());
