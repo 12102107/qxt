@@ -276,6 +276,20 @@
 					<skipTests>true</skipTests>
 				</configuration>
 			</plugin>
+			<!--module:us:排除打包时不需要的目录开始-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>/io/renren/modules/app/**</exclude>
+						<exclude>/io/renren/modules/job/**</exclude>
+						<exclude>/io/renren/modules/oss/**</exclude>
+						<exclude>/io/renren/modules/sys/controller/**</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<!--module:us:排除打包时不需要的目录结束-->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>wagon-maven-plugin</artifactId>
