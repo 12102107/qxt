@@ -5,6 +5,7 @@ import io.renren.common.utils.R;
 import io.renren.modules.us.entity.UsUserEntity;
 import io.renren.modules.us.param.*;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -22,7 +23,7 @@ public interface UsUserService extends IService<UsUserEntity> {
 
     UsUserEntity updatePersonalInfo(UsUserEntity user, UsUserParam form);
 
-    UsUserEntity realnameCert(UsUserEntity user, UsUserRealCertParam form);
+    UsUserEntity realnameCert(UsUserEntity user, UsUserRealCertParam form) throws IOException;
 
     UsUserEntity queryName(UsUserEntity user);
 

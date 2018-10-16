@@ -2,6 +2,7 @@ package io.renren.modules.us.service.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import io.renren.common.exception.RRException;
 import io.renren.common.utils.Constant;
 import io.renren.common.utils.HttpContextUtils;
 import io.renren.common.utils.R;
@@ -16,7 +17,9 @@ import io.renren.modules.us.service.UsUserPlantParamService;
 import io.renren.modules.us.service.UsUserService;
 import io.renren.modules.us.util.UsCardNumberUtil;
 import io.renren.modules.us.util.UsIdUtil;
+import io.renren.modules.us.util.UsOkHttpUtil;
 import io.renren.modules.us.util.UsSessionUtil;
+import okhttp3.*;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,7 @@ import sun.misc.BASE64Decoder;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -47,6 +51,9 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
 
     @Value("${us.img.dirTemp}")
     private String DIRTEMP;
+
+    @Value("${fs.appUrl}")
+    private String fsAppUrl;
 
     private TSTypeService tSTypeService;
 
@@ -194,7 +201,7 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
      */
     @Override
     @Transactional
-    public UsUserEntity realnameCert(UsUserEntity user, UsUserRealCertParam form) {
+    public UsUserEntity realnameCert(UsUserEntity user, UsUserRealCertParam form) throws IOException {
         user.setUpdateDate(new Date());
         user.setRealname(form.getRealname());
         user.setNickname(form.getNickname());
@@ -209,6 +216,21 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         user.setEidLevel(Constant.EidLevel.EID_LEVEL_2.getValue());//实名认证后EID等级改为2
         user.setAppid(form.getAppid());
         this.updateById(user);
+
+        //实名认证后开通存储空间
+        OkHttpClient okHttpClient = UsOkHttpUtil.getInstance().getOkHttpClient();
+        RequestBody body = new FormBody.Builder()
+                .add("appkey", user.getId())
+                .add("code", user.getId())
+                .add("name", user.getId())
+                .build();
+        Request request = new Request.Builder().post(body).url(fsAppUrl).build();
+        Call call = okHttpClient.newCall(request);
+        Response response = call.execute();
+        String result = response.body().string();
+        if (!result.equals("ok")) {
+            throw new RRException("实名认证失败,未开通存储空间");
+        }
 
         // 实名认证成功后生成身份证卡号和公交卡号
         String idCardNumber = cardNumberUtil.generateIdCardNumber();
