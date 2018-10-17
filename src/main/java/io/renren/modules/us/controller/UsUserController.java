@@ -10,14 +10,15 @@ import io.renren.modules.us.param.*;
 import io.renren.modules.us.service.TSTypeService;
 import io.renren.modules.us.service.UsSmsService;
 import io.renren.modules.us.service.UsUserService;
-import io.renren.modules.us.util.*;
+import io.renren.modules.us.util.UsCardNumberUtil;
+import io.renren.modules.us.util.UsIdUtil;
+import io.renren.modules.us.util.UsSessionUtil;
+import io.renren.modules.us.util.UsSmsUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -216,6 +217,29 @@ public class UsUserController {
             return R.error("查询不到此用户");
         }
         return R.ok(usUserService.unifyUserDataReturned(user.getId(), cardNumberUtil.getIdCard()));
+    }
+
+    @PostMapping("/api/user/data")
+    @ApiOperation("查询个人数据")
+    public R info(@RequestBody UsSessionParam param) {
+        //表单校验
+        ValidatorUtils.validateEntity(param);
+        String userId = sessionUtil.getUserId(param.getSession());
+        if (userId == null) {
+            return R.error("查询不到此用户");
+        }
+        UsUserEntity user = usUserService.selectById(userId);
+        if (user == null) {
+            return R.error("查询不到此用户");
+        }
+        Map<String, String> map = new HashMap<>();
+        map.put("id", user.getId());
+        map.put("session", user.getSession());
+        map.put("mobile", user.getMobilePhone());
+        map.put("name", user.getRealname());
+        map.put("identity", user.getCitizenNo());
+        map.put("level", user.getEidLevel().toString());
+        return R.ok(map);
     }
 
     @PostMapping("/api/user/editPersonalInfo")

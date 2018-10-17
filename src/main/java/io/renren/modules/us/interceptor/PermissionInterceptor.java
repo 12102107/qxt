@@ -8,6 +8,8 @@ import io.renren.modules.us.util.UsSessionUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.session.SessionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -22,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 @Component
 public class PermissionInterceptor extends HandlerInterceptorAdapter {
 
+    private Logger logger = LoggerFactory.getLogger(getClass());
     private UsSessionUtil sessionUtil;
 
     @Override
@@ -36,6 +39,8 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter {
         }
         String requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         String url = request.getServletPath();
+        logger.info("访问URL" + url);
+        logger.info("访问参数" + requestBody);
         JSONObject object = JSONObject.parseObject(requestBody);
         UsApiService apiService = (UsApiService) SpringContextUtils.getBean("usApiService");
         if (object == null || !object.containsKey("appid")) {

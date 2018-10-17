@@ -52,8 +52,8 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
     @Value("${us.img.dirTemp}")
     private String DIRTEMP;
 
-    @Value("${fs.appUrl}")
-    private String fsAppUrl;
+//    @Value("${fs.appUrl}")
+//    private String fsAppUrl;
 
     private TSTypeService tSTypeService;
 
@@ -218,19 +218,19 @@ public class UsUserServiceImpl extends ServiceImpl<UsUserDao, UsUserEntity> impl
         this.updateById(user);
 
         //实名认证后开通存储空间
-        OkHttpClient okHttpClient = UsOkHttpUtil.getInstance().getOkHttpClient();
-        RequestBody body = new FormBody.Builder()
-                .add("appkey", user.getId())
-                .add("code", user.getId())
-                .add("name", user.getId())
-                .build();
-        Request request = new Request.Builder().post(body).url(fsAppUrl).build();
-        Call call = okHttpClient.newCall(request);
-        Response response = call.execute();
-        String result = response.body().string();
-        if (!result.equals("ok")) {
-            throw new RRException("实名认证失败,未开通存储空间");
-        }
+//        OkHttpClient okHttpClient = UsOkHttpUtil.getInstance().getOkHttpClient();
+//        RequestBody body = new FormBody.Builder()
+//                .add("appkey", user.getId())
+//                .add("code", user.getId())
+//                .add("name", user.getId())
+//                .build();
+//        Request request = new Request.Builder().post(body).url(fsAppUrl).build();
+//        Call call = okHttpClient.newCall(request);
+//        Response response = call.execute();
+//        String result = response.body().string();
+//        if (!result.equals("ok")) {
+//            throw new RRException("实名认证失败,未开通存储空间");
+//        }
 
         // 实名认证成功后生成身份证卡号和公交卡号
         String idCardNumber = cardNumberUtil.generateIdCardNumber();

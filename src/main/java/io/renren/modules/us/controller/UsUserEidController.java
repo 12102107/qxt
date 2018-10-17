@@ -38,13 +38,13 @@ public class UsUserEidController {
         return eidService.eidAuth(param);
     }
 
-    @Scope("prototype")
-    @PostMapping("/api/user/auth")
-    @ApiOperation("第三方EID认证")
-    public R auth(@RequestBody UsUserAuthParam param) throws InterruptedException, UnsupportedEncodingException {
-        ValidatorUtils.validateEntity(param);
-        return eidService.auth(param);
-    }
+//    @Scope("prototype")
+//    @PostMapping("/api/user/auth")
+//    @ApiOperation("第三方EID认证")
+//    public R auth(@RequestBody UsUserAuthParam param) throws InterruptedException, UnsupportedEncodingException {
+//        ValidatorUtils.validateEntity(param);
+//        return eidService.auth(param);
+//    }
 
     @Autowired
     public void setEidService(UsUserEidService eidService) {

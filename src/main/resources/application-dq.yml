@@ -178,5 +178,5 @@ us:
     logoPath: C:\logo_dq\logo.png
 
 #云存储
-fs:
-  appUrl: http://221.207.166.30:9091/apps/add
+#fs:
+#  appUrl: http://221.207.166.30:9091/apps/add
