@@ -15,13 +15,13 @@ public class RealCertUtil {
     final static String path = "/nidCard";
     final static String method = "GET";
     final static String appcode = "c379749a229c44a88e5d7bb789549461";
-    public static boolean realNameCert(String name,String idcard){
+    public static boolean realNameCert(String name,String idcard) throws Exception{
         Map<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", "APPCODE " + appcode);
         Map<String, String> querys = new HashMap<String, String>();
         querys.put("idCard",idcard);
         querys.put("name", name);
-        try {
+        //try {
             HttpResponse response = HttpUtils.doGet(host, path, method, headers, querys);
             String result = EntityUtils.toString(response.getEntity());
             JSONObject jsonObject = JSONObject.fromObject(result);
@@ -29,12 +29,12 @@ public class RealCertUtil {
                 return true;
             }
 
-        } catch (Exception e) {
+        /*} catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
         return false;
     }
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
 
         boolean b = RealCertUtil.realNameCert("伍帅","510703198602170052");
         System.err.println(b);
