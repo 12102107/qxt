@@ -8,8 +8,7 @@ import io.renren.common.utils.Query;
 import io.renren.modules.us.entity.*;
 import io.renren.modules.us.service.*;
 import io.renren.modules.us.util.*;
-import okhttp3.Call;
-import okhttp3.Response;
+import okhttp3.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -333,6 +332,57 @@ public class UsTest {
         double d3 = 1.03;
         double d4 = 0.01;
         System.out.println("测试余额:" + (d3 * 100 - d4 * 100) / 100);
+    }
+
+    @Test
+    public void test23() throws IOException {
+        OkHttpClient okHttpClient = UsOkHttpUtil.getInstance().getOkHttpClient();
+        RequestBody body = new FormBody.Builder()
+                .add("username", "15904607121@139.com")
+                .add("password", "15904607121@139.com").build();
+        Request request = new Request.Builder().post(body).url("http://42.159.5.20/api2/auth-token/").build();
+        Call call = okHttpClient.newCall(request);
+        Response response = call.execute();
+        String str = response.body().string();
+        int status = response.code();
+        System.out.println(status + "测试测试" + str);
+        JSONObject object = JSONObject.parseObject(str);
+        System.out.println(status + "测试测试" + object.getString("token"));
+    }
+
+    @Test
+    public void test24() throws IOException {
+        OkHttpClient okHttpClient = UsOkHttpUtil.getInstance().getOkHttpClient();
+        RequestBody body = new FormBody.Builder().build();
+        //必须使用管理账号token
+        Request request = new Request.Builder().post(body).url("http://42.159.5.20/api2/accounts/" + "15904607121@139.com")
+                .header("Authorization", "Token " + "aa619273ed6ab6eb4b6955d32e59231de785a138")
+                .header("Accept", "application/json; indent=4")
+                .build();
+        Call call = okHttpClient.newCall(request);
+        Response response = call.execute();
+        String str = response.body().string();
+        int status = response.code();
+        System.out.println(status + "测试测试" + str);
+    }
+
+    @Test
+    public void test25() throws IOException {
+        OkHttpClient okHttpClient = UsOkHttpUtil.getInstance().getOkHttpClient();
+        RequestBody body = new FormBody.Builder()
+                .add("password", "15904607122@139.com")
+                .build();
+        //必须使用管理账号token
+        Request request = new Request.Builder().put(body).url("http://42.159.5.20/api2/accounts/" + "15904607122@139.com" + "/")
+                .header("Authorization", "Token " + "aa619273ed6ab6eb4b6955d32e59231de785a138")
+                .header("Accept", "application/json; indent=4")
+                .build();
+        Call call = okHttpClient.newCall(request);
+        Response response = call.execute();
+        String str = response.body().string();
+        int status = response.code();
+        //第一次创建返回201 第二次创建返回200
+        System.out.println(status + "测试测试" + str);
     }
 
 }
