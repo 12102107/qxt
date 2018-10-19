@@ -138,7 +138,7 @@ public class UsNoticeController {
         UsNoticeEntity tl = new UsNoticeEntity();
 
         if (form.getNoticeType()!=null){
-            tl = usNoticeService.findByNoticeType(form.getNoticeType());
+            tl = usNoticeService.findByNoticeType(form);
         }
 
         return R.ok(tl);
@@ -153,7 +153,7 @@ public class UsNoticeController {
         UsNoticeEntity tl = new UsNoticeEntity();
 
         if (form.getNoticeType()!=null){
-            tl = usNoticeService.findByNoticeType(form.getNoticeType());
+            tl = usNoticeService.findByNoticeType(form);
         }
 
         return R.ok(tl);
@@ -168,7 +168,7 @@ public class UsNoticeController {
         UsNoticeEntity tl = new UsNoticeEntity();
 
         if (form.getNoticeType()!=null){
-            tl = usNoticeService.findByNoticeType(form.getNoticeType());
+            tl = usNoticeService.findByNoticeType(form);
         }
 
         return R.ok(tl);
@@ -183,7 +183,7 @@ public class UsNoticeController {
         UsNoticeEntity tl = new UsNoticeEntity();
 
         if (form.getNoticeType()!=null){
-            tl = usNoticeService.findByNoticeType(form.getNoticeType());
+            tl = usNoticeService.findByNoticeType(form);
         }
 
         return R.ok(tl);

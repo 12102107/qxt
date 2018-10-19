@@ -7,6 +7,7 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.modules.us.dao.UsNoticeDao;
 import io.renren.modules.us.entity.UsNoticeEntity;
+import io.renren.modules.us.param.UsCompanyProfile;
 import io.renren.modules.us.service.UsNoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,8 +36,8 @@ public class UsNoticeServiceImpl extends ServiceImpl<UsNoticeDao, UsNoticeEntity
     }
 
     @Override
-    public UsNoticeEntity findByNoticeType(String noticeType) {
-        return usNoticeDao.findByNoticeType(noticeType);
+    public UsNoticeEntity findByNoticeType(UsCompanyProfile companyProfile) {
+        return usNoticeDao.findByNoticeType(companyProfile.getNoticeType(), companyProfile.getAppid());
     }
 
 }

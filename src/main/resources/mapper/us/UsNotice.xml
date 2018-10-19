@@ -4,7 +4,7 @@
 <mapper namespace="io.renren.modules.us.dao.UsNoticeDao">
 
     <select id="findByNoticeType" parameterType="java.lang.String" resultType="io.renren.modules.us.entity.UsNoticeEntity">
-        SELECT * from us_notice WHERE notice_type=#{noticeType}
+        SELECT * from us_notice WHERE notice_type=#{noticeType} and appid = #{appId} and notice_status = '1'
     </select>
 
 </mapper>
