@@ -75,6 +75,22 @@ public class UsStorageController {
         }
     }
 
+    private String createRepo(String name, String token) throws IOException {
+        OkHttpClient okHttpClient = UsOkHttpUtil.getInstance().getOkHttpClient();
+        RequestBody body = new FormBody.Builder()
+                .add("name", name)
+                .add("desc ", name)
+                .build();
+        Request request = new Request.Builder().post(body).url("http://42.159.5.20/api2/repos/")
+                .header("Authorization", "Token " + token)
+                .header("Accept", "application/json; indent=4")
+                .build();
+        Call call = okHttpClient.newCall(request);
+        Response response = call.execute();
+        String str = response.body().string();
+        return str;
+    }
+
     @PostMapping("/api/storage/token")
     @ApiOperation("获取token")
     public R token(@org.springframework.web.bind.annotation.RequestBody UsSessionParam param) throws IOException {
@@ -131,11 +147,15 @@ public class UsStorageController {
         String str = response.body().string();
         int status = response.code();
         //第一次创建返回201 第二次创建返回200
-        if (status == 201 || status == 200) {
-            return R.ok(JSONObject.parseObject(str));
-        } else {
+        if (status != 201 && status != 200) {
             throw new RRException(status + str);
         }
+        //调用用户token
+        String userJsonToken = getToken(user.getMobilePhone() + "@139.com", user.getMobilePhone() + "@139.com");
+        String userToken = JSONObject.parseObject(userJsonToken).getString("token");
+        createRepo("电子病历", userToken);
+        createRepo("健康档案", userToken);
+        return R.ok(JSONObject.parseObject(str));
     }
 
     @Autowired

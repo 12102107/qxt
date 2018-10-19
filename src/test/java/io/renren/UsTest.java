@@ -385,4 +385,22 @@ public class UsTest {
         System.out.println(status + "测试测试" + str);
     }
 
+    @Test
+    public void test26() throws IOException {
+        OkHttpClient okHttpClient = UsOkHttpUtil.getInstance().getOkHttpClient();
+        RequestBody body = new FormBody.Builder()
+                .add("name", "健康档案")
+                .add("desc ", "健康档案")
+                .build();
+        Request request = new Request.Builder().post(body).url("http://42.159.5.20/api2/repos/")
+                .header("Authorization", "Token " + "6dae216de4ea1c68c78e2221e5d2b9fcf7d9e51b")
+                .header("Accept", "application/json; indent=4")
+                .build();
+        Call call = okHttpClient.newCall(request);
+        Response response = call.execute();
+        String str = response.body().string();
+        int status = response.code();
+        System.out.println(status + "测试测试" + str);
+    }
+
 }
