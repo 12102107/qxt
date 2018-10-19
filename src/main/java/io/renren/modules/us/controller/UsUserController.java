@@ -10,10 +10,7 @@ import io.renren.modules.us.param.*;
 import io.renren.modules.us.service.TSTypeService;
 import io.renren.modules.us.service.UsSmsService;
 import io.renren.modules.us.service.UsUserService;
-import io.renren.modules.us.util.UsCardNumberUtil;
-import io.renren.modules.us.util.UsIdUtil;
-import io.renren.modules.us.util.UsSessionUtil;
-import io.renren.modules.us.util.UsSmsUtil;
+import io.renren.modules.us.util.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -295,7 +291,7 @@ public class UsUserController {
 
     @PostMapping("/api/user/realnameCertification")
     @ApiOperation("实名认证")
-    public R realnameCertification(@RequestBody UsUserRealCertParam form) throws IOException {
+    public R realnameCertification(@RequestBody UsUserRealCertParam form) throws Exception {
         //表单校验
         ValidatorUtils.validateEntity(form);
         String userId = sessionUtil.getUserId(form.getSession());
@@ -305,6 +301,10 @@ public class UsUserController {
         UsUserEntity user = usUserService.selectById(userId);
         if (user == null) {
             return R.error("查询不到此用户");
+        }
+        boolean b = RealCertUtil.realNameCert(form.getRealname(), form.getCitizenNo());
+        if (!b) {
+            return R.error("身份信息实名验证未通过");
         }
         UsUserEntity usUserEntity = usUserService.realnameCert(user, form);
         return R.ok(usUserService.unifyUserDataReturned(usUserEntity.getId(), cardNumberUtil.getIdCard()));
